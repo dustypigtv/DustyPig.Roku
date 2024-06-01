@@ -5,31 +5,65 @@ sub Init()
     ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.busyLabel = m.top.findNode("busyLabel")
+    m.rowList = m.top.findNode("rowList")
     
     
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
     m.errorDialog.title = "Error"
-    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
-    m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+    ' m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    ' m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+
+
     
-     ' Login task
-     m.loginTask = CreateObject("roSGNode", "LoginTask")
-     m.loginTask.observeField("loginResult", "OnLoginResult")
+     ' Home screen task
+     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
+     m.homeScreenTask.observeField("success", "OnDataAvailable")
+
+
+     ' Observe this.visible
+    m.top.observeField("visible", "OnVisibleChanged")
     
 end sub
 
-' Fires when this view's visibility changes
 Sub OnVisibleChanged(event as object)
-
+    
     visible = event.getData()
 
     print "HomeView:OnVisibleChanged "; visible
-
+    
     if not visible then return
 
     m.busySpinner.poster.uri = m.global.theme.spinner
-    m.busyLabel.color = m.global.theme.primary
+    m.busyLabel.color = m.global.theme.textOnBackground
+    m.rowList.rowLabelColor = m.global.theme.textOnBackground
+    m.rowList.focusBitmapBlendColor = m.global.theme.primary
+
+    m.homeScreenTask.control = "run"
+
+End Sub
+
+
+Sub OnDataAvailable()
+
+    print "HomeView:OnDataAvailable"
+
+    m.busySpinner.visible = false
+    m.busyLabel.visible = false
+
+    
+    if m.homeScreenTask.success then
+        m.rowList.numRows = m.homeScreenTask.numRows
+        m.rowList.content = m.homeScreenTask.data
+        m.rowList.setFocus(true)
+    else if m.homeScreenTask.unauthorized then
+        m.switchToLoginView = true
+    else
+        print m.homeScreenTask.errMsg
+        m.errorDialog.message = [m.homeScreenTask.errMsg]
+        m.top.getScene().dialog = m.errorDialog
+    end if
+
 
 End Sub

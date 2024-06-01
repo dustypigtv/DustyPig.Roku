@@ -3,6 +3,9 @@
     
     <script type = "text/brightscript" uri = "pkg:/components/Views/HomeView.bs" />
 
+	<interface>
+        <field id="switchToLoginView" type="bool" value="false" alwaysNotify="true" />
+    </interface>
 	
     <children>
 
@@ -31,7 +34,31 @@
 			translation="[0,150]" />
 
         
-		
+		<!--
+            Safe zone: 
+                x,y = 192,106
+                w,h = 1534,866
+
+                numColumns = 4, 
+                In-between spaces = 3
+                Item width = 300
+                Safe Zone = 1534
+
+                Item Spacing = (1534 - (4 * 300)) / 3 = ~111 
+        -->
+		<RowList
+			id="rowList"
+			translation="[192,106]"
+            rowitemSize="[[200,300]]"
+      		rowItemSpacing= "[[20,0]]"
+       		itemSize= "[1452,480]"
+       		rowLabelOffset= "[[0,10]]"
+       		showRowLabel= "[true]"
+       		rowFocusAnimationStyle= "fixedFocusWrap"
+       		vertFocusAnimationStyle="fixedFocusWrap"
+       		failedBitmapUri = "pkg:/images/failed_poster.jpg"
+       		loadingBitmapUri = "pkg:/images/loading_poster.jpg"/>
+			
 
 	</children>
 

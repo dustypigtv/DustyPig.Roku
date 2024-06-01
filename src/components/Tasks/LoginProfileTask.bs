@@ -12,10 +12,13 @@ sub TryLogin()
 
     m.top.unauthorized = false
     
+    di=createobject("roDeviceInfo")
+    deviceId=di.GetChannelClientId()
+
     if m.top.pin = invalid or m.top.pin = "" then 
-        creds = {"id": m.top.id }
+        creds = {"id": m.top.id, "deviceId":deviceId }
     else
-        creds = {"id": m.top.id, "pin": m.top.pin}
+        creds = {"id": m.top.id, "pin": m.top.pin, "deviceId":deviceId}
     end if
 
     apiInstance = new API()

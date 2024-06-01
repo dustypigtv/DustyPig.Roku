@@ -60,7 +60,6 @@ Sub OnDataAvailable()
     else if m.homeScreenTask.unauthorized then
         m.switchToLoginView = true
     else
-        print m.homeScreenTask.errMsg
         m.errorDialog.message = [m.homeScreenTask.errMsg]
         m.top.getScene().dialog = m.errorDialog
     end if

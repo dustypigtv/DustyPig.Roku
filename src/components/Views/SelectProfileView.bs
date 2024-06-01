@@ -90,7 +90,7 @@ sub LoadProfilesResult()
         m.profileGrid.numRows = m.loadProfilesTask.numProfiles
         m.profileGrid.content = m.loadProfilesTask.loadData
     else if m.loadProfilesTask.unauthorized then
-        m.switchToHomeView = true
+        m.switchToLoginView = true
     else
         m.loadErrorDialog.message = [m.loginTask.errMsg]
         m.top.getScene().dialog = m.loadErrorDialog

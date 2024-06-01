@@ -27,7 +27,7 @@ Sub TryGetData()
             bp.id = item.id
             bp.HDGRIDPOSTERURL = item.avatarUrl
             bp.SHORTDESCRIPTIONLINE1 = item.name
-            bp.addFields({initials: item.initials, isMain: bp.isMain, hasPin: item.hasPin})
+            bp.addFields({initials: item.initials, isMain: item.isMain, hasPin: item.hasPin})
 
             cnt++
         end for

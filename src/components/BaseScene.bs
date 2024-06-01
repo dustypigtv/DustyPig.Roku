@@ -25,11 +25,12 @@ Sub Init()
     m.selectProfileView = m.top.findNode("selectProfileView")
     m.selectProfileView.observeField("cancel", "CancelSelectProfileView")
     m.selectProfileView.observeField("switchToHomeView", "SwitchToHomeView")
+    m.selectProfileView.observeField("switchToLoginView", "SwitchToLoginView")
 
 
     ' Home View
     m.homeView = m.top.findNode("homeView")
-
+    m.homeView.observeField("switchToLoginView", "SwitchToLoginView")
 
 
     m.viewStack = []

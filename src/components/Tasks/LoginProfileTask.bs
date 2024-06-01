@@ -22,17 +22,19 @@ sub TryLogin()
     end if
 
     apiInstance = new API()
-    result = apiInstance.LoginProfile(creds)
-        
+    result = apiInstance.PostAndGetData("/Auth/ProfileLogin", creds, apiInstance.GetAccountToken())
+
     if result.success then
-        m.top.loginType = result.data.loginType        
-        m.top.loginResult = true
-    else if result.statusCode = 401 then
-        m.top.unauthorized = true
-        m.top.loadResult = false
-    else
-        m.top.errMsg = result.error
-        m.top.loginResult = false
-    end if
+
+        m.global.profileId = result.data.profileId
+        m.global.profileToken = result.data.token
+        m.global.profileIsMain = result.data.loginType = 1 ' Main profile in API
+
+        ' Set theme AFTER setting profileId
+        m.global.theme = GetTheme()
+
+   end if
+
+   m.top.data = result
 
 end sub

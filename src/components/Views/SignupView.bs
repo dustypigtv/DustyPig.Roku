@@ -52,7 +52,7 @@ sub Init()
 
     ' Signup task
     m.signupTask = CreateObject("roSGNode", "SignupTask")
-    m.signupTask.observeField("signupResult", "OnSignupResult")
+    m.signupTask.observeField("data", "OnSignupResult")
 
 
     'variables
@@ -216,13 +216,6 @@ End Function
 
 
 
-' From api library
-' public enum LoginType
-' {
-'     Account = 0,
-'     MainProfile = 1,
-'     SubProfile = 2
-' }
 
 Sub OnSignupResult()
 
@@ -231,19 +224,19 @@ Sub OnSignupResult()
     m.signupButton.setFocus(true)
     m.busySpinner.visible = false
     
-    if m.signupTask.signupResult then
+    data = m.signupTask.data
+    if data.success then
 
-        if m.signupTask.loginType = 1 then
+        if data.loginType = 1 then '1 = Main Profile in api
             m.top.switchToHomeScreen = true
         else
             m.top.switchToSelectProfile = true
         end if
 
     else
-        print m.signupTask.errMsg
 
         ShowControls(false)
-        m.errorDialog.message = [m.signupTask.errMsg]
+        m.errorDialog.message = [data.error]
         m.top.getScene().dialog = m.errorDialog
 
     end if

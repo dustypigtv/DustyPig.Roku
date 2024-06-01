@@ -1,9 +1,11 @@
-function GetTheme(profileId as integer) as object
+function GetTheme() as object
 
     ' Try to get from the registry based on profile id
     themeId = "theme_0"
-    reg = CreateObject("roRegistrySection", "default")
-    if reg.Exists(`theme_${profileId}`) then themeId = reg.Read(`theme_${profileId}`)
+    if m.global.profileId > 0 then
+        reg = CreateObject("roRegistrySection", "default")
+        if reg.Exists(`theme_${m.global.profileId}`) then themeId = reg.Read(`theme_${m.global.profileId}`)
+    end if
     
     ' Return the theme from the json file
     json = ParseJSON(ReadAsciiFile("pkg:/source/themes.json"))
@@ -18,12 +20,12 @@ function GetTheme(profileId as integer) as object
 
 end function
 
-sub SetTheme(profileId as integer, theme as object)
+sub SetTheme(theme as object)
 
-    if profileId < 1 then return
+    if m.global.profileId < 1 then return
 
     reg = CreateObject("roRegistrySection", "default")
-    reg.Write(`theme_${profileId}`, theme.id)
+    reg.Write(`theme_${m.global.profileId}`, theme.id)
     reg.Flush()
 
 end sub

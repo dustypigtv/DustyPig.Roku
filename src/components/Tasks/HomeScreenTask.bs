@@ -14,7 +14,7 @@ Sub TryGetData()
     m.top.unauthorized = false
         
     apiInstance = new API()
-    result = apiInstance.GetData("/Media/HomeScreen")
+    result = apiInstance.GetData("/Media/HomeScreen", m.global.profileToken)
         
     if result.success then
     

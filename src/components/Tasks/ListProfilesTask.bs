@@ -14,10 +14,10 @@ Sub TryGetData()
     m.top.unauthorized = false
         
     apiInstance = new API()
-    result = apiInstance.ListProfiles()
-        
+    result = apiInstance.GetData("/Profiles/List", apiInstance.GetAccountToken())
+
     if result.success then
-       
+
         ' Create a root content node, with child nodes holding info
         root = createObject("roSGNode", "ContentNode")
         cnt = 0
@@ -33,18 +33,18 @@ Sub TryGetData()
         end for
         
         m.top.numProfiles = cnt
-        m.top.loadData = root        
-        m.top.loadResult = true
+        m.top.data = root        
+        m.top.success = true
 
     else if result.statusCode = 401 then
 
         m.top.unauthorized = true
-        m.top.loadResult = false
+        m.top.success = false
 
     else
 
         m.top.errMsg = result.error
-        m.top.loadResult = false
+        m.top.success = false
 
     end if
     

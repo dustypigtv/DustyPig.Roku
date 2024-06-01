@@ -8,8 +8,6 @@
 	<interface>
         <field id="email" type="string" />
         <field id="password" type="string" />
-        <field id="loginResult" type="bool" value="false" alwaysNotify="true" />
-        <field id="loginType" type="int" value="0" />
-        <field id="errMsg" type="string" />
+        <field id="data" type="assocarray" alwaysNotify="true" />
     </interface>
 </component>

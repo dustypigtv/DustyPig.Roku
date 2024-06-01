@@ -11,15 +11,23 @@
     screen.setMessagePort(m.port) 
 
 
-    ' Setup theme
     m.global = screen.getGlobalNode()
+    
+    ' Profile data will be memory only
     m.global.addField("profileId", "integer", false)
     m.global.profileId = 0
-    m.global.addField("theme", "assocarray", false)
-    m.global.theme = GetTheme(0)
-    m.global.addField("defaultTheme", "assocarray", false)
-    m.global.defaultTheme = GetTheme(0)
+    m.global.addField("profileToken", "string", false)
+    m.global.profileToken = ""
+    m.global.addField("profileIsMain", "boolean", false)
+    m.global.profileIsMain = false
 
+    ' Setup theme
+    m.global.addField("theme", "assocarray", false)
+    m.global.theme = GetTheme()
+    m.global.addField("defaultTheme", "assocarray", false)
+    m.global.defaultTheme = GetTheme()
+
+    
     'Create Base Scene
     screen.CreateScene("BaseScene") 
 

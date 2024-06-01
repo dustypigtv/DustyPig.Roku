@@ -18,13 +18,13 @@ sub Init()
 
 
     ' Load profiles task
-    m.loadProfilesTask = CreateObject("roSGNode", "LoadProfilesTask")
-    m.loadProfilesTask.observeField("loadResult", "LoadProfilesResult")
+    m.listProfilesTask = CreateObject("roSGNode", "ListProfilesTask")
+    m.listProfilesTask.observeField("success", "OnListProfilesResult")
 
 
     ' Login profile task
     m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
-    m.loginProfileTask.observeField("loginResult", "OnLoginResult")
+    m.loginProfileTask.observeField("data", "OnLoginResult")
 
 
     ' Pin dialog
@@ -65,7 +65,7 @@ Sub OnVisibleChanged(event as object)
     m.profileGrid.content = invalid
     SetBusy(true)
     if not event.getData() then return
-    m.loadProfilesTask.control = "RUN"
+    m.listProfilesTask.control = "RUN"
 
 End Sub
 
@@ -80,16 +80,16 @@ sub SetBusy(busy as boolean)
 end sub
 
 
-sub LoadProfilesResult()
+sub OnListProfilesResult()
 
-    print "SelectProfileView:LoadProfilesResult"
+    print "SelectProfileView:OnListProfilesResult"
 
     SetBusy(false)
         
-    if m.loadProfilesTask.loadResult then
-        m.profileGrid.numRows = m.loadProfilesTask.numProfiles
-        m.profileGrid.content = m.loadProfilesTask.loadData
-    else if m.loadProfilesTask.unauthorized then
+    if m.listProfilesTask.success then
+        m.profileGrid.numRows = m.listProfilesTask.numProfiles
+        m.profileGrid.content = m.listProfilesTask.data
+    else if m.listProfilesTask.unauthorized then
         m.switchToLoginView = true
     else
         m.loadErrorDialog.message = [m.loginTask.errMsg]
@@ -112,7 +112,7 @@ sub OnProfileSelected()
     print "SelectProfileView:OnProfileSelected"
 
     idx = m.profileGrid.itemSelected
-    profile = m.loadProfilesTask.loadData.getChild(idx)
+    profile = m.listProfilesTask.data.getChild(idx)
     
     
     if profile.hasPin then
@@ -136,7 +136,7 @@ sub OnPinSubmitted()
     SetBusy(true)
 
     idx = m.profileGrid.itemSelected
-    profile = m.loadProfilesTask.loadData.getChild(idx)
+    profile = m.listProfilesTask.data.getChild(idx)
     
     m.loginProfileTask.id = profile.id
     m.loginProfileTask.pin = m.pinDialog.pin
@@ -152,17 +152,13 @@ Sub OnLoginResult()
     
     SetBusy(false)
     
-    idx = m.profileGrid.itemSelected
-    profile = m.loadProfilesTask.loadData.getChild(idx)
-    m.global.profileId = profile.id
-
-    if m.loginProfileTask.loginResult then
+    data = m.loginProfileTask.data
+    if data.success then
         m.top.switchToHomeView = true
-    else if m.loginProfileTask.unauthorized then
-        m.switchToHomeView = true
+    else if data.statusCode = 401 then
+        m.switchToLoginView = true
     else
-        print m.loginProfileTask.errMsg
-        m.loginErrorDialog.message = [m.loginProfileTask.errMsg]
+        m.loginErrorDialog.message = [data.error]
         m.top.getScene().dialog = m.loginErrorDialog
     end if
 

@@ -51,7 +51,7 @@ sub Init()
 
     ' Login task
     m.loginTask = CreateObject("roSGNode", "LoginTask")
-    m.loginTask.observeField("loginResult", "OnLoginResult")
+    m.loginTask.observeField("data", "OnLoginResult")
 
 
     'variables
@@ -208,13 +208,6 @@ End Function
 
 
 
-' From api library
-' public enum LoginType
-' {
-'     Account = 0,
-'     MainProfile = 1,
-'     SubProfile = 2
-' }
 
 Sub OnLoginResult()
 
@@ -223,9 +216,25 @@ Sub OnLoginResult()
     m.loginButton.setFocus(true)
     m.busySpinner.visible = false
 
-    if m.loginTask.loginResult then
+    data = m.loginTask.data
+    if data.success then
 
-        if m.loginTask.loginType = 1 then
+        ' From api library
+        ' public enum LoginType
+        ' {
+        '     Account = 0,
+        '     MainProfile = 1,
+        '     SubProfile = 2
+        ' }
+
+        if data.loginType = 1 then
+            m.global.profileId = data.profileId
+            m.global.profileToken = data.token
+            m.global.profileIsMain = true
+
+            ' Call GetTheme AFTER setting m.global.profileId
+            m.global.theme = GetTheme()
+            
             m.top.switchToHomeScreen = true
         else
             m.top.switchToSelectProfile = true
@@ -233,10 +242,8 @@ Sub OnLoginResult()
         
     else
         
-        print m.loginTask.errMsg
-
         ShowControls(false)
-        m.errorDialog.message = [m.loginTask.errMsg]
+        m.errorDialog.message = [data.error]
         m.top.getScene().dialog = m.errorDialog
 
     end if

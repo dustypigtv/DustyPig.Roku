@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="SelectProfileView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/SelectProfileView.bs" />
+
+    <interface>
+        <field id="cancel" type="bool" value="false" alwaysNotify="true" />
+        <field id="switchToHomeView" type="bool" value="false" alwaysNotify="true" />
+        <field id="switchToLoginView" type="bool" value="false" alwaysNotify="true" />
+    </interface>
+	
+    <children>
+
+       <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<BusySpinner
+			id="busySpinner"
+			translation="[860,440]" />
+		
+		<!-- 
+			Since the spinner above is centered and is 200 px high,
+			Translate this 100 px down the y axis.
+			Add another 50 for spacing
+		-->
+		<Label
+			id="busyLabel" 
+			text="The Pig is gettin' Dusty"
+			width="1920"
+			height="1080"
+			horizAlign="center"
+			vertAlign="center"
+			translation="[0,150]" />
+
+
+
+        <!--
+            Safe zone: 
+                x,y = 192,106
+                w,h = 1534,866
+
+                numColumns = 4, 
+                In-between spaces = 3
+                Item width = 300
+                Safe Zone = 1534
+
+                Item Spacing = (1534 - (4 * 300)) / 3 = ~111 
+        -->
+
+        <Label 
+            id="headerLabel"
+            translation="[192,106]"
+            width="1534"
+            font="font:LargeBoldSystemFont"
+			color="#DBD160"
+            horizAlign="center"
+            text="Who's Watching?" />
+
+        <PosterGrid
+            id="profileGrid"
+            translation="[192,206]"
+            basePosterSize="[300,300]"
+            useAtlas="false"
+            posterDisplayMode="scaleToFit"
+            enableCaptionScrolling="true"
+            caption1NumLines="1"
+            loadingBitmapUri = "pkg:/images/loading_profile.jpg"
+            failedBitmapUri = "pkg:/images/failed_profile.jpg"
+            itemSpacing="[111, 111]"
+            numColumns="4"
+            visible="false" />
+		
+
+	</children>
+
+</component>

@@ -1,0 +1,71 @@
+{
+    "themes":
+    [
+        {
+            "id":"theme_0",
+            "name":"Maggie's",
+            "primary": 3983394815,
+            "textOnPrimary":4294967295,
+            "textOnBackground":3687932159,
+            "background":0,
+            "secondary":3983394815,
+            "spinner":"pkg:/images/spinner_theme_0.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_0.bmp"
+        },
+        {
+            "id":"theme_1",
+            "name":"Burnt Orange",
+            "primary":3428122879,
+            "textOnPrimary":4294967295,
+            "textOnBackground":4294967295,
+            "background":168034559,
+            "secondary":436928767,
+            "spinner":"pkg:/images/spinner_theme_1.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_1.bmp"
+        },
+        {
+            "id":"theme_2",
+            "name":"Cool Blue",
+            "primary":895142655,
+            "textOnPrimary":4294967295,
+            "textOnBackground":4294967295,
+            "background":50662143,
+            "secondary":118233855,
+            "spinner":"pkg:/images/spinner_theme_2.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_2.bmp"
+        },
+        {
+            "id":"theme_3",
+            "name":"Dusty Pig Classic",
+            "primary":4294967295,
+            "textOnPrimary":0,
+            "textOnBackground":4294967295,
+            "background":0,
+            "secondary":741092607,
+            "spinner":"pkg:/images/spinner_theme_3.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_3.bmp"
+        },
+        {
+            "id":"theme_4",
+            "name":"Hunter Green",
+            "primary":895368191,
+            "textOnPrimary":4294967295,
+            "textOnBackground":4294967295,
+            "background":50660351,
+            "secondary":118229247,
+            "spinner":"pkg:/images/spinner_theme_4.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_4.bmp"
+        },
+        {
+            "id":"theme_5",
+            "name":"Red Hot",
+            "primary":3842577663,
+            "textOnPrimary":4294967295,
+            "textOnBackground":4294967295,
+            "background":184549887,
+            "secondary":486605823,
+            "spinner":"pkg:/images/spinner_theme_5.png",
+            "primaryBitmap":"pkg:/images/primary_color_theme_5.bmp"
+        }
+    ]
+}

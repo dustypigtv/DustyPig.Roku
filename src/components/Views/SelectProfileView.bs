@@ -1,0 +1,179 @@
+sub Init()
+
+    print "SelectProfileView:Init"
+
+    ' Find controls
+    m.busyLabel = m.top.findNode("busyLabel")
+    m.busySpinner = m.top.findNode("busySpinner")
+    m.headerLabel = m.top.findNode("headerLabel")
+    m.profileGrid = m.top.findNode("profileGrid")
+
+    ' Init controls
+    m.busySpinner.poster.uri = m.global.defaultTheme.spinner
+    m.busyLabel.color = m.global.defaultTheme.textOnBackground
+    m.headerLabel.color = m.global.defaultTheme.textOnBackground
+    m.profileGrid.focusBitmapBlendColor = m.global.defaultTheme.primary
+    m.profileGrid.caption1Color = m.global.defaultTheme.textOnBackground
+    m.profileGrid.observeField("itemSelected", "OnProfileSelected")
+
+
+    ' Load profiles task
+    m.loadProfilesTask = CreateObject("roSGNode", "LoadProfilesTask")
+    m.loadProfilesTask.observeField("loadResult", "LoadProfilesResult")
+
+
+    ' Login profile task
+    m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
+    m.loginProfileTask.observeField("loginResult", "OnLoginResult")
+
+
+    ' Pin dialog
+    m.pinDialog = createObject("roSGNode", "StandardPinPadDialog")
+    m.pinDialog.title = "Enter your Pin #:"
+    m.pinDialog.buttons = ["OK"]
+    m.pinDialog.textEditBox.maxTextLength = 4
+    m.pinDialog.observeField("buttonSelected", "OnPinSubmitted")
+
+
+    ' Load Error dialog
+    m.loadErrorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.loadErrorDialog.title = "Error Loading Profiles"
+    m.loadErrorDialog.buttons = ["OK"]
+    m.loadErrorDialog.observeField("buttonSelected", "OnLoadErrorDialogClosed")
+    m.loadErrorDialog.observeField("wasClosed", "OnLoadErrorDialogClosed")
+    
+
+    ' Login error dialog
+    m.loginErrorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.loginErrorDialog.buttons = ["OK"]
+    m.loginErrorDialog.title = "Error Signing In To Profile"
+    m.loginErrorDialog.observeField("buttonSelected", "OnLoginErrorDialogClosed")
+    m.loginErrorDialog.observeField("wasClosed", "OnLoginErrorDialogClosed")
+    
+
+     ' Observe this.visible
+    m.top.observeField("visible", "OnVisibleChanged")
+
+end sub
+
+
+' Fires when this view's visibility changes
+Sub OnVisibleChanged(event as object)
+    
+    print "SelectProfileView:OnVisibleChanged"
+
+    m.profileGrid.content = invalid
+    SetBusy(true)
+    if not event.getData() then return
+    m.loadProfilesTask.control = "RUN"
+
+End Sub
+
+
+sub SetBusy(busy as boolean)
+
+    m.profileGrid.visible = not busy
+    m.profileGrid.setFocus(not busy)
+    m.busyLabel.visible = busy
+    m.busySpinner.visible = busy
+    
+end sub
+
+
+sub LoadProfilesResult()
+
+    print "SelectProfileView:LoadProfilesResult"
+
+    SetBusy(false)
+        
+    if m.loadProfilesTask.loadResult then
+        m.profileGrid.numRows = m.loadProfilesTask.numProfiles
+        m.profileGrid.content = m.loadProfilesTask.loadData
+    else if m.loadProfilesTask.unauthorized then
+        m.switchToHomeView = true
+    else
+        m.loadErrorDialog.message = [m.loginTask.errMsg]
+        m.top.getScene().dialog = m.loadErrorDialog
+    end if
+
+end sub
+
+sub OnLoadErrorDialogClosed()
+
+    print "SelectProfileView:OnLoadErrorDialogClosed"
+
+    m.top.getScene().dialog = invalid
+    m.top.cancel = true
+
+end sub
+
+sub OnProfileSelected()
+
+    print "SelectProfileView:OnProfileSelected"
+
+    idx = m.profileGrid.itemSelected
+    profile = m.loadProfilesTask.loadData.getChild(idx)
+    
+    
+    if profile.hasPin then
+        m.pinDialog.pin = ""
+        m.top.getScene().dialog = m.pinDialog
+    else
+        SetBusy(true)
+        m.loginProfileTask.id = profile.id
+        m.loginProfileTask.pin = invalid
+        m.loginProfileTask.control = "RUN"
+    end if
+
+end sub
+
+
+sub OnPinSubmitted()
+
+    print "SelectProfileView:OnPinSubmitted"
+
+    m.top.getScene().dialog = invalid
+    SetBusy(true)
+
+    idx = m.profileGrid.itemSelected
+    profile = m.loadProfilesTask.loadData.getChild(idx)
+    
+    m.loginProfileTask.id = profile.id
+    m.loginProfileTask.pin = m.pinDialog.pin
+    m.loginProfileTask.control = "RUN"
+
+end sub
+
+
+
+Sub OnLoginResult()
+
+    print "SelectProfileView:OnLoginResult"
+    
+    SetBusy(false)
+    
+    idx = m.profileGrid.itemSelected
+    profile = m.loadProfilesTask.loadData.getChild(idx)
+    m.global.profileId = profile.id
+
+    if m.loginProfileTask.loginResult then
+        m.top.switchToHomeView = true
+    else if m.loginProfileTask.unauthorized then
+        m.switchToHomeView = true
+    else
+        print m.loginProfileTask.errMsg
+        m.loginErrorDialog.message = [m.loginProfileTask.errMsg]
+        m.top.getScene().dialog = m.loginErrorDialog
+    end if
+
+End Sub
+
+
+sub OnLoginErrorDialogClosed()
+
+    print "SelectProfileView:OnLoginErrorDialogClosed"
+
+    m.top.getScene().dialog = invalid
+    m.profileGrid.setFocus(true)
+
+end sub

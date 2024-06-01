@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="AuthenticationTask" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
+	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	<script type="text/brightscript" uri="pkg:/components/Tasks/AuthenticationTask.bs" />
+	
+	<interface>
+        <field id="startAuthFlow" type="bool" value="false" />
+        <field id="startProfileFlow" type="bool" value="false" />
+    </interface>
+</component>

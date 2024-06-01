@@ -1,0 +1,7 @@
+{
+    "rootDir": "src",
+    "stagingDir": "dist",
+    "retainStagingDir": true,
+    "createPackage": false,
+    "sourceMap": true
+}

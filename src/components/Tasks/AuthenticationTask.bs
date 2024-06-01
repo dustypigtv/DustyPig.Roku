@@ -1,0 +1,22 @@
+Sub Init()
+
+    print "AuthenticationTask:Init"
+
+    m.top.functionName = "CheckIfAuthenticated"
+
+End Sub
+
+
+Sub CheckIfAuthenticated()
+
+    print "AuthenticationTask:CheckIfAuthenticated"
+    
+    apiInstance = new API()
+    
+    if apiInstance.CheckAccountToken() then
+        m.top.startProfileFlow = true
+    else
+        m.top.startAuthFlow = true
+    end if
+
+End Sub

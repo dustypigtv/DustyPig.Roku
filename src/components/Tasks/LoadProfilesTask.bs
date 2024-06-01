@@ -1,0 +1,51 @@
+Sub Init()
+
+    print "LoadProfilesTask:Init "; m.top.url
+
+    m.top.functionName = "TryGetData"
+
+End Sub
+
+
+Sub TryGetData()
+
+    print "LoadProfilesTask:TryGetData"
+
+    m.top.unauthorized = false
+        
+    apiInstance = new API()
+    result = apiInstance.ListProfiles()
+        
+    if result.success then
+       
+        ' Create a root content node, with child nodes holding info
+        root = createObject("roSGNode", "ContentNode")
+        cnt = 0
+        for each item in result.data
+            
+            bp = root.createChild("ContentNode")
+            bp.id = item.id
+            bp.HDGRIDPOSTERURL = item.avatarUrl
+            bp.SHORTDESCRIPTIONLINE1 = item.name
+            bp.addFields({initials: item.initials, isMain: bp.isMain, hasPin: item.hasPin})
+
+            cnt++
+        end for
+        
+        m.top.numProfiles = cnt
+        m.top.loadData = root        
+        m.top.loadResult = true
+
+    else if result.statusCode = 401 then
+
+        m.top.unauthorized = true
+        m.top.loadResult = false
+
+    else
+
+        m.top.errMsg = result.error
+        m.top.loadResult = false
+
+    end if
+    
+End Sub

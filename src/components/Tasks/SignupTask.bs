@@ -1,0 +1,31 @@
+Sub Init()
+
+    print "SignupTask:Init"
+
+    m.top.functionName = "TrySignup"
+
+End Sub
+
+
+Sub TrySignup()
+
+    print "SignupTask:TrySignup"
+
+    apiInstance = new API()
+    result = apiInstance.Signup(m.top.displayName, m.top.email, m.top.password)
+        
+    if result.success then
+        result = apiInstance.Login(m.top.email, m.top.password)
+        if result.success then
+            m.top.loginType = result.data.loginType        
+            m.top.signupResult = true
+        else
+            m.top.errMsg = result.error
+            m.top.signupResult = false
+        end if
+    else
+        m.top.errMsg = result.error
+        m.top.signupResult = false
+    end if
+    
+End Sub

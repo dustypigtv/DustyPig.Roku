@@ -1,0 +1,321 @@
+sub Init()
+
+    print "LoginView:Init"
+
+    ' Find controls    
+    m.headerLabel = m.top.findNode("headerLabel")
+    m.emailTextBox = m.top.findNode("emailTextBox")
+    m.passwordTextBox = m.top.findNode("passwordTextBox")
+    m.loginButton = m.top.findNode("loginButton")
+    m.signupButton = m.top.findNode("signupButton")
+    m.busySpinner = m.top.findNode("busySpinner")
+    
+    
+    ' Init controls
+    m.headerLabel.color = m.global.defaultTheme.textOnBackground
+    m.headerLabel.visible = true
+
+    m.busySpinner.poster.uri = m.global.defaultTheme.spinner
+
+    m.loginButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+    m.loginButton.observeField("buttonSelected", "OnLoginClicked")
+
+    m.signupButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+    m.signupButton.observeField("buttonSelected", "OnSignupClicked")
+
+
+    
+    ' Test user
+    appInfo = CreateObject("roAppInfo")
+    if appInfo.isDev()
+        m.emailTextBox.text = "testuser@dustypig.tv"
+        m.passwordTextBox.text = "test password"
+    end if
+    
+
+    ' Build keyboard dialog
+    m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
+    m.keyboardDialog.buttons=["Cancel","OK"]
+    m.keyboardDialog.observeField("wasClosed", "OnKeyboardDialogClosed")
+    m.keyboardDialog.observeField("buttonSelected", "OnKeyboardDialogButtonSelected")
+
+    
+    ' Error dialog
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Sign In error"
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+
+
+
+    ' Login task
+    m.loginTask = CreateObject("roSGNode", "LoginTask")
+    m.loginTask.observeField("loginResult", "OnLoginResult")
+
+
+    'variables
+    m.lastSelected = invalid
+
+
+    ' Observe this.visible
+    m.top.observeField("visible", "OnVisibleChanged")
+
+end sub
+
+
+' Fires when this view's visibility changes
+Sub OnVisibleChanged(event as object)
+    
+    print "LoginView:OnVisibleChanged"
+
+    m.busySpinner.visible = false
+    if not event.getData() then return
+    m.lastSelected = m.emailTextBox
+    ShowControls(true)
+
+End Sub
+
+
+Sub ShowControls(s as boolean)
+
+    print "LoginView:ShowControls "; s
+
+    if not s then
+
+        if m.emailTextBox.hasFocus() then m.lastSelected = m.emailTextBox
+        if m.passwordTextBox.hasFocus() then m.lastSelected = m.passwordTextBox
+    
+    end if
+
+    m.headerLabel.visible = s
+    m.emailTextBox.visible = s
+    m.passwordTextBox.visible = s
+    m.loginButton.visible = s
+    m.signupButton.visible = s
+
+    if s then FocusOnTB(m.lastSelected)
+
+End Sub
+
+
+Sub FocusOnTB(tb as object)
+
+    print "LoginView:FocusOnTB"
+
+    m.emailTextBox.textColor = "#808080"
+    m.passwordTextBox.textColor = "#808080"
+
+    if tb = invalid then tb = m.emailTextBox
+
+    tb.setFocus(true)
+    tb.textColor = m.global.defaultTheme.primary
+
+End Sub
+
+
+Sub FocusOnButton(btn as object)
+
+    print "LoginView:FocusOnButton"
+
+    m.emailTextBox.textColor = "#808080"
+    m.passwordTextBox.textColor = "#808080"
+
+    if btn = invalid then btn = m.loginButton
+
+    btn.setFocus(true)
+
+End Sub
+
+
+Sub OnKeyboardDialogClosed(event as object)
+
+    print "LoginView:OnKeyboardDialogClosed"
+
+    ShowControls(true)
+
+End Sub
+
+
+Sub OnKeyboardDialogButtonSelected(event as object)
+
+    print "LoginView:OnKeyboardDialogButtonSelected"
+
+    m.top.getScene().dialog = invalid
+    idx = event.getData()
+    selectLogin = false
+    if idx = 1 then 
+        m.lastSelected.text = m.keyboardDialog.text
+        if m.lastSelected.id = m.emailTextBox.id and m.emailTextBox.text = "testuser@dustypig.tv" then 
+            m.passwordTextBox.text = "test password"
+            selectLogin = true
+        end if
+    end if
+    ShowControls(true)
+    if selectLogin then FocusOnButton(m.loginButton)
+    
+End Sub
+
+
+Sub OnErrorDialogClosed()
+
+    print "SignupView:OnErrorDialogClosed"
+
+    m.top.getScene().dialog = invalid
+    ShowControls(true)
+
+End Sub
+
+
+Sub OnLoginClicked()
+
+    print "LoginView:OnLoginClicked"
+
+    m.loginButton.setFocus(false)
+    m.busySpinner.visible = true
+
+    credentials = GetCredentials()
+    m.loginTask.email = credentials.email
+    m.loginTask.password = credentials.password
+    m.loginTask.control = "RUN"
+
+End sub
+
+
+Sub OnSignupClicked()
+    
+    print "LoginView:OnSignupClicked"
+
+    m.top.switchToSignup = true
+
+End Sub
+
+Function GetCredentials() as object
+
+    print "LoginView:GetCredentials"
+
+    email = m.emailTextBox.text
+    if email = invalid or email = "" then return invalid
+
+    password = m.passwordTextBox.text
+    if password = invalid or password = "" then return invalid
+
+    return { "email": email, "password": password }
+
+End Function
+
+
+
+
+
+' From api library
+' public enum LoginType
+' {
+'     Account = 0,
+'     MainProfile = 1,
+'     SubProfile = 2
+' }
+
+Sub OnLoginResult()
+
+    print "LoginView:OnLoginResult"
+
+    m.loginButton.setFocus(true)
+    m.busySpinner.visible = false
+
+    if m.loginTask.loginResult then
+
+        if m.loginTask.loginType = 1 then
+            m.top.switchToHomeScreen = true
+        else
+            m.top.switchToSelectProfile = true
+        end if
+        
+    else
+        
+        print m.loginTask.errMsg
+
+        ShowControls(false)
+        m.errorDialog.message = [m.loginTask.errMsg]
+        m.top.getScene().dialog = m.errorDialog
+
+    end if
+
+End Sub
+
+
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    print "LoginView:onKeyEvent " + key + " "; press
+
+    if not press then return false
+
+    if key = "back" then return true
+
+    if key = "up" then
+        if m.passwordTextBox.hasFocus() then
+            FocusOnTB(m.emailTextBox)
+            return true
+        else if m.loginButton.hasFocus() then
+            FocusOnTB(m.passwordTextBox)
+            return true
+        else if m.signupButton.hasFocus() then
+            credentials = GetCredentials()
+            if credentials = invalid then
+                FocusOnTB(m.passwordTextBox)
+            else
+                FocusOnButton(m.loginButton)
+            end if
+            return true
+        end if
+    end if
+
+    if key = "down" then
+        if m.emailTextBox.hasFocus() then
+            FocusOnTB(m.passwordTextBox)
+            return true
+        else if m.passwordTextBox.hasFocus() then
+            credentials = GetCredentials()
+            if credentials = invalid then 
+                FocusOnButton(m.signupButton)
+            else
+                FocusOnButton(m.loginButton)
+            end if
+            return true
+        else if m.loginButton.hasFocus() then
+            FocusOnButton(m.signupButton)
+            return true
+        end if
+    end if
+
+    if key = "OK" then 
+
+        if m.emailTextBox.hasFocus() or m.passwordTextBox.hasFocus() then
+
+            if m.emailTextBox.hasFocus() then
+                 m.keyboardDialog.title = "Email Address:"
+                 m.keyboardDialog.keyBoardDomain = "email"
+            else
+                m.keyboardDialog.title = "Password:"
+                m.keyboardDialog.keyBoardDomain = "password"
+            end if
+
+            m.keyboardDialog.text = m.lastSelected.text
+            m.keyboardDialog.textEditBox.secureMode = m.passwordTextBox.hasFocus()
+            
+
+            ShowControls(false)
+            m.top.getScene().dialog = m.keyboardDialog
+            return true
+
+        end if
+
+        ' Return button click sound
+        if m.loginButton.hasFocus() or m.signupButton.hasFocus() return true
+
+    end if
+
+    return false
+
+End Function

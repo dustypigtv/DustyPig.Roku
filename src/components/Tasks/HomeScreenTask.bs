@@ -1,0 +1,47 @@
+Sub Init()
+
+    print "HomeScreenTask:Init"
+
+    m.top.functionName = "TryGetData"
+
+End Sub
+
+
+Sub TryGetData()
+
+    print "HomeScreenTask:TryGetData"
+
+    m.top.unauthorized = false
+        
+    apiInstance = new API()
+    result = apiInstance.GetData("/Media/HomeScreen")
+        
+    if result.success then
+    
+        ' Create a root content node, with child nodes holding info
+        root = createObject("roSGNode", "ContentNode")
+        for each item in result.data.sections
+            
+            section = root.createChild("ContentNode")
+            section.id = item.listId
+            section.title = item.title
+
+            
+        end for
+        
+        m.top.data = root        
+        m.top.success = true
+
+    else if result.statusCode = 401 then
+
+        m.top.unauthorized = true
+        m.top.success = false
+
+    else
+
+        m.top.errMsg = result.error
+        m.top.success = false
+
+    end if
+
+End Sub

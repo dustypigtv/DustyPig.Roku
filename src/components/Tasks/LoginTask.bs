@@ -1,0 +1,25 @@
+Sub Init()
+
+    print "LoginTask:Init"
+
+    m.top.functionName = "TryLogin"
+
+End Sub
+
+
+Sub TryLogin()
+
+    print "LoginTask:TryLogin"
+
+    apiInstance = new API()
+    result = apiInstance.Login(m.top.email, m.top.password)
+        
+    if result.success then
+        m.top.loginType = result.data.loginType        
+        m.top.loginResult = true
+    else
+        m.top.errMsg = result.error
+        m.top.loginResult = false
+    end if
+    
+End Sub

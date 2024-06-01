@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="HomeView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/HomeView.bs" />
+
+	
+    <children>
+
+      <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<BusySpinner
+			id="busySpinner"
+			translation="[860,440]" />
+		
+		<!-- 
+			Since the spinner above is centered and is 200 px high,
+			Translate this 100 px down the y axis.
+			Add another 50 for spacing
+		-->
+		<Label
+			id="busyLabel" 
+			text="The Pig is gettin' Dusty"
+			width="1920"
+			height="1080"
+			horizAlign="center"
+			vertAlign="center"
+			translation="[0,150]" />
+
+        
+		
+
+	</children>
+
+</component>

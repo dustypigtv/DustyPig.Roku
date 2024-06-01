@@ -1,0 +1,313 @@
+
+
+
+
+class API
+
+    private function GetAccountToken() as string
+
+        print "API:GetAccountToken"
+
+        ' Try to get from the registry
+        reg = CreateObject("roRegistrySection", "default")
+        if reg.Exists("accountToken") then return reg.Read("accountToken")
+
+        
+        ' Try to get from the roku cloud
+        channelStore = CreateObject("roSGNode", "ChannelStore")
+        channelStore.command = "getChannelCred"
+        accountToken = invalid
+        if channelStore.channelCred <> invalid then 
+            if channelStore.channelCred.json <> invalid then authToken = channelStore.channelCred.json.channel_data
+        end if
+
+
+        ' If in cloud but not local device registry, save it
+        if accountToken <> invalid then 
+            reg.Write("accountToken", accountToken)
+            reg.Flush()
+        end if
+        
+        if accountToken = invalid then accountToken = ""
+        return accountToken
+        
+    end function
+
+    private sub SaveAccountToken(accountToken as String)
+
+        print "API:SaveAccountToken"
+
+        reg = CreateObject("roRegistrySection", "default")
+        reg.Write("accountToken", accountToken)
+        reg.Flush()
+
+        channelStore = CreateObject("roSGNode", "ChannelStore")
+        channelStore.channelCredData = accountToken
+        channelStore.command = "storeChannelCredData"
+        
+    end sub
+
+    private sub DeleteAccountToken()
+
+        print "API:DeleteAccountToken"
+
+        reg = CreateObject("roRegistrySection", "default")
+        if reg.Exists("accountToken") then reg.delete("accountToken")
+
+        channelStore = CreateObject("roSGNode", "ChannelStore")
+        channelStore.channelCredData = invalid
+        channelStore.command = "storeChannelCredData"
+
+    end sub
+
+
+    private function GetProfileToken() as string
+
+        print "API:GetProfileToken"
+
+        ' Try to get from the registry
+        reg = CreateObject("roRegistrySection", "default")
+        if reg.Exists("profileToken") then return reg.Read("profileToken")
+        return ""
+
+    end function
+
+    private sub SaveProfileToken(profileToken as String)
+
+        print "API:SaveProfileToken"
+
+        reg = CreateObject("roRegistrySection", "default")
+        reg.Write("profileToken", profileToken)
+        reg.Flush()
+        
+    end sub
+
+
+    private function GetUrl(endpoint as string) as string
+
+        print "API:GetUrl"
+
+        return "https://service.dustypig.tv/api/v3" + endpoint
+            
+    end function
+
+    private function TranslateErrorCode(code as integer) as string
+
+        if code = 400 then return "Bad Request"
+        if code = 401 then return "Unauthorized"
+        if code = 403 then return "Forbidden"
+        if code = 404 then return "Not Found"
+        if code = 405 then return "Method Not Allowed"
+
+        if code = 500 then return "Internal Server Error"
+        if code = 502 then return "Bad Gateway"
+        if code = 503 then return "Service Unavailable"
+        if code = 504 then return "Gateway Timeout"
+
+        return `Unknown Error (${code})`
+
+    end function
+
+    private function BuildResult(instance as API, response as dynamic) as object
+
+        if response.ok
+            json = response.json()
+            json.statusCode = response.status
+            return json       
+        else
+            if response.status = 401 then instance.DeleteAccountToken()
+            return {"success": false, "statusCode": response.status, "error": instance.TranslateErrorCode(response.status)}
+        end if
+        
+    end function
+
+
+
+    function CheckAccountToken() as boolean
+
+        print "API:CheckAccountToken"
+        
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl("/NoOp/HelloAccount")
+            headers: {
+                "Authorization": "Bearer " + instance.GetAccountToken()
+            }
+        })
+        return response.ok
+
+    end function
+
+
+    ' From api library
+    ' public enum LoginType
+    ' {
+    '     Account = 0,
+    '     MainProfile = 1,
+    '     SubProfile = 2
+    ' }
+    function Login(email as string, password as string) as object
+
+        print "API:Login"
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl("/Auth/PasswordLogin"),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: FormatJson({"email": email, "password": password})
+        })
+
+        ret = instance.BuildResult(instance, response)
+
+        if ret.success
+            instance.SaveAccountToken(ret.data.token)
+            if ret.data.loginType = 1 then instance.SaveProfileToken(ret.data.token)
+        end if
+
+        return ret
+
+    end function
+
+
+    function Signup(displayName as string, email as string, password as string) as object
+
+        print "API:Signup"
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl("/Account/Create"),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: FormatJson({"displayName": displayName, "email": email, "password": password})
+        })
+
+        ret = instance.BuildResult(instance, response)
+        
+        if ret.success
+            instance.SaveAccountToken(ret.data.token)
+            if ret.data.loginType = 1 then instance.SaveProfileToken(ret.data.token)
+        end if
+
+        return ret
+
+    end function
+
+
+    sub Signout()
+
+        print "API:Signout"
+
+        instance = new API()
+        response = fetch({
+            url: instance.GetUrl("/Auth/Signout")
+            headers: {
+                "Authorization": "Bearer " + instance.GetAccountToken()
+            }
+        })
+        
+        instance.DeleteAccountToken()
+
+    end sub
+
+
+    function ListProfiles() as object
+
+        print "API:ListProfiles"
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl("/Profiles/List"),
+            headers: {
+                "Authorization": "Bearer " + instance.GetAccountToken()
+            }
+        })
+
+        return instance.BuildResult(instance, response)
+
+    end function
+
+
+
+    function LoginProfile(data as object) as object
+
+        print "API:LoginProfile"
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl("/Auth/ProfileLogin"),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + instance.GetAccountToken()
+            },
+            body: FormatJson(data)
+        })
+
+        ret = instance.BuildResult(instance, response)
+        if ret.success instance.SaveProfileToken(ret.data.token)
+        return ret
+
+    end function
+   
+
+    
+    function GetData(subUrl as string) as object
+
+        print "API:GetData "; subUrl
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl(subUrl),
+            headers: {
+                "Authorization": "Bearer " + instance.GetProfileToken()
+            }
+        })
+
+        return instance.BuildResult(instance, response)
+
+    end function
+    
+
+
+
+
+
+    
+    function PostAndGetData(subUrl as string, data as object) as object
+
+        print "API:PostAndGetData "; subUrl
+
+        instance = new API()
+
+        response = fetch({
+            url: instance.GetUrl(subUrl),
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + instance.GetAccountToken()
+            },
+            body: FormatJson(data)
+        })
+
+        if response.ok
+            return response.json()       
+        else
+            return {"success":false, "statusCode":response.status}
+        end if
+
+    end function
+
+
+end class
+
+
+
+
+

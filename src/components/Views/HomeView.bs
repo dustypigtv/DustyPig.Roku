@@ -1,0 +1,35 @@
+sub Init()
+
+    print "HomeView:Init"
+
+    ' Find controls    
+    m.busySpinner = m.top.findNode("busySpinner")
+    m.busyLabel = m.top.findNode("busyLabel")
+    
+    
+    ' Error dialog
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Error"
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+    
+     ' Login task
+     m.loginTask = CreateObject("roSGNode", "LoginTask")
+     m.loginTask.observeField("loginResult", "OnLoginResult")
+    
+end sub
+
+' Fires when this view's visibility changes
+Sub OnVisibleChanged(event as object)
+
+    visible = event.getData()
+
+    print "HomeView:OnVisibleChanged "; visible
+
+    if not visible then return
+
+    m.busySpinner.poster.uri = m.global.theme.spinner
+    m.busyLabel.color = m.global.theme.primary
+
+End Sub

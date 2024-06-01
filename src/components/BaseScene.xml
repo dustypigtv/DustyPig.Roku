@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="BaseScene" extends="Scene">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/BaseScene.bs" />
+	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
+	 
+    <children>
+	
+		<!-- Background Color -->
+		<Rectangle
+        	id = "shader"
+        	height = "1080"
+        	width = "1920"
+        	color = "0x000000FF"
+        	opacity = "1"/>
+        
+
+		<!-- Views -->
+		<LandingView 
+			id="landingView" />
+		
+		<LoginView 
+			id="loginView"
+			visible="false" />
+
+		<SignupView
+			id="signupView"
+			visible="false" />
+
+		<SelectProfileView
+			id="selectProfileView"
+			visible="false" />
+
+		<HomeView
+			id="homeView"
+			visible="false" />
+	
+		
+	</children>
+
+</component>

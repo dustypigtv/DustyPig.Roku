@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="SignupView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/SignupView.bs" />
+   
+   <interface>
+		<field id="switchToLogin" type="bool" value="false" alwaysNotify="true" />
+		<field id="switchToSelectProfile" type="bool" value="false" alwaysNotify="true" />
+		<field id="switchToHomeScreen" type="bool" value="false" alwaysNotify="true" />
+	</interface>
+
+
+    <children>
+
+        <!--
+            Screen width = 1920
+            Set control widths to 1000
+            centery = (1920 - 1000) / 2 = 460
+        -->
+
+		
+		<Label
+			id="headerLabel"
+			font="font:LargeBoldSystemFont"
+			text = "Sign Up For Dusty Pig"
+            color="#DBD160"
+			horizAlign = "center"
+			vertAlign = "center"
+			width="1000"
+			translation="[460,200]" />
+
+		<TextEditBox
+			id="nameTextBox"
+			hintText="Name"
+			clearOnDownKey="false"
+			width="1000"
+			translation="[460,300]" />
+
+
+		<TextEditBox
+			id="emailTextBox"
+			hintText="Email Address"
+			clearOnDownKey="false"
+			width="1000"
+			translation="[460,400]" />
+
+		<TextEditBox
+			id="passwordTextBox"
+			hintText="Password"
+			clearOnDownKey="false"
+			secureMode="true"
+			width="1000"
+			translation="[460,500]" />
+
+		
+		<!--
+			The translation is off by 30px on these, so adjust
+			Move the button 30px to the left
+			Right edge of other controls = 460:offset + 1000:width = 1460
+			Button width = 300 so left edge = 1160
+			1160 - 30 - 1130
+		 -->
+		<Button
+			id="signupButton"
+			translation="[1160,600]"
+			minWidth="300"
+			maxWidth="300"
+			height="75"
+			showFocusFootprint="true"
+			iconUri=""
+			focusedIconUri=""
+			focusBitmapUri="pkg://images/maggie_pink.bmp">
+			<Label 
+				height="75" 
+				width="300" 
+				text="Sign Up"
+				vertAlign="center" 
+				horizAlign="center" />
+		</Button>
+
+		<Button
+			id="loginButton"
+			translation="[460,800]"
+			minWidth="1000"
+			maxWidth="1000"
+			height="75"
+			showFocusFootprint="true"
+			iconUri=""
+			focusedIconUri=""
+			focusBitmapUri="pkg://images/maggie_pink.bmp">
+			<Label 
+				height="75" 
+				width="1000" 
+				text="Already have an account?   Sign In"
+				vertAlign="center" 
+				horizAlign="center" />
+		</Button>
+		
+        <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+
+			This covers the password field, so move down 100px to 540
+		-->
+        <BusySpinner
+  		 	id="busySpinner"
+			translation="[860,540]"
+			visible="false" />
+		
+
+	</children>
+
+</component>

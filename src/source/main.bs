@@ -1,0 +1,65 @@
+ Sub Main(args)
+
+    print "Main:Main"
+
+    
+    'Create Message port
+    m.port = CreateObject("roMessagePort") 
+    
+    'Create Screen object
+    screen = CreateObject("roSGScreen") 
+    screen.setMessagePort(m.port) 
+
+
+    ' Setup theme
+    m.global = screen.getGlobalNode()
+    m.global.addField("profileId", "integer", false)
+    m.global.profileId = 0
+    m.global.addField("theme", "assocarray", false)
+    m.global.theme = GetTheme(0)
+    m.global.addField("defaultTheme", "assocarray", false)
+    m.global.defaultTheme = GetTheme(0)
+
+    'Create Base Scene
+    screen.CreateScene("BaseScene") 
+
+    ' Handle deep link
+    m.global.addField("deeplink", "assocarray", false)
+    m.global.deeplink = GetDeepLinks(args)
+
+    screen.show()
+    ' vscode_rdb_on_device_component_entry
+
+
+    'Main program loop
+    while(true) 
+
+        msg = wait(0, m.port)
+        msgType = type(msg)
+        
+        if msgType = "roSGScreenEvent"
+        
+            if msg.isScreenClosed() then return
+
+        end if
+
+    end while
+
+end sub
+
+
+Function GetDeepLinks(args) as Object
+
+    print "Main:GetDeepLinks"
+
+    if args.contentid <> Invalid and args.mediaType <> Invalid
+        return {
+            id: args.contentId
+            type: args.mediaType
+        }
+    end if
+
+    return invalid
+    
+end Function
+

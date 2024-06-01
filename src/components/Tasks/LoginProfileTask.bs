@@ -1,0 +1,35 @@
+sub Init()
+
+    print "LoginProfileTask:Init"
+
+    m.top.functionName = "TryLogin"
+
+end sub
+
+sub TryLogin()
+
+    print "LoginProfileTask:TryLogin"
+
+    m.top.unauthorized = false
+    
+    if m.top.pin = invalid or m.top.pin = "" then 
+        creds = {"id": m.top.id }
+    else
+        creds = {"id": m.top.id, "pin": m.top.pin}
+    end if
+
+    apiInstance = new API()
+    result = apiInstance.LoginProfile(creds)
+        
+    if result.success then
+        m.top.loginType = result.data.loginType        
+        m.top.loginResult = true
+    else if result.statusCode = 401 then
+        m.top.unauthorized = true
+        m.top.loadResult = false
+    else
+        m.top.errMsg = result.error
+        m.top.loginResult = false
+    end if
+
+end sub

@@ -22,7 +22,7 @@
 		-->
 		<Label
 			id="busyLabel" 
-			text="The Pig is gettin' Dusty"
+			text="Dusty Pig is waking up"
 			width="1920"
 			height="1080"
 			horizAlign="center"

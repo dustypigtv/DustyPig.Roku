@@ -1,0 +1,17 @@
+function ProfilesToNode(data as object) as object
+
+    ' Create a root content node, with child nodes holding info
+    ret = createObject("roSGNode", "ContentNode")
+    for each item in data
+        
+        bp = ret.createChild("ContentNode")
+        bp.id = item.id
+        bp.HDGRIDPOSTERURL = item.avatarUrl
+        bp.SHORTDESCRIPTIONLINE1 = item.name
+        bp.addFields({initials: item.initials, isMain: item.isMain, hasPin: item.hasPin})
+
+    end for
+
+    return ret
+
+end function

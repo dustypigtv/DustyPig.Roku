@@ -219,22 +219,7 @@ Sub OnLoginResult()
     data = m.loginTask.data
     if data.success then
 
-        ' From api library
-        ' public enum LoginType
-        ' {
-        '     Account = 0,
-        '     MainProfile = 1,
-        '     SubProfile = 2
-        ' }
-
         if data.loginType = 1 then
-            m.global.profileId = data.profileId
-            m.global.profileToken = data.token
-            m.global.profileIsMain = true
-
-            ' Call GetTheme AFTER setting m.global.profileId
-            m.global.theme = GetTheme()
-            
             m.top.switchToHomeScreen = true
         else
             m.top.switchToSelectProfile = true

@@ -12,6 +12,19 @@ Sub TryLogin()
     print "LoginTask:TryLogin"
 
     apiInstance = new API()
-    m.top.data = apiInstance.Login(m.top.email, m.top.password)
+    result = apiInstance.Login(m.top.email, m.top.password)
+    if result.success then 
+        if result.data.loginType = 1 then
+            m.global.profileId = result.data.profileId
+            m.global.profileToken = result.data.token
+            m.global.profileIsMain = true
+
+            ' Call GetTheme AFTER setting m.global.profileId
+            m.global.theme = GetTheme()
+        else
+            m.global.allProfiles = ProfilesToNode(result.data.profiles)
+        end if
+    end if
+    m.top.data = result
 
 End Sub

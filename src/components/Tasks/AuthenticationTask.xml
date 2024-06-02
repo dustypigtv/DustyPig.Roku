@@ -3,10 +3,13 @@
 
 	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
+	<script type="text/brightscript" uri = "pkg:/source/Converters.bs" />    
 	<script type="text/brightscript" uri="pkg:/components/Tasks/AuthenticationTask.bs" />
 	
 	<interface>
         <field id="startAuthFlow" type="bool" value="false" />
         <field id="startProfileFlow" type="bool" value="false" />
+		<field id="switchToHomeView" type="bool" value="false" />
     </interface>
 </component>

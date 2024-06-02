@@ -2,7 +2,6 @@
 <component name="LoginView" extends="Group">
     
     <script type = "text/brightscript" uri = "pkg:/components/Views/LoginView.bs" />
-	<script type = "text/brightscript" uri = "pkg:/source/Theme.bs" />
 
 	<interface>
 		<field id="switchToSignup" type="bool" value="false" alwaysNotify="true" />

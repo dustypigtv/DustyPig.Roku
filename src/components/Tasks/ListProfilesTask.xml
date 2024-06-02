@@ -3,12 +3,12 @@
 
 	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	<script type="text/brightscript" uri = "pkg:/source/Converters.bs" />    
 	<script type="text/brightscript" uri="pkg:/components/Tasks/ListProfilesTask.bs" />
 	
 	<interface>
         <field id="success" type="bool" value="false" alwaysNotify="true" />
         <field id="data" type="node" />
-        <field id="numProfiles" type="int" value="0" />
         <field id="unauthorized" type="bool" value="false" />
     </interface>
 </component>

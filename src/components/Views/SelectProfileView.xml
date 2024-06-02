@@ -19,7 +19,8 @@
 		-->
 		<BusySpinner
 			id="busySpinner"
-			translation="[860,440]" />
+			translation="[860,440]" 
+            visible="false" />
 		
 		<!-- 
 			Since the spinner above is centered and is 200 px high,
@@ -28,12 +29,13 @@
 		-->
 		<Label
 			id="busyLabel" 
-			text="The Pig is gettin' Dusty"
+			text="Roundin' up the piglets"
 			width="1920"
 			height="1080"
 			horizAlign="center"
 			vertAlign="center"
-			translation="[0,150]" />
+			translation="[0,150]"
+            visible="false" />
 
 
 

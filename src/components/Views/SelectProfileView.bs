@@ -17,11 +17,6 @@ sub Init()
     m.profileGrid.observeField("itemSelected", "OnProfileSelected")
 
 
-    ' Load profiles task
-    m.listProfilesTask = CreateObject("roSGNode", "ListProfilesTask")
-    m.listProfilesTask.observeField("success", "OnListProfilesResult")
-
-
     ' Login profile task
     m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
     m.loginProfileTask.observeField("data", "OnLoginResult")
@@ -62,10 +57,20 @@ Sub OnVisibleChanged(event as object)
     
     print "SelectProfileView:OnVisibleChanged"
 
-    m.profileGrid.content = invalid
-    SetBusy(true)
     if not event.getData() then return
-    m.listProfilesTask.control = "RUN"
+
+    SetBusy(false)
+
+    data = m.global.allProfiles
+
+    ' 4 columns of profiles, figure out how many rows
+    ' Really? Brightscript doesn't have a ceiling function?
+    x = data.count() / 4
+    y = int(x)
+    if y = x then numRows = y else numRows = y + 1
+    
+    m.profileGrid.numRows = numRows
+    m.profileGrid.content = data
 
 End Sub
 
@@ -80,23 +85,6 @@ sub SetBusy(busy as boolean)
 end sub
 
 
-sub OnListProfilesResult()
-
-    print "SelectProfileView:OnListProfilesResult"
-
-    SetBusy(false)
-        
-    if m.listProfilesTask.success then
-        m.profileGrid.numRows = m.listProfilesTask.numProfiles
-        m.profileGrid.content = m.listProfilesTask.data
-    else if m.listProfilesTask.unauthorized then
-        m.switchToLoginView = true
-    else
-        m.loadErrorDialog.message = [m.loginTask.errMsg]
-        m.top.getScene().dialog = m.loadErrorDialog
-    end if
-
-end sub
 
 sub OnLoadErrorDialogClosed()
 
@@ -112,13 +100,14 @@ sub OnProfileSelected()
     print "SelectProfileView:OnProfileSelected"
 
     idx = m.profileGrid.itemSelected
-    profile = m.listProfilesTask.data.getChild(idx)
+    profile = m.global.allProfiles.getChild(idx)
     
     
     if profile.hasPin then
         m.pinDialog.pin = ""
         m.top.getScene().dialog = m.pinDialog
     else
+        if idx > 0 then m.busyLabel.text = "A pliglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
         SetBusy(true)
         m.loginProfileTask.id = profile.id
         m.loginProfileTask.pin = invalid
@@ -133,10 +122,13 @@ sub OnPinSubmitted()
     print "SelectProfileView:OnPinSubmitted"
 
     m.top.getScene().dialog = invalid
-    SetBusy(true)
-
+    
     idx = m.profileGrid.itemSelected
-    profile = m.listProfilesTask.data.getChild(idx)
+    profile = m.global.allProfiles.getChild(idx)
+    
+    if idx > 0 then m.busyLabel.text = "A pliglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
+    SetBusy(true)
+    
     
     m.loginProfileTask.id = profile.id
     m.loginProfileTask.pin = m.pinDialog.pin

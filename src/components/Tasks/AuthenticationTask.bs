@@ -12,11 +12,54 @@ Sub CheckIfAuthenticated()
     print "AuthenticationTask:CheckIfAuthenticated"
     
     apiInstance = new API()
-    
-    if apiInstance.CheckAccountToken() then
-        m.top.startProfileFlow = true
+    result = apiInstance.CheckAccountToken()
+    if result then
+        profiles = apiInstance.GetData("/Profiles/List", apiInstance.GetAccountToken())
+        if profiles.success then
+            if profiles.data.count() = 1 then
+
+                ' Only 1 profile, login
+                di=createobject("roDeviceInfo")
+                deviceId=di.GetChannelClientId()
+                creds = {"id": profiles.data[0].id, "deviceId":deviceId }
+                result = apiInstance.PostAndGetData("/Auth/ProfileLogin", creds, apiInstance.GetAccountToken())
+
+                if result.success then
+
+                    m.global.profileId = result.data.profileId
+                    m.global.profileToken = result.data.token
+                    m.global.profileIsMain = true
+
+                    ' Set theme AFTER setting profileId
+                    m.global.theme = GetTheme()
+
+                    m.top.switchToHomeView = true
+
+                else
+
+                    ' Proile login failed
+                    m.top.startAuthFlow = true
+
+                end if
+
+            else
+
+                ' More than 1 profile
+                m.global.allProfiles = ProfilesToNode(profiles.data)
+                m.top.startProfileFlow = true
+            
+            end if
+        else
+            
+            ' Loading profiles failed
+            m.top.startAuthFlow = true
+        
+        end if
     else
+        
+        ' Auth with account token failed
         m.top.startAuthFlow = true
+    
     end if
 
 End Sub

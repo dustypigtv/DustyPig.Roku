@@ -18,22 +18,7 @@ Sub TryGetData()
 
     if result.success then
 
-        ' Create a root content node, with child nodes holding info
-        root = createObject("roSGNode", "ContentNode")
-        cnt = 0
-        for each item in result.data
-            
-            bp = root.createChild("ContentNode")
-            bp.id = item.id
-            bp.HDGRIDPOSTERURL = item.avatarUrl
-            bp.SHORTDESCRIPTIONLINE1 = item.name
-            bp.addFields({initials: item.initials, isMain: item.isMain, hasPin: item.hasPin})
-
-            cnt++
-        end for
-        
-        m.top.numProfiles = cnt
-        m.top.data = root        
+        m.top.data = ProfilesToNode(result.data)     
         m.top.success = true
 
     else if result.statusCode = 401 then

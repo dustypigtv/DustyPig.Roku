@@ -87,7 +87,6 @@ Sub SwitchToLoginView()
 
     print "BaseScene:SwitchToLoginView"
 
-    m.global.accountAuthorized = false
     m.loggedIn = false
     ShowView(m.loginView)
 
@@ -97,7 +96,6 @@ Sub SwitchToSignUpView()
 
     print "BaseScene:SwitchToSignUpView"
 
-    m.global.accountAuthorized = false
     m.loggedIn = false
     ShowView(m.signupView)
 

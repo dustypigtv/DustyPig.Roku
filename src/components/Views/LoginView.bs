@@ -25,12 +25,6 @@ sub Init()
 
 
     
-    ' Test user
-    appInfo = CreateObject("roAppInfo")
-    if appInfo.isDev()
-        m.emailTextBox.text = "testuser@dustypig.tv"
-        m.passwordTextBox.text = "test password"
-    end if
     
 
     ' Build keyboard dialog
@@ -56,7 +50,7 @@ sub Init()
 
     'variables
     m.lastSelected = invalid
-
+    m.alreadyAskedChannelStore = false
 
     ' Observe this.visible
     m.top.observeField("visible", "OnVisibleChanged")
@@ -74,7 +68,43 @@ Sub OnVisibleChanged(event as object)
     m.lastSelected = m.emailTextBox
     ShowControls(true)
 
+    ' Test user
+    appInfo = CreateObject("roAppInfo")
+    if appInfo.isDev()
+       
+        m.emailTextBox.text = "testuser@dustypig.tv"
+        m.passwordTextBox.text = "test password"
+    
+    else if m.alreadyAskedChannelStore = false
+
+        m.alreadyAskedChannelStore = true
+        m.channelStore = CreateObject("roSGNode", "ChannelStore")
+        
+        ' Set sign-in context for RFI screen
+        info = CreateObject("roSGNode", "ContentNode")
+        info.addFields({context: "signin"})
+        m.channelStore.requestedUserDataInfo = info
+        
+        m.channelStore.requestedUserData = "email"
+        m.channelStore.observeField("userData", "OnChannelStoreGetEmail")
+        m.channelStore.command = "getUserData"
+        
+    end if
+    
+
 End Sub
+
+
+sub OnChannelStoreGetEmail(data as object)
+
+    print "LoginView:OnChannelStoreGetEmail"
+
+    if m.channelStore.userData <> invalid then
+         m.emailTextBox.text = m.channelStore.userData.email
+        FocusOnTB(m.passwordTextBox)
+    end if
+
+end sub
 
 
 Sub ShowControls(s as boolean)

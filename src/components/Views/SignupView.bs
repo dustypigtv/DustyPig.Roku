@@ -26,15 +26,7 @@ sub Init()
 
 
 
-    ' Test user
-    appInfo = CreateObject("roAppInfo")
-    if appInfo.isDev()
-        m.nameTextBox.text = "New Test User"
-        m.emailTextBox.text = "newtestuser@dustypig.tv"
-        m.passwordTextBox.text = "test password"
-    end if
-
-
+    
     ' Build keyboard dialog
     m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
     m.keyboardDialog.buttons=["Cancel","OK"]
@@ -57,6 +49,7 @@ sub Init()
 
     'variables
     m.lastSelected = invalid
+    m.alreadyAskedChannelStore = false
 
 
     ' Observe this.visible
@@ -75,7 +68,44 @@ Sub OnVisibleChanged(event as object)
     m.lastSelected = m.nameTextBox
     ShowControls(true)
 
+    ' Test user
+    appInfo = CreateObject("roAppInfo")
+    if appInfo.isDev()
+
+        m.nameTextBox.text = "New Test User"
+        m.emailTextBox.text = "newtestuser@dustypig.tv"
+        m.passwordTextBox.text = "test password"
+
+    else if m.alreadyAskedChannelStore = false
+
+        m.alreadyAskedChannelStore = true
+        m.channelStore = CreateObject("roSGNode", "ChannelStore")
+        
+        ' Set sign-in context for RFI screen
+        info = CreateObject("roSGNode", "ContentNode")
+        info.addFields({context: "signup"})
+        m.channelStore.requestedUserDataInfo = info
+        
+        m.channelStore.requestedUserData = "firstName, email"
+        m.channelStore.observeField("userData", "OnChannelStoreGetInfo")
+        m.channelStore.command = "getUserData"
+
+    end if
+
 End Sub
+
+
+sub OnChannelStoreGetInfo(data as object)
+
+    print "SignupView:OnChannelStoreGetInfo"
+
+    if m.channelStore.userData <> invalid then
+        m.nameTextBox.text = m.channelStore.userData.firstName
+        m.emailTextBox.text = m.channelStore.userData.email
+        FocusOnTB(m.passwordTextBox)
+    end if
+
+end sub
 
 
 Sub ShowControls(s as boolean)

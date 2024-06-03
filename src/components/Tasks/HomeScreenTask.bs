@@ -24,6 +24,7 @@ Sub RunTask()
                 item = row.createChild("ContentNode")
                 item.id = bm.id
                 item.title = bm.title
+                item.description = bm.description
                 item.FHDGRIDPOSTERURL = bm.artworkUrl
                 item.addFields({backdropUrl: bm.backdropUrl, mediaType: bm.mediaType})
                 

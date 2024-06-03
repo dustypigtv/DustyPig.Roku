@@ -25,15 +25,6 @@ sub Init()
      m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
      m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
 
-     ' Movie details task
-     m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
-     m.movieDetailsTask.observeField("data", "OnMovieDataAvailable")
-
-     ' Series details task
-     m.seriesDetailsTask = CreateObject("roSGNode", "SeriesDetailsTask")
-     m.seriesDetailsTask.observeField("data", "OnSeriesDataAvailable")
-
-
      ' Observe this.visible
     m.top.observeField("visible", "OnVisibleChanged")
     
@@ -77,19 +68,6 @@ Sub OnHomeScreenDataAvailable()
 End Sub
 
 
-Sub OnMovieDataAvailable()
-
-    if m.movieDetailsTask.data.success then m.descriptionLabel.text = m.movieDetailsTask.data.data.description
-
-End Sub
-
-Sub OnSeriesDataAvailable()
-
-    if m.seriesDetailsTask.data.success then m.descriptionLabel.text = m.seriesDetailsTask.data.data.description
-
-End Sub
-
-
 ' public enum MediaTypes
 ' {
 '     Movie = 1,
@@ -112,22 +90,10 @@ Sub OnFocusedItemChanged()
     m.backdropPoster.uri = backdropUrl
 
     m.titleLabel.text = selItem.title
-    m.descriptionLabel.text = invalid
-
-    if selItem.mediaType = 1 then 
-
-        m.movieDetailsTask.id = selItem.id
-        m.movieDetailsTask.control = "run"
-
-    else if selItem.mediaType = 2 then
-
-        m.seriesDetailsTask.id = selItem.id
-        m.seriesDetailsTask.control = "run"
-
-    else if selItem.mediaType = 4 then
-
+    if selItem.mediaType = 4 then
         m.descriptionLabel.text = " * Playlist *"
-
+    else
+        m.descriptionLabel.text = selItem.description
     end if
 
 End Sub

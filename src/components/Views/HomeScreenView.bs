@@ -1,0 +1,132 @@
+sub Init()
+
+    ' Find controls    
+    m.busySpinner = m.top.findNode("busySpinner")
+    m.busyLabel = m.top.findNode("busyLabel")
+    m.rowList = m.top.findNode("rowList")
+    m.backdropPoster = m.top.findNode("backdropPoster")
+    m.titleLabel = m.top.findNode("titleLabel")
+    m.descriptionLabel = m.top.findNode("descriptionLabel")
+
+    
+    ' Observers
+    m.rowList.observeField("rowItemFocused", "OnFocusedItemChanged")
+    
+    ' Error dialog
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Error"
+    ' m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    ' m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+
+
+    
+     ' Home screen task
+     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
+     m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
+
+     ' Movie details task
+     m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
+     m.movieDetailsTask.observeField("data", "OnMovieDataAvailable")
+
+     ' Series details task
+     m.seriesDetailsTask = CreateObject("roSGNode", "SeriesDetailsTask")
+     m.seriesDetailsTask.observeField("data", "OnSeriesDataAvailable")
+
+
+     ' Observe this.visible
+    m.top.observeField("visible", "OnVisibleChanged")
+    
+end sub
+
+Sub OnVisibleChanged(event as object)
+    
+    if not event.getData() then return
+
+    m.busySpinner.poster.uri = m.global.theme.spinner
+    m.busyLabel.color = m.global.theme.textOnBackground
+    m.rowList.rowLabelColor = m.global.theme.textOnBackground
+    m.rowList.focusBitmapBlendColor = m.global.theme.primary
+    m.titleLabel.color = m.global.theme.textOnBackground
+    m.descriptionLabel.color = m.global.theme.textOnBackground
+
+    m.homeScreenTask.control = "run"
+
+End Sub
+
+
+
+Sub OnHomeScreenDataAvailable()
+
+    m.busySpinner.visible = false
+    m.busyLabel.visible = false
+    
+    if m.homeScreenTask.success then
+        m.rowList.numRows = m.homeScreenTask.data.getChildCount()
+        m.rowList.content = m.homeScreenTask.data
+        m.rowList.setFocus(true)
+    else if m.homeScreenTask.unauthorized then
+        m.switchToLoginAccountView = true
+    else
+        m.errorDialog.message = [m.homeScreenTask.errMsg]
+        m.top.getScene().dialog = m.errorDialog
+    end if
+
+
+End Sub
+
+
+Sub OnMovieDataAvailable()
+
+    if m.movieDetailsTask.data.success then m.descriptionLabel.text = m.movieDetailsTask.data.data.description
+
+End Sub
+
+Sub OnSeriesDataAvailable()
+
+    if m.seriesDetailsTask.data.success then m.descriptionLabel.text = m.seriesDetailsTask.data.data.description
+
+End Sub
+
+
+' public enum MediaTypes
+' {
+'     Movie = 1,
+'     Series = 2,
+'     Episode = 3,
+'     Playlist = 4
+' }
+
+Sub OnFocusedItemChanged()
+
+    m.movieDetailsTask.control = "stop"
+    m.seriesDetailsTask.control = "stop"
+
+    x = m.rowList.rowItemFocused
+    rowContent = m.rowList.content.getChild(x[0])
+    selItem = rowContent.getChild(x[1])
+
+    backdropUrl = selItem.backdropUrl
+    if backdropUrl = "" or backdropUrl = invalid then backdropUrl = selItem.FHDGRIDPOSTERURL
+    m.backdropPoster.uri = backdropUrl
+
+    m.titleLabel.text = selItem.title
+    m.descriptionLabel.text = invalid
+
+    if selItem.mediaType = 1 then 
+
+        m.movieDetailsTask.id = selItem.id
+        m.movieDetailsTask.control = "run"
+
+    else if selItem.mediaType = 2 then
+
+        m.seriesDetailsTask.id = selItem.id
+        m.seriesDetailsTask.control = "run"
+
+    else if selItem.mediaType = 4 then
+
+        m.descriptionLabel.text = " * Playlist *"
+
+    end if
+
+End Sub

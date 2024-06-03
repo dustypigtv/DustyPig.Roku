@@ -1,59 +1,19 @@
 sub Init()
 
     ' Find controls    
-    m.busySpinner = m.top.findNode("busySpinner")
-    m.busyLabel = m.top.findNode("busyLabel")
-    m.rowList = m.top.findNode("rowList")
-    
-    
-    ' Error dialog
-    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.errorDialog.buttons = ["OK"]
-    m.errorDialog.title = "Error"
-    ' m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
-    ' m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
-
-
-    
-     ' Home screen task
-     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
-     m.homeScreenTask.observeField("success", "OnDataAvailable")
-
+    m.sideBar = m.top.findNode("sideBar")
+    m.homeScreen = m.top.findNode("homeScreen")
 
      ' Observe this.visible
-    m.top.observeField("visible", "OnVisibleChanged")
-    
+     m.top.observeField("visible", "OnVisibleChanged")
+
 end sub
 
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
 
-    m.busySpinner.poster.uri = m.global.theme.spinner
-    m.busyLabel.color = m.global.theme.textOnBackground
-    m.rowList.rowLabelColor = m.global.theme.textOnBackground
-    m.rowList.focusBitmapBlendColor = m.global.theme.primary
-
-    m.homeScreenTask.control = "run"
-
-End Sub
-
-
-Sub OnDataAvailable()
-
-    m.busySpinner.visible = false
-    m.busyLabel.visible = false
+    m.homeScreen.visible = true
     
-    if m.homeScreenTask.success then
-        m.rowList.numRows = m.homeScreenTask.data.getChildCount()
-        m.rowList.content = m.homeScreenTask.data
-        m.rowList.setFocus(true)
-    else if m.homeScreenTask.unauthorized then
-        m.switchToLoginAccountView = true
-    else
-        m.errorDialog.message = [m.homeScreenTask.errMsg]
-        m.top.getScene().dialog = m.errorDialog
-    end if
-
-
 End Sub
+

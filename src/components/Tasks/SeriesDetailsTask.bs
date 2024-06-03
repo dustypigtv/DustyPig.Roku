@@ -1,0 +1,14 @@
+Sub Init()
+
+    m.top.functionName = "RunTask"
+
+    End Sub
+
+Sub RunTask()
+
+    id = m.top.id
+    url = `/Series/Details/${id}`
+
+    m.top.data = GetData(url, m.global.profileToken)
+
+End Sub

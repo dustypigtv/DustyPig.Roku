@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="LoginView" extends="Group">
+<component name="LoginAccountView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/LoginView.bs" />
+    <script type = "text/brightscript" uri = "pkg:/components/Views/LoginAccountView.bs" />
 
 	<interface>
-		<field id="switchToSignup" type="bool" value="false" alwaysNotify="true" />
-		<field id="switchToSelectProfile" type="bool" value="false" alwaysNotify="true" />
-		<field id="switchToHomeScreen" type="bool" value="false" alwaysNotify="true" />
+		<field id="switchToSignUpView" type="bool" value="false" alwaysNotify="true" />
+		<field id="switchToLoginProfileView" type="bool" value="false" alwaysNotify="true" />
+		<field id="switchToMainView" type="bool" value="false" alwaysNotify="true" />
 	</interface>
    
     <children>
@@ -45,7 +45,7 @@
 
 		
 		<Button
-			id="loginButton"
+			id="loginAccountButton"
 			translation="[1160,500]"
 			minWidth="300"
 			maxWidth="300"
@@ -62,7 +62,7 @@
 		</Button>
 
 		<Button
-			id="signupButton"
+			id="signUpButton"
 			translation="[460,700]"
 			minWidth="1000"
 			maxWidth="1000"

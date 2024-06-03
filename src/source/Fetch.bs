@@ -51,9 +51,6 @@
 
 function fetch(options)
 
-    print "Fetch:fetch"
-    print options
-    
     timeout = options.timeout
     if timeout = invalid then timeout = 0
 

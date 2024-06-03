@@ -8,7 +8,6 @@
 	<interface>
         <field id="success" type="bool" value="false" alwaysNotify="true" />
         <field id="data" type="node" />
-        <field id="numRows" type="int" value="1" />
         <field id="errMsg" type="string" />
         <field id="unauthorized" type="bool" value="false" />
     </interface>

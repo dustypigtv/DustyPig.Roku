@@ -1,13 +1,11 @@
 sub Init()
 
-    print "LoginView:Init"
-
     ' Find controls    
     m.headerLabel = m.top.findNode("headerLabel")
     m.emailTextBox = m.top.findNode("emailTextBox")
     m.passwordTextBox = m.top.findNode("passwordTextBox")
-    m.loginButton = m.top.findNode("loginButton")
-    m.signupButton = m.top.findNode("signupButton")
+    m.loginAccountButton = m.top.findNode("loginAccountButton")
+    m.signUpButton = m.top.findNode("signUpButton")
     m.busySpinner = m.top.findNode("busySpinner")
     
     
@@ -17,11 +15,11 @@ sub Init()
 
     m.busySpinner.poster.uri = m.global.defaultTheme.spinner
 
-    m.loginButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
-    m.loginButton.observeField("buttonSelected", "OnLoginClicked")
+    m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+    m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountClicked")
 
-    m.signupButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
-    m.signupButton.observeField("buttonSelected", "OnSignupClicked")
+    m.signUpButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+    m.signUpButton.observeField("buttonSelected", "OnSignUpClicked")
 
 
     
@@ -43,9 +41,9 @@ sub Init()
 
 
 
-    ' Login task
-    m.loginTask = CreateObject("roSGNode", "LoginTask")
-    m.loginTask.observeField("data", "OnLoginResult")
+    ' Sign In task
+    m.loginAccountTask = CreateObject("roSGNode", "LoginAccountTask")
+    m.loginAccountTask.observeField("data", "OnLoginAccountResult")
 
 
     'variables
@@ -61,8 +59,6 @@ end sub
 ' Fires when this view's visibility changes
 Sub OnVisibleChanged(event as object)
     
-    print "LoginView:OnVisibleChanged"
-
     m.busySpinner.visible = false
     if not event.getData() then return
     m.lastSelected = m.emailTextBox
@@ -95,9 +91,7 @@ Sub OnVisibleChanged(event as object)
 End Sub
 
 
-sub OnChannelStoreGetEmail(data as object)
-
-    print "LoginView:OnChannelStoreGetEmail"
+sub OnChannelStoreGetEmail()
 
     if m.channelStore.userData <> invalid then
          m.emailTextBox.text = m.channelStore.userData.email
@@ -109,8 +103,6 @@ end sub
 
 Sub ShowControls(s as boolean)
 
-    print "LoginView:ShowControls "; s
-
     if not s then
 
         if m.emailTextBox.hasFocus() then m.lastSelected = m.emailTextBox
@@ -121,8 +113,8 @@ Sub ShowControls(s as boolean)
     m.headerLabel.visible = s
     m.emailTextBox.visible = s
     m.passwordTextBox.visible = s
-    m.loginButton.visible = s
-    m.signupButton.visible = s
+    m.loginAccountButton.visible = s
+    m.signUpButton.visible = s
 
     if s then FocusOnTB(m.lastSelected)
 
@@ -130,8 +122,6 @@ End Sub
 
 
 Sub FocusOnTB(tb as object)
-
-    print "LoginView:FocusOnTB"
 
     m.emailTextBox.textColor = "#808080"
     m.passwordTextBox.textColor = "#808080"
@@ -146,21 +136,17 @@ End Sub
 
 Sub FocusOnButton(btn as object)
 
-    print "LoginView:FocusOnButton"
-
     m.emailTextBox.textColor = "#808080"
     m.passwordTextBox.textColor = "#808080"
 
-    if btn = invalid then btn = m.loginButton
+    if btn = invalid then btn = m.loginAccountButton
 
     btn.setFocus(true)
 
 End Sub
 
 
-Sub OnKeyboardDialogClosed(event as object)
-
-    print "LoginView:OnKeyboardDialogClosed"
+Sub OnKeyboardDialogClosed()
 
     ShowControls(true)
 
@@ -168,8 +154,6 @@ End Sub
 
 
 Sub OnKeyboardDialogButtonSelected(event as object)
-
-    print "LoginView:OnKeyboardDialogButtonSelected"
 
     m.top.getScene().dialog = invalid
     idx = event.getData()
@@ -182,14 +166,12 @@ Sub OnKeyboardDialogButtonSelected(event as object)
         end if
     end if
     ShowControls(true)
-    if selectLogin then FocusOnButton(m.loginButton)
+    if selectLogin then FocusOnButton(m.loginAccountButton)
     
 End Sub
 
 
 Sub OnErrorDialogClosed()
-
-    print "SignupView:OnErrorDialogClosed"
 
     m.top.getScene().dialog = invalid
     ShowControls(true)
@@ -197,32 +179,25 @@ Sub OnErrorDialogClosed()
 End Sub
 
 
-Sub OnLoginClicked()
+Sub OnLoginAccountClicked()
 
-    print "LoginView:OnLoginClicked"
-
-    m.loginButton.setFocus(false)
+    m.loginAccountButton.setFocus(false)
     m.busySpinner.visible = true
 
-    credentials = GetCredentials()
-    m.loginTask.email = credentials.email
-    m.loginTask.password = credentials.password
-    m.loginTask.control = "RUN"
+    m.loginAccountTask.email = m.emailTextBox.text
+    m.loginAccountTask.password = m.passwordTextBox.text
+    m.loginAccountTask.control = "RUN"
 
 End sub
 
 
-Sub OnSignupClicked()
-    
-    print "LoginView:OnSignupClicked"
+Sub OnSignUpClicked()
 
-    m.top.switchToSignup = true
+    m.top.switchToSignUpView = true
 
 End Sub
 
 Function GetCredentials() as object
-
-    print "LoginView:GetCredentials"
 
     email = m.emailTextBox.text
     if email = invalid or email = "" then return invalid
@@ -239,20 +214,18 @@ End Function
 
 
 
-Sub OnLoginResult()
+Sub OnLoginAccountResult()
 
-    print "LoginView:OnLoginResult"
-
-    m.loginButton.setFocus(true)
+    m.loginAccountButton.setFocus(true)
     m.busySpinner.visible = false
 
-    data = m.loginTask.data
+    data = m.loginAccountTask.data
     if data.success then
 
         if data.loginType = 1 then
-            m.top.switchToHomeScreen = true
+            m.top.switchToMainView = true
         else
-            m.top.switchToSelectProfile = true
+            m.top.switchToLoginProfileView = true
         end if
         
     else
@@ -269,8 +242,6 @@ End Sub
 
 Function onKeyEvent(key as String, press as Boolean) as Boolean
 
-    print "LoginView:onKeyEvent " + key + " "; press
-
     if not press then return false
 
     if key = "back" then return true
@@ -279,15 +250,15 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         if m.passwordTextBox.hasFocus() then
             FocusOnTB(m.emailTextBox)
             return true
-        else if m.loginButton.hasFocus() then
+        else if m.loginAccountButton.hasFocus() then
             FocusOnTB(m.passwordTextBox)
             return true
-        else if m.signupButton.hasFocus() then
+        else if m.signUpButton.hasFocus() then
             credentials = GetCredentials()
             if credentials = invalid then
                 FocusOnTB(m.passwordTextBox)
             else
-                FocusOnButton(m.loginButton)
+                FocusOnButton(m.loginAccountButton)
             end if
             return true
         end if
@@ -300,13 +271,13 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         else if m.passwordTextBox.hasFocus() then
             credentials = GetCredentials()
             if credentials = invalid then 
-                FocusOnButton(m.signupButton)
+                FocusOnButton(m.signUpButton)
             else
-                FocusOnButton(m.loginButton)
+                FocusOnButton(m.loginAccountButton)
             end if
             return true
-        else if m.loginButton.hasFocus() then
-            FocusOnButton(m.signupButton)
+        else if m.loginAccountButton.hasFocus() then
+            FocusOnButton(m.signUpButton)
             return true
         end if
     end if
@@ -334,7 +305,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         end if
 
         ' Return button click sound
-        if m.loginButton.hasFocus() or m.signupButton.hasFocus() return true
+        if m.loginAccountButton.hasFocus() or m.signUpButton.hasFocus() return true
 
     end if
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="HomeView" extends="Group">
+<component name="MainView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/HomeView.bs" />
+    <script type = "text/brightscript" uri = "pkg:/components/Views/MainView.bs" />
 
 	<interface>
-        <field id="switchToLoginView" type="bool" value="false" alwaysNotify="true" />
+        <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
     </interface>
 	
     <children>
@@ -58,7 +58,6 @@
        		vertFocusAnimationStyle="fixedFocusWrap"
        		failedBitmapUri = "pkg:/images/failed_poster.jpg"
        		loadingBitmapUri = "pkg:/images/loading_poster.jpg"/>
-			
 
 	</children>
 

@@ -1,18 +1,11 @@
 Sub Init()
-
-    print "LoginTask:Init"
-
-    m.top.functionName = "TryLogin"
-
+    m.top.functionName = "RunTask"
 End Sub
 
 
-Sub TryLogin()
+Sub RunTask()
 
-    print "LoginTask:TryLogin"
-
-    apiInstance = new API()
-    result = apiInstance.Login(m.top.email, m.top.password)
+    result = Login(m.top.email, m.top.password)
     if result.success then 
         if result.data.loginType = 1 then
             m.global.profileId = result.data.profileId

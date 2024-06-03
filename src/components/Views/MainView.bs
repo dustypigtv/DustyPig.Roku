@@ -1,7 +1,5 @@
 sub Init()
 
-    print "HomeView:Init"
-
     ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.busyLabel = m.top.findNode("busyLabel")
@@ -29,11 +27,7 @@ end sub
 
 Sub OnVisibleChanged(event as object)
     
-    visible = event.getData()
-
-    print "HomeView:OnVisibleChanged "; visible
-    
-    if not visible then return
+    if not event.getData() then return
 
     m.busySpinner.poster.uri = m.global.theme.spinner
     m.busyLabel.color = m.global.theme.textOnBackground
@@ -47,8 +41,6 @@ End Sub
 
 Sub OnDataAvailable()
 
-    print "HomeView:OnDataAvailable"
-
     m.busySpinner.visible = false
     m.busyLabel.visible = false
 
@@ -58,7 +50,7 @@ Sub OnDataAvailable()
         m.rowList.content = m.homeScreenTask.data
         m.rowList.setFocus(true)
     else if m.homeScreenTask.unauthorized then
-        m.switchToLoginView = true
+        m.switchToLoginAccountView = true
     else
         m.errorDialog.message = [m.homeScreenTask.errMsg]
         m.top.getScene().dialog = m.errorDialog

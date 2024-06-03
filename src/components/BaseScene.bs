@@ -1,36 +1,34 @@
 Sub Init()
 
-    print "BaseScene:Init"
-
     m.loggedIn = false
 
     ' Landing view
     m.landingView = m.top.findNode("landingView")
 
-    ' Login View
-    m.loginView = m.top.findNode("loginView")
-    m.loginView.observeField("switchToSignup", "SwitchToSignUpView")
-    m.loginView.observeField("switchToSelectProfile", "SwitchToSelectProfileView")
-    m.loginView.observeField("switchToHomeScreen", "SwitchToHomeView")
+    ' Login Account View
+    m.loginAccountView = m.top.findNode("loginAccountView")
+    m.loginAccountView.observeField("switchToSignUpView", "SwitchToSignUpView")
+    m.loginAccountView.observeField("switchToLoginProfileView", "SwitchToLoginProfileView")
+    m.loginAccountView.observeField("switchToMainView", "SwitchToMainView")
 
 
-    ' Signup View
-    m.signupView = m.top.findNode("signupView")
-    m.signupView.observeField("switchToLogin", "SwitchToLoginView")
-    m.signupView.observeField("switchToSelectProfile", "SwitchToSelectProfileView")
-    m.loginView.observeField("switchToHomeScreen", "SwitchToHomeView")
+    ' SignUp View
+    m.signUpView = m.top.findNode("signupView")
+    m.signUpView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
+    m.signUpView.observeField("switchToLoginProfileView", "SwitchToLoginProfileView")
+    m.signUpView.observeField("switchToMainView", "SwitchToMainView")
 
 
-    ' Select Profile View
-    m.selectProfileView = m.top.findNode("selectProfileView")
-    m.selectProfileView.observeField("cancel", "CancelSelectProfileView")
-    m.selectProfileView.observeField("switchToHomeView", "SwitchToHomeView")
-    m.selectProfileView.observeField("switchToLoginView", "SwitchToLoginView")
+    ' Login Profile View
+    m.loginProfileView = m.top.findNode("loginProfileView")
+    m.loginProfileView.observeField("cancel", "CancelLoginProfileView")
+    m.loginProfileView.observeField("switchToMainView", "SwitchToMainView")
+    m.loginProfileView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
 
 
     ' Home View
-    m.homeView = m.top.findNode("homeView")
-    m.homeView.observeField("switchToLoginView", "SwitchToLoginView")
+    m.mainView = m.top.findNode("mainView")
+    m.mainView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
 
 
     m.viewStack = []
@@ -39,10 +37,11 @@ Sub Init()
     
 
     ' Do this 2nd to last
-    m.AuthTask = CreateObject("roSGNode", "AuthenticationTask")
-    m.AuthTask.observeField("startAuthFlow", "SwitchToLoginView")
-    m.AuthTask.observeField("startProfileFlow", "SwitchToSelectProfileView")
-    m.AuthTask.Control = "RUN"
+    m.authTask = CreateObject("roSGNode", "AuthenticationTask")
+    m.authTask.observeField("startAuthFlow", "SwitchToLoginAccountView")
+    m.authTask.observeField("startProfileFlow", "SwitchToLoginProfileView")
+    m.authTask.observeField("switchToMainView", "SwitchToMainView")
+    m.authTask.Control = "RUN"
 
     ' Do this LAST
     m.top.signalBeacon("AppLaunchComplete")
@@ -83,50 +82,40 @@ End Sub
 
 
 
-Sub SwitchToLoginView()
-
-    print "BaseScene:SwitchToLoginView"
+Sub SwitchToLoginAccountView()
 
     m.loggedIn = false
-    ShowView(m.loginView)
+    ShowView(m.loginAccountView)
 
 End Sub
 
 Sub SwitchToSignUpView()
 
-    print "BaseScene:SwitchToSignUpView"
-
     m.loggedIn = false
-    ShowView(m.signupView)
+    ShowView(m.signUpView)
 
 End Sub
 
 
-Sub SwitchToSelectProfileView()
+Sub SwitchToLoginProfileView()
 
-    print "BaseScene:SwitchToSelectProfileView"
-
-    ShowView(m.selectProfileView)
+    ShowView(m.loginProfileView)
 
 End Sub
 
-Sub SwitchToHomeView()
-
-    print "BaseScene:SwitchToHomeView"
+Sub SwitchToMainView()
 
     m.loggedIn = true
-    ShowView(m.homeView)
+    ShowView(m.mainView)
 
 End Sub
 
-sub CancelSelectProfileView()
-
-    print "BaseScene:CancelSelectProfileView"
+sub CancelLoginProfileView()
 
     if m.loggedIn then
-        ShowView(m.homeView)
+        ShowView(m.mainView)
     else
-        ShowView(m.loginView)
+        ShowView(m.loginAccountView)
     end if
 
 end sub

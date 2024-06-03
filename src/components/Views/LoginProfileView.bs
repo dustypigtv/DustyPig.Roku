@@ -1,7 +1,5 @@
 sub Init()
 
-    print "SelectProfileView:Init"
-
     ' Find controls
     m.busyLabel = m.top.findNode("busyLabel")
     m.busySpinner = m.top.findNode("busySpinner")
@@ -19,7 +17,7 @@ sub Init()
 
     ' Login profile task
     m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
-    m.loginProfileTask.observeField("data", "OnLoginResult")
+    m.loginProfileTask.observeField("data", "OnLoginProfileResult")
 
 
     ' Pin dialog
@@ -55,8 +53,6 @@ end sub
 ' Fires when this view's visibility changes
 Sub OnVisibleChanged(event as object)
     
-    print "SelectProfileView:OnVisibleChanged"
-
     if not event.getData() then return
 
     SetBusy(false)
@@ -88,8 +84,6 @@ end sub
 
 sub OnLoadErrorDialogClosed()
 
-    print "SelectProfileView:OnLoadErrorDialogClosed"
-
     m.top.getScene().dialog = invalid
     m.top.cancel = true
 
@@ -97,11 +91,8 @@ end sub
 
 sub OnProfileSelected()
 
-    print "SelectProfileView:OnProfileSelected"
-
     idx = m.profileGrid.itemSelected
-    profile = m.global.allProfiles.getChild(idx)
-    
+    profile = m.global.allProfiles.getChild(idx)    
     
     if profile.hasPin then
         m.pinDialog.pin = ""
@@ -119,8 +110,6 @@ end sub
 
 sub OnPinSubmitted()
 
-    print "SelectProfileView:OnPinSubmitted"
-
     m.top.getScene().dialog = invalid
     
     idx = m.profileGrid.itemSelected
@@ -128,7 +117,6 @@ sub OnPinSubmitted()
     
     if idx > 0 then m.busyLabel.text = "A pliglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
     SetBusy(true)
-    
     
     m.loginProfileTask.id = profile.id
     m.loginProfileTask.pin = m.pinDialog.pin
@@ -138,17 +126,15 @@ end sub
 
 
 
-Sub OnLoginResult()
+Sub OnLoginProfileResult()
 
-    print "SelectProfileView:OnLoginResult"
-    
     SetBusy(false)
     
     data = m.loginProfileTask.data
     if data.success then
-        m.top.switchToHomeView = true
+        m.top.switchToMainView = true
     else if data.statusCode = 401 then
-        m.switchToLoginView = true
+        m.switchToLoginAccountView = true
     else
         m.loginErrorDialog.message = [data.error]
         m.top.getScene().dialog = m.loginErrorDialog
@@ -158,8 +144,6 @@ End Sub
 
 
 sub OnLoginErrorDialogClosed()
-
-    print "SelectProfileView:OnLoginErrorDialogClosed"
 
     m.top.getScene().dialog = invalid
     m.profileGrid.setFocus(true)

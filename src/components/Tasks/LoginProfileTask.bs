@@ -1,17 +1,9 @@
 sub Init()
-
-    print "LoginProfileTask:Init"
-
-    m.top.functionName = "TryLogin"
-
+    m.top.functionName = "RunTask"
 end sub
 
-sub TryLogin()
+sub RunTask()
 
-    print "LoginProfileTask:TryLogin"
-
-    m.top.unauthorized = false
-    
     di=createobject("roDeviceInfo")
     deviceId=di.GetChannelClientId()
 
@@ -21,8 +13,7 @@ sub TryLogin()
         creds = {"id": m.top.id, "pin": m.top.pin, "deviceId":deviceId}
     end if
 
-    apiInstance = new API()
-    result = apiInstance.PostAndGetData("/Auth/ProfileLogin", creds, apiInstance.GetAccountToken())
+    result = PostAndGetData("/Auth/ProfileLogin", creds, GetAccountToken())
 
     if result.success then
 

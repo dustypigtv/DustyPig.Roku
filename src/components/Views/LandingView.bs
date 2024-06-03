@@ -1,7 +1,5 @@
 sub Init()
 
-    print "LandingView:Init"
-
     m.busySpinner = m.top.findNode("busySpinner")
     m.busySpinner.poster.uri = m.global.defaultTheme.spinner
 

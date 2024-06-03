@@ -1,8 +1,5 @@
  Sub Main(args)
 
-    print "Main:Main"
-
-    
     'Create Message port
     m.port = CreateObject("roMessagePort") 
     
@@ -58,8 +55,6 @@ end sub
 
 
 Function GetDeepLinks(args) as Object
-
-    print "Main:GetDeepLinks"
 
     if args.contentid <> Invalid and args.mediaType <> Invalid
         return {

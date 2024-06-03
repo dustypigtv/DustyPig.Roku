@@ -1,29 +1,20 @@
 Sub Init()
-
-    print "HomeScreenTask:Init"
-
-    m.top.functionName = "TryGetData"
-
+    m.top.functionName = "RunTask"
 End Sub
 
 
-Sub TryGetData()
-
-    print "HomeScreenTask:TryGetData"
+Sub RunTask()
 
     m.top.unauthorized = false
         
-    apiInstance = new API()
-    result = apiInstance.GetData("/Media/HomeScreen", m.global.profileToken)
+    result = GetData("/Media/HomeScreen", m.global.profileToken)
         
     if result.success then
     
         ' Create a root content node, with child nodes holding info
         root = createObject("roSGNode", "ContentNode")
-        numRows = 0
         for each section in result.data.sections
             
-            numRows++
             row = root.createChild("ContentNode")
             row.id = section.listId
             row.title = section.title
@@ -41,7 +32,6 @@ Sub TryGetData()
         end for
         
         m.top.data = root
-        m.top.numRows = numRows
         m.top.success = true
 
     else if result.statusCode = 401 then

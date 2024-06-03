@@ -1,20 +1,13 @@
 Sub Init()
-
-    print "AuthenticationTask:Init"
-
-    m.top.functionName = "CheckIfAuthenticated"
-
+    m.top.functionName = "RunTask"
 End Sub
 
 
-Sub CheckIfAuthenticated()
+Sub RunTask()
 
-    print "AuthenticationTask:CheckIfAuthenticated"
-    
-    apiInstance = new API()
-    result = apiInstance.CheckAccountToken()
+    result = CheckAccountToken()
     if result then
-        profiles = apiInstance.GetData("/Profiles/List", apiInstance.GetAccountToken())
+        profiles = GetData("/Profiles/List", GetAccountToken())
         if profiles.success then
             if profiles.data.count() = 1 then
 
@@ -22,7 +15,7 @@ Sub CheckIfAuthenticated()
                 di=createobject("roDeviceInfo")
                 deviceId=di.GetChannelClientId()
                 creds = {"id": profiles.data[0].id, "deviceId":deviceId }
-                result = apiInstance.PostAndGetData("/Auth/ProfileLogin", creds, apiInstance.GetAccountToken())
+                result = PostAndGetData("/Auth/ProfileLogin", creds, GetAccountToken())
 
                 if result.success then
 
@@ -33,7 +26,7 @@ Sub CheckIfAuthenticated()
                     ' Set theme AFTER setting profileId
                     m.global.theme = GetTheme()
 
-                    m.top.switchToHomeView = true
+                    m.top.switchToMainView = true
 
                 else
 

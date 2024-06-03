@@ -19,20 +19,20 @@
 		<LandingView 
 			id="landingView" />
 		
-		<LoginView 
-			id="loginView"
+		<LoginAccountView 
+			id="loginAccountView"
 			visible="false" />
 
-		<SignupView
-			id="signupView"
+		<SignUpView
+			id="signUpView"
 			visible="false" />
 
-		<SelectProfileView
-			id="selectProfileView"
+		<LoginProfileView
+			id="loginProfileView"
 			visible="false" />
 
-		<HomeView
-			id="homeView"
+		<MainView
+			id="mainView"
 			visible="false" />
 	
 		

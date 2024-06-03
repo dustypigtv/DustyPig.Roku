@@ -43,10 +43,9 @@ Sub OnDataAvailable()
 
     m.busySpinner.visible = false
     m.busyLabel.visible = false
-
     
     if m.homeScreenTask.success then
-        m.rowList.numRows = m.homeScreenTask.numRows
+        m.rowList.numRows = m.homeScreenTask.data.getChildCount()
         m.rowList.content = m.homeScreenTask.data
         m.rowList.setFocus(true)
     else if m.homeScreenTask.unauthorized then

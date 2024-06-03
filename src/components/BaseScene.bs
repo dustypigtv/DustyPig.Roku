@@ -26,10 +26,20 @@ Sub Init()
     m.loginProfileView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
 
 
-    ' Home View
+    ' Main View
     m.mainView = m.top.findNode("mainView")
     m.mainView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
 
+    ' *** Sub views of Main View ***
+
+        m.homeScreenView = m.mainView.findNode("homeScreenView")
+        m.homeScreenView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
+        
+    ' ******************************
+
+    
+    ' Video View
+    m.videoView = m.top.findNode("videoView")
 
     m.viewStack = []
     ShowView(m.landingView)

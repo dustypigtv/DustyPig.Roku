@@ -43,7 +43,8 @@ Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
 
-    m.busySpinner.poster.uri = m.global.theme.spinner
+    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
+    m.busySpinner.poster.uri = m.global.busySpinnerUri
     m.busyLabel.color = m.global.theme.textOnBackground
     m.rowList.rowLabelColor = m.global.theme.textOnBackground
     m.rowList.focusBitmapBlendColor = m.global.theme.primary

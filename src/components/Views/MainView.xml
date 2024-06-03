@@ -10,7 +10,7 @@
     <children>
 
 		<HomeScreenView
-			id="homeScreen"
+			id="homeScreenView"
 			visible="false" />
 
 

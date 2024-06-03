@@ -9,35 +9,6 @@
 	
     <children>
 
-      <!-- 
-			Spinner images are 200x200
-			Screen is 1920x1024
-			centerx = (1920 - 200) / 2 = 860
-			centery = (1080 - 200) / 2 = 440
-		-->
-		<BusySpinner
-			id="busySpinner"
-			translation="[860,440]" />
-		
-		<!-- 
-			Since the spinner above is centered and is 200 px high,
-			Translate this 100 px down the y axis.
-			Add another 50 for spacing
-		-->
-		<Label
-			id="busyLabel" 
-			text="The Pig is gettin' Dusty"
-			width="1920"
-			height="1080"
-			horizAlign="center"
-			vertAlign="center"
-			translation="[0,150]" />
-
-
-
-        <!-- Order of the controls below here matters! -->
-
-        
         <!-- 
             Backdrops are 1920x1080
             Half size = 960x540
@@ -72,8 +43,8 @@
             
         <!--
             SideBar is 100px wide
-            Safezone sets y at 106
-            so translation = [100,106]
+            Give 75px padding on top
+            so translation = [100,75]
 
             Max Width = (1920 - 100) / 2 = 910
             Give 50 px padding on the right, end up with 860
@@ -85,21 +56,22 @@
             wrap="false"
             maxLines="1"
             ellipsizeOnBoundary="true"
-			translation="[100,106]" />
+			translation="[100,75]" />
 
         <!-- 
-            titleLabel is at y=106, and 75px high
-            So this y = 181
+            titleLabel is at y=75, and 75px high
+            So this y = 150
+            give 25px bottom padding
 
-            540 - 181 = 359
+            540 - 150 - 25 = 365
         -->
         <Label
             id="descriptionLabel"
             width="860"
-            height="359"
+            height="365"
             wrap="true"
             ellipsizeOnBoundary="true"
-			translation="[100,181]" />
+			translation="[100,150]" />
 
 
 
@@ -130,6 +102,32 @@
        		loadingBitmapUri = "pkg:/images/loading_poster.jpg"/>
 
 
+
+
+
+        <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<BusySpinner
+			id="busySpinner"
+			translation="[860,440]" />
+		
+		<!-- 
+			Since the spinner above is centered and is 200 px high,
+			Translate this 100 px down the y axis.
+			Add another 50 for spacing
+		-->
+		<Label
+			id="busyLabel" 
+			text="The Pig is gettin' Dusty"
+			width="1920"
+			height="1080"
+			horizAlign="center"
+			vertAlign="center"
+			translation="[0,150]" />
 
 	</children>
 

@@ -12,19 +12,12 @@
     
     ' Profile data will be memory only
     m.global.addField("allProfiles", "node", false)
-    m.global.addField("profileId", "integer", false)
-    m.global.profileId = 0
-    m.global.addField("profileToken", "string", false)
-    m.global.profileToken = ""
-    m.global.addField("profileIsMain", "boolean", false)
-    m.global.profileIsMain = false
+    m.global.addFields({profileId:0, profileToken:"", profileIsMain:false})
+    
 
     ' Setup theme
-    m.global.addField("theme", "assocarray", false)
-    m.global.theme = GetTheme()
-    m.global.addField("defaultTheme", "assocarray", false)
-    m.global.defaultTheme = GetTheme()
-
+    m.global.addFields({busySpinnerUri:"pkg:/images/spinner.png", "theme":GetTheme(), "defaultTheme":GetTheme()})
+    
     
     'Create Base Scene
     screen.CreateScene("BaseScene") 

@@ -35,7 +35,11 @@
 			id="mainView"
 			visible="false" />
 	
-		
+		<Video
+        	id = "videoView"
+        	enableUI = "true"
+        	visible = "false"/>
+
 	</children>
 
 </component>

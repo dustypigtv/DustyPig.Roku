@@ -9,7 +9,6 @@
             "textOnBackground":"0xDBD160FF",
             "background":"0x000000FF",
             "secondary":"0x2D222DFF",
-            "spinner":"pkg:/images/spinner_theme_0.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_0.bmp"
         },
         {
@@ -20,7 +19,6 @@
             "textOnBackground":"0XFFFFFFFF",
             "background":"0x0A0400FF",
             "secondary":"0x1A0B00FF",
-            "spinner":"pkg:/images/spinner_theme_1.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_1.bmp"
         },
         {
@@ -31,7 +29,6 @@
             "textOnBackground":"0XFFFFFFFF",
             "background":"0x03050AFF",
             "secondary":"0x070C1AFF",
-            "spinner":"pkg:/images/spinner_theme_2.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_2.bmp"
         },
         {
@@ -42,7 +39,6 @@
             "textOnBackground":"0XFFFFFFFF",
             "background":"0x000000FF",
             "secondary":"0x2C2C2CFF",
-            "spinner":"pkg:/images/spinner_theme_3.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_3.bmp"
         },
         {
@@ -53,7 +49,6 @@
             "textOnBackground":"0XFFFFFFFF",
             "background":"0x030503FF",
             "secondary":"0x070C08FF",
-            "spinner":"pkg:/images/spinner_theme_4.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_4.bmp"
         },
         {
@@ -64,7 +59,6 @@
             "textOnBackground":"0XFFFFFFFF",
             "background":"0x0B0001FF",
             "secondary":"0x1D0103FF",
-            "spinner":"pkg:/images/spinner_theme_5.png",
             "primaryBitmap":"pkg:/images/primary_color_theme_5.bmp"
         }
     ]

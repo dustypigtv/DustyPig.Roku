@@ -1,8 +1,8 @@
 sub Init()
 
     ' Find controls    
-    m.sideBar = m.top.findNode("sideBar")
-    m.homeScreen = m.top.findNode("homeScreen")
+    m.sideBarView = m.top.findNode("sideBarView")
+    m.homeScreenView = m.top.findNode("homeScreenView")
 
      ' Observe this.visible
      m.top.observeField("visible", "OnVisibleChanged")
@@ -13,7 +13,7 @@ Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
 
-    m.homeScreen.visible = true
+    m.homeScreenView.visible = true
     
 End Sub
 

@@ -9,17 +9,37 @@
 	
     <children>
 
+		<!-- 
+			SideBar is 150px wide, so
+			translate sub-views to 150
+		-->
 		<HomeScreenView
 			id="homeScreenView"
+			translation="[150,0]"
 			visible="false" />
 
 
-		<!-- Side Bar -->
+		<!-- 
+			*** Side Bar ***
+
+			4 items, meaning 3 spaces between items
+			each space is 100px translation - 50px height = 50px
+			center space should be in the middle of the screen (1080 / 4 = 540)
+		
+			Working outward from the center
+			btn2.y = 540 - (50 / 2) - 50 = 465
+			btn3.y = 540 + (50 / 2) = 565
+
+			btn1.y = btn2.y - 100 = 365
+			btn4.y = btn3.y + 100 = 665
+		
+		-->
 		<Group
-			id="sideBar">
+			id="sideBar"
+			translation="[25,0]">
 
 			<Poster
-				translation="[25,400]"
+				translation="[25,365]"
 				width="50"
 				height="50"
 				uri="pkg:/images/home.png"
@@ -27,27 +47,31 @@
 			/>
 
 			<Poster
-				translation="[25,500]"
+				translation="[25,465]"
 				width="50"
 				height="50"
 				uri="pkg:/images/search.png"
 			/>
 
 			<Poster
-				translation="[25,600]"
+				translation="[25,565]"
 				width="50"
 				height="50"
 				uri="pkg:/images/notifications.png"
 			/>
 
 			<Poster
-				translation="[25,700]"
+				translation="[25,665]"
 				width="50"
 				height="50"
 				uri="pkg:/images/profile.png"
 			/>
 
 
+			<!-- 
+				Put this button at the bottom
+				1080px screen - 50px poster - 25px bottom padding = 1005
+			-->
 			<Poster
 				translation="[25,1005]"
 				width="50"

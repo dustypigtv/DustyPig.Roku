@@ -39,7 +39,7 @@ Sub OnVisibleChanged(event as object)
     m.busyLabel.color = m.global.theme.textOnBackground
     m.rowList.rowLabelColor = m.global.theme.textOnBackground
     m.rowList.focusBitmapBlendColor = m.global.theme.primary
-    m.titleLabel.color = m.global.theme.textOnBackground
+    m.titleLabel.color = m.global.theme.primary
     m.descriptionLabel.color = m.global.theme.textOnBackground
 
     m.homeScreenTask.control = "run"
@@ -77,9 +77,6 @@ End Sub
 ' }
 
 Sub OnFocusedItemChanged()
-
-    m.movieDetailsTask.control = "stop"
-    m.seriesDetailsTask.control = "stop"
 
     x = m.rowList.rowItemFocused
     rowContent = m.rowList.content.getChild(x[0])

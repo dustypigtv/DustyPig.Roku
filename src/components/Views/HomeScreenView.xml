@@ -10,53 +10,58 @@
     <children>
 
         <!-- 
+            SideBar is 150px wide
+            Translations are handled by the parent view, so don't add 150 to x axis here
+            Full width = 1920 - 150 = 1770
+        -->
+
+        <!--
             Backdrops are 1920x1080
-            Half size = 960x540
+            Shrinking width to 1770, size = 1770x995
+            Half size = 885x497
         -->
         <Poster
             id="backdropPoster"
-            width="960"
-            height="540"
+            width="885"
+            height="497"
             loadDisplayMode="scaleToZoom"
             loadingBitmapUri="pkg:/images/loading_poster.jpg"
             failedBitmapUri="pkg:/images/failed_poster.jpg"
-            translation="[960,0]" />
+            translation="[885,0]" />
 
 
         <!-- Vertical gradient -->
         <Poster
             width="100"
-            height="540"
+            height="497"
             loadDisplayMode="scaleToZoom"
-            translation="[960,0]"
+            translation="[885,0]"
             uri="pkg:/images/vertical_gradient.png" />
         
 
         <!-- Horizontal gradient -->
 		<Poster
-            width="960"
+            width="885"
             height="100"
             loadDisplayMode="scaleToZoom"
-            translation="[960,440]"
+            translation="[885,397]"
             uri="pkg:/images/horizontal_gradient.png" />
 
             
         <!--
-            SideBar is 100px wide
             Give 75px padding on top
-            so translation = [100,75]
 
-            Max Width = (1920 - 100) / 2 = 910
-            Give 50 px padding on the right, end up with 860
+            Max Width = 1770 / 2 = 885
+            Give 50 px padding on the right, end up with 835
         -->
         <Label
             id="titleLabel"
             font="font:LargeBoldSystemFont"
-            width="860"
+            width="835"
             wrap="false"
             maxLines="1"
             ellipsizeOnBoundary="true"
-			translation="[100,75]" />
+			translation="[0,75]" />
 
         <!-- 
             titleLabel is at y=75, and 75px high
@@ -67,33 +72,29 @@
         -->
         <Label
             id="descriptionLabel"
-            width="860"
+            width="835"
             height="365"
             wrap="true"
             ellipsizeOnBoundary="true"
-			translation="[100,150]" />
+			translation="[0,150]" />
 
 
 
 		<!--
-            SideBar is 100px wide
-            So this will be 1920 - 100 = 1820
-
             Poster items are 300px high
             Add 75px for label and some spacing  = 375
-            itemSize = [1820, 375]
+            itemSize = [1770, 375]
 
-            Sidbar = 100px wide, so x translation = 100
             top info will take half the screen, so y translation = 1080 / 2 = 540
-            translation = [100,540]
+            translation = [0,540]
 
         -->
 		<RowList
 			id="rowList"
-			translation="[100,540]"
+			translation="[0,540]"
             rowitemSize="[[200,300]]"
       		rowItemSpacing= "[[20,0]]"
-       		itemSize= "[1820,375]"
+       		itemSize= "[1770,375]"
        		rowLabelOffset= "[[0,10]]"
        		showRowLabel= "[true]"
        		rowFocusAnimationStyle= "fixedFocusWrap"

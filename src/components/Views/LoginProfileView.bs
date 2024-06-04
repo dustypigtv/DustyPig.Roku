@@ -56,6 +56,9 @@ Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
 
+    print "LoginProfileView becomming visible"
+    
+
     SetBusy(false)
 
     data = m.global.allProfiles
@@ -131,13 +134,13 @@ Sub OnLoginProfileResult()
 
     SetBusy(false)
     
-    data = m.loginProfileTask.data
-    if data.success then
+    result = m.loginProfileTask.data
+    if result.success then
         m.top.switchToMainView = true
-    else if data.statusCode = 401 then
+    else if result.statusCode = 401 then
         m.switchToLoginAccountView = true
     else
-        m.loginErrorDialog.message = [data.error]
+        m.loginErrorDialog.message = [result.error]
         m.top.getScene().dialog = m.loginErrorDialog
     end if
 

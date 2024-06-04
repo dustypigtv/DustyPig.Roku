@@ -62,6 +62,7 @@ Sub OnVisibleChanged(event as object)
 
     m.busySpinner.visible = false
     if not event.getData() then return
+
     m.lastSelected = m.nameTextBox
     ShowControls(true)
 
@@ -229,9 +230,10 @@ Sub OnSignUpResult()
     m.signUpButton.setFocus(true)
     m.busySpinner.visible = false
     
-    data = m.signUpTask.data
-    if data.success then
+    result = m.signUpTask.data
+    if result.success then
 
+        data = result.data
         if data.loginType = 1 then '1 = Main Profile in api
             m.top.switchToMainView = true
         else
@@ -241,7 +243,7 @@ Sub OnSignUpResult()
     else
 
         ShowControls(false)
-        m.errorDialog.message = [data.error]
+        m.errorDialog.message = [result.error]
         m.top.getScene().dialog = m.errorDialog
 
     end if

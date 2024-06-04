@@ -114,7 +114,7 @@ function Login(email as string, password as string) as object
     })
 
     ret = BuildResult(response)
-    if ret.success then SaveAccountToken(ret.data.token)
+    if ret.success then SaveAccountToken(ret.data.accountToken)
 
     return ret
 

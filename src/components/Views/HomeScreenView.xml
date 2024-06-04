@@ -97,7 +97,7 @@
        		itemSize= "[1770,375]"
        		rowLabelOffset= "[[0,10]]"
        		showRowLabel= "[true]"
-       		rowFocusAnimationStyle= "fixedFocusWrap"
+       		rowFocusAnimationStyle= "floatingFocus"
        		vertFocusAnimationStyle="fixedFocusWrap"
        		failedBitmapUri = "pkg:/images/failed_poster.jpg"
        		loadingBitmapUri = "pkg:/images/loading_poster.jpg"/>

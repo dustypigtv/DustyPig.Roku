@@ -1,5 +1,7 @@
 Sub Init()
+
     m.top.functionName = "RunTask"
+
 End Sub
 
 
@@ -22,7 +24,7 @@ Sub RunTask()
                 if result.success then
 
                     m.global.profileId = result.data.profileId
-                    m.global.profileToken = result.data.token
+                    m.global.profileToken = result.data.profileToken
                     m.global.profileIsMain = true
 
                     ' Set theme AFTER setting profileId

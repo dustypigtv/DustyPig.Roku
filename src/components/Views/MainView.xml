@@ -3,9 +3,6 @@
     
     <script type = "text/brightscript" uri = "pkg:/components/Views/MainView.bs" />
 
-	<interface>
-        <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
-    </interface>
 	
     <children>
 

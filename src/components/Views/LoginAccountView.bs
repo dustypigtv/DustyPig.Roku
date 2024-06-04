@@ -71,7 +71,7 @@ Sub OnVisibleChanged(event as object)
        
         m.emailTextBox.text = "testuser@dustypig.tv"
         m.passwordTextBox.text = "test password"
-    
+            
     else if m.alreadyAskedChannelStore = false
 
         m.alreadyAskedChannelStore = true

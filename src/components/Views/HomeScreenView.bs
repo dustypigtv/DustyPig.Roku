@@ -42,7 +42,7 @@ Sub OnVisibleChanged(event as object)
     m.titleLabel.color = m.global.theme.primary
     m.descriptionLabel.color = m.global.theme.textOnBackground
 
-    m.homeScreenTask.control = "run"
+    ' m.homeScreenTask.control = "run"
 
 End Sub
 

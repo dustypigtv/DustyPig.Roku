@@ -28,8 +28,6 @@ Sub Init()
 
     ' Main View
     m.mainView = m.top.findNode("mainView")
-    m.mainView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
-
     ' *** Sub views of Main View ***
 
         m.homeScreenView = m.mainView.findNode("homeScreenView")
@@ -92,31 +90,37 @@ End Sub
 
 
 
-Sub SwitchToLoginAccountView()
+Sub SwitchToLoginAccountView(event as object)
 
-    m.loggedIn = false
-    ShowView(m.loginAccountView)
-
-End Sub
-
-Sub SwitchToSignUpView()
-
-    m.loggedIn = false
-    ShowView(m.signUpView)
+    if event.getData() then
+        m.loggedIn = false
+        ShowView(m.loginAccountView)
+    end if
 
 End Sub
 
+Sub SwitchToSignUpView(event as object)
 
-Sub SwitchToLoginProfileView()
-
-    ShowView(m.loginProfileView)
+    if event.getData then
+        m.loggedIn = false
+        ShowView(m.signUpView)
+    end if
 
 End Sub
 
-Sub SwitchToMainView()
 
-    m.loggedIn = true
-    ShowView(m.mainView)
+Sub SwitchToLoginProfileView(event as object)
+
+    if event.getData() then ShowView(m.loginProfileView)
+
+End Sub
+
+Sub SwitchToMainView(event as object)
+
+    if event.getData() then
+        m.loggedIn = true
+        ShowView(m.mainView)
+    end if 
 
 End Sub
 

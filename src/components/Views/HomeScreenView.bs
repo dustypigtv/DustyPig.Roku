@@ -34,8 +34,7 @@ Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
 
-    print "HomeScreenView becomming visible"
-    
+    ' Set theme
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
     m.busySpinner.poster.uri = m.global.busySpinnerUri
     m.busyLabel.color = m.global.theme.textOnBackground
@@ -44,7 +43,8 @@ Sub OnVisibleChanged(event as object)
     m.titleLabel.color = m.global.theme.primary
     m.descriptionLabel.color = m.global.theme.textOnBackground
 
-    ' m.homeScreenTask.control = "run"
+    ' Load the task
+    m.homeScreenTask.control = "run"
 
 End Sub
 

@@ -11,6 +11,5 @@
         <field id="startAuthFlow" type="bool" value="false" />
         <field id="startProfileFlow" type="bool" value="false" />
 		<field id="switchToMainView" type="bool" value="false" />
-		<field id="homeScreenData" type="node" />
     </interface>
 </component>

@@ -5,7 +5,7 @@ End Sub
 
 Sub RunTask()
 
-    DeleteAccountToken()
+    ' DeleteAccountToken()
 
     result = CheckAccountToken()
     if result then
@@ -27,46 +27,7 @@ Sub RunTask()
 
                     ' Set theme AFTER setting profileId
                     m.global.theme = GetTheme()
-
-                    ' Get the home screen
-                    result = GetData("/Media/HomeScreen", m.global.profileToken)
-                    if result.success then
-                    
-                        ' Create a root content node, with child nodes holding info
-                        root = createObject("roSGNode", "ContentNode")
-                        for each section in result.data.sections
-                            
-                            row = root.createChild("ContentNode")
-                            row.id = section.listId
-                            row.title = section.title
-                
-                            for each bm in section.items
-                
-                                item = row.createChild("ContentNode")
-                                item.id = bm.id
-                                item.title = bm.title
-                                item.description = bm.description
-                                item.FHDGRIDPOSTERURL = bm.artworkUrl
-                                item.addFields({backdropUrl: bm.backdropUrl, mediaType: bm.mediaType})
-                                
-                            end for
-                            
-                        end for
-                        
-                        m.top.homeScreenData = root
-                        m.top.switchToMainView = true
-                
-                    else if result.statusCode = 401 then
-                
-                        ' Logged out while trying to get home screen. Probably will never happen, but catch it anyway
-                        m.top.startAuthFlow = true
-                
-                    else
-                
-                         ' Failed to load the home screen, start over
-                         m.top.startAuthFlow = true
-                
-                    end if
+                    m.top.switchToMainView = true
 
                 else
 

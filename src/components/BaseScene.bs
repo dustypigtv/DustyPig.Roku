@@ -42,7 +42,6 @@ Sub Init()
     m.viewStack = []
     ShowView(m.landingView)
     
-    
 
     ' Do this 2nd to last
     m.launchTask = CreateObject("roSGNode", "LaunchTask")
@@ -115,6 +114,7 @@ Sub SwitchToLoginProfileView(event as object)
 
 End Sub
 
+
 Sub SwitchToMainView(event as object)
 
     if event.getData() then
@@ -123,6 +123,8 @@ Sub SwitchToMainView(event as object)
     end if 
 
 End Sub
+
+
 
 sub CancelLoginProfileView(event as object)
 

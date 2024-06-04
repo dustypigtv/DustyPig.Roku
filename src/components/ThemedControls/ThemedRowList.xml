@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedRowList" extends="RowList">
+    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+                m.top.observeField("themeChanged", "ThemeChanged")
+            End Sub
+
+            Sub ThemeChanged()
+                m.top.rowLabelColor = m.global.theme.textOnBackground
+                m.top.focusBitmapBlendColor = m.global.theme.primary
+            End Sub
+
+        ]]>
+    </script>
+
+    <interface>
+        <field id="isThemed" type="bool" value="true" />
+        <field id="themeChanged" type="bool" alwaysNotify="true" />
+    </interface>
+
+</component>

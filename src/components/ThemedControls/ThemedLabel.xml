@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedLabel" extends="Label">
+    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+                m.top.observeField("themeChanged", "ThemeChanged")
+            End Sub
+
+            Sub ThemeChanged()
+                m.top.color = m.global.theme[m.top.themeColor]
+            End Sub
+
+        ]]>
+    </script>
+
+    <interface>
+        <field id="isThemed" type="bool" value="true" />
+        <field id="themeColor" type="string" />
+        <field id="themeChanged" type="bool" alwaysNotify="true" />
+    </interface>
+
+</component>

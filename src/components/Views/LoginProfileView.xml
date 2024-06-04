@@ -19,6 +19,7 @@
 		-->
 		<BusySpinner
 			id="busySpinner"
+			uri="pkg:/images/spinner.png"
 			translation="[860,440]" 
             visible="false" />
 		

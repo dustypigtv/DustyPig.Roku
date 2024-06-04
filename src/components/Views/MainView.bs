@@ -12,9 +12,6 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
-
-    print "MainView becomming visible"
-    
     m.homeScreenView.visible = true
     
 End Sub

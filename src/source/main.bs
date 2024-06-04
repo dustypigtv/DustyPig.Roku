@@ -16,7 +16,7 @@
     
 
     ' Setup theme
-    m.global.addFields({busySpinnerUri:"pkg:/images/spinner.png", "theme":GetTheme(), "defaultTheme":GetTheme()})
+    m.global.addFields({"theme":GetTheme(), "defaultTheme":GetTheme()})
     
     
     'Create Base Scene

@@ -32,13 +32,40 @@ Sub Init()
 
         m.homeScreenView = m.mainView.findNode("homeScreenView")
         m.homeScreenView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
+        m.homeScreenView.observeField("switchToMovieDetailsView", "SwitchToMovieDetailsView")
         
     ' ******************************
+
+
+    ' Movie Details View
+    m.movieDetailsView = m.top.findNode("movieDetailsView")
 
     
     ' Video View
     m.videoView = m.top.findNode("videoView")
 
+
+
+
+
+    ' *** THEME ***
+    m.lastThemeId = invalid
+
+    ' Make sure theme is set on all controls before showing any views
+    ThemeTimerFired()
+
+    ' Setup a timer to update the theme
+    m.themeTimer = CreateObject("roSGNode", "Timer")
+    m.themeTimer.repeat = true
+    m.themeTimer.duration = 0.250
+    m.themeTimer.ObserveField("fire","ThemeTimerFired")
+    m.themeTimer.control = "start"
+  
+
+
+
+
+    ' Do this 3rd from last
     m.viewStack = []
     ShowView(m.landingView)
     
@@ -87,6 +114,32 @@ Sub HideView(node as Object)
 End Sub
 
 
+Sub ThemeTimerFired()
+
+    if m.lastThemeId = m.global.theme.id  then return
+    m.lastThemeId = m.global.theme.id
+    
+    for i = 0 to m.top.getChildCount() - 1
+        SetControlTheme(m.top.getChild(i))
+    end for
+
+End sub
+
+Sub SetControlTheme(item as object)
+
+    try
+        if item.isThemed = true then item.themeChanged = true
+    catch e
+    end try
+
+    try
+        for i = 0 to item.getChildCount() - 1
+            SetControlTheme(item.getChild(i))
+        end for
+    catch e
+    end try
+
+End Sub
 
 
 Sub SwitchToLoginAccountView(event as object)
@@ -137,3 +190,14 @@ sub CancelLoginProfileView(event as object)
     end if
 
 end sub
+
+
+Sub SwitchToMovieDetailsView(event as object)
+
+    node = event.getData()
+    if node = invalid then return
+
+    m.movieDetailsView.content = node
+    ShowView(m.movieDetailsView)
+
+End Sub

@@ -15,8 +15,7 @@ sub Init()
     m.headerLabel.visible = true
 
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    m.busySpinner.poster.uri = m.global.busySpinnerUri
-
+    
     m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
     m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountClicked")
 

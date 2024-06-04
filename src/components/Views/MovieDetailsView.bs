@@ -1,0 +1,140 @@
+Sub Init()
+
+    ' Find controls    
+    m.busySpinner = m.top.findNode("busySpinner")
+    m.backdropPoster = m.top.findNode("backdropPoster")
+    m.titleLabel = m.top.findNode("titleLabel")
+    m.yearLabel = m.top.findNode("yearLabel")
+    m.ratedLabel = m.top.findNode("ratedLabel")
+    m.lengthLabel = m.top.findNode("lengthLabel")
+    m.descriptionLabel = m.top.findNode("descriptionLabel")
+
+
+    ' Error dialog
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Error"
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+
+
+    ' Movie Details task
+    m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
+    m.movieDetailsTask.observeField("data", "OnMovieDataAvailable")
+
+
+    ' Timer - Create AFTER creating the movieDetailsTask
+    m.timer = CreateObject("roSGNode", "Timer")
+    m.timer.repeat = true
+    m.timer.duration = 0.250
+    m.timer.ObserveField("fire","TimerFired")
+    m.timer.control = "start"
+  
+
+    ' Observers
+    m.top.observeField("visible", "OnVisibleChanged")
+    m.top.observeField("content", "OnContentSet")
+
+end sub
+
+
+
+Sub OnVisibleChanged(event as object)
+    
+    if not event.getData() then return
+
+End Sub
+
+
+Sub OnErrorDialogClosed()
+
+    m.top.getScene().dialog = invalid
+
+End Sub
+
+
+Sub TimerFired()
+
+    m.busySpinner.visible = m.top.visible and m.movieDetailsTask.state = "run"
+
+End sub
+
+
+
+' Fires when the BaseScene sets the Content node
+Sub OnContentSet()
+
+    ' Reset
+    m.titleLabel.text = invalid
+    m.yearLabel.text = invalid
+    m.ratedLabel.text = invalid
+    m.descriptionLabel.text = invalid
+
+    ' Load
+    content = m.top.content
+    
+    m.movieDetailsTask.control = "stop"
+    m.movieDetailsTask.id = content.id
+    m.movieDetailsTask.control = "run"
+
+    m.backdropPoster.uri = content.backdropUrl
+    
+
+End Sub
+
+
+Sub OnMovieDataAvailable()
+
+    result = m.movieDetailsTask.data
+    if result.success then
+        
+        data = result.data
+        m.titleLabel.text = data.title
+
+        try
+            date = CreateObject("roDateTime")
+            date.FromISO8601String(data.date)
+            m.yearLabel.text = str(date.getYear())
+        catch e
+            m.yearLabel.text = "1900"
+        end try
+
+        ' From API
+        ' public enum MovieRatings
+        ' {
+        '     None = 0,
+        '     G = 1,
+        '     PG = 2,
+        '     PG_13 = 3,
+        '     R = 4,
+        '     NC_17 = 5,
+        '     Unrated = 6
+        ' }        
+        if data.rated = 1 then 
+            m.ratedLabel.text = "Rated G"
+        else if data.rated = 2 then 
+            m.ratedLabel.text = "Rated PG"
+        else if data.rated = 3 then 
+            m.ratedLabel.text = "Rated PG-13"
+        else if data.rated = 4 then 
+            m.ratedLabel.text = "Rated R"
+        else if data.rated = 5 then 
+            m.ratedLabel.text = "Rated NC-17"
+        else if data.rated = 6 then 
+            m.ratedLabel.text = "Unrated"
+        else  
+            m.ratedLabel.text = "Not Rated"
+        end if
+
+        m.descriptionLabel.text = data.description
+
+    else if result.statusCode = 401 then
+    
+        m.top.switchToLoginAccountView = true
+    else
+    
+        m.errorDialog.message = [result.error]
+        m.top.getScene().dialog = m.errorDialog
+    
+    end if
+
+End Sub

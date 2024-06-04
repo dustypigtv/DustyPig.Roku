@@ -5,6 +5,7 @@
 
 	<interface>
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
+        <field id="switchToMovieDetailsView" type="node" alwaysNotify="true" />
     </interface>
 	
     <children>
@@ -53,8 +54,9 @@
             Max Width = 1770 / 2 = 885
             Give 50 px padding on the right, end up with 835
         -->
-        <Label
+        <ThemedLabel
             id="titleLabel"
+            themeColor="primary"
             font="font:LargeBoldSystemFont"
             width="835"
             wrap="false"
@@ -69,8 +71,9 @@
 
             540 - 150 - 25 = 365
         -->
-        <Label
+        <ThemedLabel
             id="descriptionLabel"
+            themeColor="textOnBackground"
             width="835"
             height="365"
             wrap="true"
@@ -88,7 +91,7 @@
             translation = [0,540]
 
         -->
-		<RowList
+		<ThemedRowList
 			id="rowList"
 			translation="[0,540]"
             rowitemSize="[[200,300]]"
@@ -112,7 +115,7 @@
 			centerx = ((1920 - 200) / 2) - 150 = 710
 			centery = (1080 - 200) / 2 = 440
 		-->
-		<BusySpinner
+		<ThemedBusySpinner
 			id="busySpinner"
 			translation="[710,440]" />
 		
@@ -121,8 +124,9 @@
 			Translate this 100 px down the y axis.
 			Add another 50 for spacing
 		-->
-		<Label
-			id="busyLabel" 
+		<ThemedLabel
+			id="busyLabel"
+            themeColor="textOnBackground"
 			text="The Pig is gettin' Dusty"
 			width="1920"
 			height="1080"

@@ -8,7 +8,6 @@ sub Init()
 
     ' Init controls
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    m.busySpinner.poster.uri = m.global.busySpinnerUri
     m.busyLabel.color = m.global.defaultTheme.textOnBackground
     m.headerLabel.color = m.global.defaultTheme.textOnBackground
     m.profileGrid.focusBitmapBlendColor = m.global.defaultTheme.primary
@@ -55,9 +54,6 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
-
-    print "LoginProfileView becomming visible"
-    
 
     SetBusy(false)
 

@@ -11,6 +11,7 @@ sub Init()
     
     ' Observers
     m.rowList.observeField("rowItemFocused", "OnFocusedItemChanged")
+    m.rowList.observeField("rowItemSelected", "OnItemClicked")
 
     
     ' Error dialog
@@ -22,13 +23,13 @@ sub Init()
 
 
     
-     ' Home screen task
-     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
-     m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
+    ' Home screen task
+    m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
+    m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
 
      
 
-     ' Observe this.visible
+    ' Observe this.visible
     m.top.observeField("visible", "OnVisibleChanged")
     
 end sub
@@ -36,17 +37,6 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
-
-    ' Set theme
-    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    m.busySpinner.poster.uri = m.global.busySpinnerUri
-    m.busyLabel.color = m.global.theme.textOnBackground
-    m.rowList.rowLabelColor = m.global.theme.textOnBackground
-    m.rowList.focusBitmapBlendColor = m.global.theme.primary
-    m.titleLabel.color = m.global.theme.primary
-    m.descriptionLabel.color = m.global.theme.textOnBackground
-
-    ' Load the task
     m.homeScreenTask.control = "run"
 
 End Sub
@@ -81,6 +71,7 @@ End Sub
 '     Playlist = 4
 ' }
 
+' Fires when an item in the rowList gets focus
 Sub OnFocusedItemChanged()
 
     x = m.rowList.rowItemFocused
@@ -100,3 +91,14 @@ Sub OnFocusedItemChanged()
 
 End Sub
 
+
+' Fires when an item in the rowList is selected (ok button pressed)
+Sub OnItemClicked()
+
+    idx = m.rowList.rowItemSelected
+    rowContent = m.rowList.content.getChild(idx[0])
+    selItem = rowContent.getChild(idx[1])
+
+    if selItem.mediaType = 1 then m.top.switchToMovieDetailsView = selItem
+
+End sub

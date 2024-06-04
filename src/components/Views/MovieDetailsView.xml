@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MovieDetailsView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
+   
+   <interface>
+        <field id="content" type="node" alwaysNotify="true" />
+        <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
+        <field id="hideView" type="node" alwaysNotify="true" />
+    </interface>
+
+    <children>
+
+       <Poster
+            id="backdropPoster"
+            loadWidth="1920"
+            loadHeight="1080"
+            loadDisplayMode="scaleToZoom"
+            failedBitmapUri="pkg:/images/failed_poster.jpg" />
+
+        
+        <Rectangle
+            width="1920"
+            height="1080"
+            color="#000000DD" />
+
+        <!--
+            Safe zone: 
+                x,y = 192,106
+                w,h = 1534,866
+        -->
+
+       <ThemedLabel
+            id="titleLabel"
+            themeColor="primary"
+            font="font:LargeBoldSystemFont"
+            width="1534"
+            wrap="false"
+            maxLines="1"
+            ellipsizeOnBoundary="true"
+			translation="[192,106]" />
+
+        <!-- 
+            titleLabel is at y=106, and 75px high
+            So this y = 181
+        -->
+        <LayoutGroup
+            layoutDirection="horiz"
+            itemSpacings="[50]"
+            translation="[192,181]">
+
+            <ThemedLabel
+                id="yearLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+
+            <ThemedLabel
+                id="ratedLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+
+            <ThemedLabel
+                id="lengthLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+        
+        </LayoutGroup>
+
+
+
+        <ThemedLabel
+            id="descriptionLabel"
+            themeColor="textOnBackground"
+            width="1534"
+            wrap="true"
+            ellipsizeOnBoundary="true"
+			translation="[192,256]" />
+
+
+
+	
+		<!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<ThemedBusySpinner
+			id="busySpinner"
+			visible="false"
+			translation="[860,440]" />
+		
+		
+		
+
+	</children>
+
+</component>

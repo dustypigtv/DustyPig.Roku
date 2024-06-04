@@ -14,8 +14,7 @@ sub Init()
     m.headerLabel.visible = true
 
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    m.busySpinner.poster.uri = m.global.busySpinnerUri
-
+    
     m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
     m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountClicked")
 
@@ -62,9 +61,6 @@ Sub OnVisibleChanged(event as object)
     
     m.busySpinner.visible = false
     if not event.getData() then return
-
-    print "LoginAccountView becomming visible"
-    
 
     m.lastSelected = m.emailTextBox
     ShowControls(true)

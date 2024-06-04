@@ -11,6 +11,7 @@ sub Init()
     
     ' Observers
     m.rowList.observeField("rowItemFocused", "OnFocusedItemChanged")
+
     
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
@@ -24,6 +25,8 @@ sub Init()
      ' Home screen task
      m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
      m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
+
+     
 
      ' Observe this.visible
     m.top.observeField("visible", "OnVisibleChanged")
@@ -96,3 +99,4 @@ Sub OnFocusedItemChanged()
     end if
 
 End Sub
+

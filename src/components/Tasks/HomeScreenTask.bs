@@ -9,7 +9,7 @@ Sub RunTask()
 
     m.top.unauthorized = false
         
-    result = GetData("/Media/HomeScreen", m.global.profileToken)
+    result = GetData("/Media/HomeScreen?itemsPerSection=100", m.global.profileToken)
         
     if result.success then
     
@@ -20,7 +20,8 @@ Sub RunTask()
             row = root.createChild("ContentNode")
             row.id = section.listId
             row.title = section.title
-
+            row.addFields({fullyLoaded: section.items.count() < 25})
+            
             for each bm in section.items
 
                 item = row.createChild("ContentNode")

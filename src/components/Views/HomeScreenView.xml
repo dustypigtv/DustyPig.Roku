@@ -22,10 +22,9 @@
         -->
         <Poster
             id="backdropPoster"
-            width="885"
-            height="497"
-            loadDisplayMode="scaleToZoom"
-            loadingBitmapUri="pkg:/images/loading_poster.jpg"
+            loadWidth="885"
+            loadHeight="497"
+            loadDisplayMode="scaleToFit"
             failedBitmapUri="pkg:/images/failed_poster.jpg"
             translation="[885,0]" />
 

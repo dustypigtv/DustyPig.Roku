@@ -21,34 +21,44 @@
 
         <!--
             Backdrops are 1920x1080
-            Shrinking width to 1770, size = 1770x995
-            Half size = 885x497
+            Half Size = 960x540
+            Scale up vertical by 100px for overalapping effects
+            Scaled = 1137x640
         -->
         <Poster
             id="backdropPoster"
-            loadWidth="885"
-            loadHeight="497"
+            loadWidth="1137"
+            loadHeight="640"
             loadDisplayMode="scaleToFit"
             failedBitmapUri="pkg:/images/failed_poster.jpg"
-            translation="[885,0]" />
+            translation="[633,0]" />
 
 
-        <!-- Vertical gradient -->
+        <!--
+            Generate gradients from https://pinetools.com/image-gradient-generator
+            Black to Black
+            0 to 100% Transparancy
+         -->
+        <!-- 
+            Left side gradient
+            Orientation = 0 degrees
+         -->
         <Poster
-            width="100"
-            height="497"
-            loadDisplayMode="scaleToZoom"
-            translation="[885,0]"
-            uri="pkg:/images/vertical_gradient.png" />
+            loadWidth="1137"
+            loadHeight="640"
+            translation="[633,0]"
+            uri="pkg:/images/left_gradient.png" />
         
 
-        <!-- Horizontal gradient -->
+        <!-- 
+            Bottom gradient
+            Orientation = 90 degrees
+        -->
 		<Poster
-            width="885"
-            height="100"
-            loadDisplayMode="scaleToZoom"
-            translation="[885,397]"
-            uri="pkg:/images/horizontal_gradient.png" />
+            loadWidth="1137"
+            loadHeight="640"
+            translation="[633,0]"
+            uri="pkg:/images/bottom_gradient.png" />
 
             
         <!--

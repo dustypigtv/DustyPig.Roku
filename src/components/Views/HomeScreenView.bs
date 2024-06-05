@@ -1,5 +1,7 @@
 sub Init()
 
+    m.firstLoad = true
+
     ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.busyLabel = m.top.findNode("busyLabel")
@@ -29,15 +31,27 @@ sub Init()
 
      
 
-    ' Observe this.visible
+    ' Observe this
     m.top.observeField("visible", "OnVisibleChanged")
+    m.top.observeField("isFocused", "SetFocus")
     
 end sub
 
+
+Sub SetFocus()
+
+    m.rowList.setFocus(true)
+
+End Sub
+
 Sub OnVisibleChanged(event as object)
     
-    if not event.getData() then return
-    m.homeScreenTask.control = "run"
+    if event.getData() 
+        if m.firstLoad then
+            m.firstLoad = false
+            m.homeScreenTask.control = "run"
+        end if
+    end if
 
 End Sub
 
@@ -51,7 +65,6 @@ Sub OnHomeScreenDataAvailable()
     if m.homeScreenTask.success then
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()
         m.rowList.content = m.homeScreenTask.data
-        m.rowList.setFocus(true)
     else if m.homeScreenTask.unauthorized then
         m.switchToLoginAccountView = true
     else

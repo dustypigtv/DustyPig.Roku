@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="MovieDetailsView" extends="Group">
     
+    <script type = "text/brightscript" uri = "pkg:/source/Converters.bs" />
     <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
    
-   <interface>
+    <interface>
         <field id="content" type="node" alwaysNotify="true" />
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
-        <field id="hideView" type="node" alwaysNotify="true" />
+        <field id="hideView" type="bool" alwaysNotify="true" />
     </interface>
 
     <children>
@@ -30,53 +31,81 @@
                 w,h = 1534,866
         -->
 
-       <ThemedLabel
-            id="titleLabel"
-            themeColor="primary"
-            font="font:LargeBoldSystemFont"
-            width="1534"
-            wrap="false"
-            maxLines="1"
-            ellipsizeOnBoundary="true"
-			translation="[192,106]" />
-
-        <!-- 
-            titleLabel is at y=106, and 75px high
-            So this y = 181
-        -->
         <LayoutGroup
-            layoutDirection="horiz"
             itemSpacings="[50]"
-            translation="[192,181]">
+            translation="[192,106]">
 
             <ThemedLabel
-                id="yearLabel"
-                themeColor="textOnBackground"
-                font="font:SmallestSystemFont" />
+                id="titleLabel"
+                themeColor="primary"
+                font="font:LargeBoldSystemFont"
+                width="1534"
+                wrap="false"
+                maxLines="1"
+                ellipsizeOnBoundary="true" />
+
+            <!-- 
+                titleLabel is at y=106, and 75px high
+                So this y = 181
+            -->
+            <LayoutGroup
+                layoutDirection="horiz"
+                itemSpacings="[50]">
+
+                <ThemedLabel
+                    id="yearLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont" />
+
+                <ThemedLabel
+                    id="ratedLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont" />
+
+                <ThemedLabel
+                    id="lengthLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont" />
+
+                <ThemedLabel
+                    id="remainingLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont" />
+            
+            </LayoutGroup>
+
+
+            <LayoutGroup
+                layoutDirection="horiz"
+                itemSpacings="[50]">
+
+                <ThemedButton
+                    id="playButton"
+                    width="250"
+                    height="75"
+                    text="Play">
+                </ThemedButton>
+
+                <ThemedButton
+                    id="resumeButton"
+                    width="250"
+                    height="75"
+                    text="Resume">
+                </ThemedButton>
+
+            </LayoutGroup>
+
 
             <ThemedLabel
-                id="ratedLabel"
+                id="descriptionLabel"
                 themeColor="textOnBackground"
-                font="font:SmallestSystemFont" />
+                width="1534"
+                wrap="true"
+                ellipsizeOnBoundary="true" />
 
-            <ThemedLabel
-                id="lengthLabel"
-                themeColor="textOnBackground"
-                font="font:SmallestSystemFont" />
-        
         </LayoutGroup>
 
-
-
-        <ThemedLabel
-            id="descriptionLabel"
-            themeColor="textOnBackground"
-            width="1534"
-            wrap="true"
-            ellipsizeOnBoundary="true"
-			translation="[192,256]" />
-
-
+       
 
 	
 		<!-- 

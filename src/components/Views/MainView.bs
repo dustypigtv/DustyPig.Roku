@@ -4,6 +4,10 @@ sub Init()
     m.sideBarView = m.top.findNode("sideBarView")
     m.homeScreenView = m.top.findNode("homeScreenView")
 
+    ' Vars
+    m.lastSelectedView = m.homeScreenView
+
+    
      ' Observe this.visible
      m.top.observeField("visible", "OnVisibleChanged")
 
@@ -12,7 +16,11 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
-    m.homeScreenView.visible = true
+
+    ' Set the last selected view to visible + focused
+    m.lastSelectedView.visible = true
+    m.lastSelectedView.setFocus(true)
+    m.lastSelectedView.isFocused = true
     
 End Sub
 

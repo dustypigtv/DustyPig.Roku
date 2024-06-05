@@ -39,6 +39,7 @@ Sub Init()
 
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
+    m.movieDetailsView.observeField("hideView", "HideTopView")
 
     
     ' Video View

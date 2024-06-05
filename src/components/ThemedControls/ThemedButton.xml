@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedButton" extends="Button">
+    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+                
+                m.textLabel = m.top.findNode("textLabel")
+
+                m.top.observeField("text", "OnTextChanged")
+
+                m.top.observeField("width", "OnSizeChanged")
+                m.top.observeField("height", "OnSizeChanged")
+
+                m.top.focusFootprintBitmapUri = "pkg:/images/focus_footprint.bmp"
+                m.top.showFocusFootprint = true
+                m.top.iconUri=""
+                m.top.focusedIconUri=""
+
+                m.top.observeField("themeChanged", "ThemeChanged")
+
+                UpdateLabelColor()
+
+                m.lastHasFocus = m.top.hasFocus()
+                m.timer = CreateObject("roSGNode", "Timer")
+                m.timer.repeat = true
+                m.timer.duration = 0.01
+                m.timer.ObserveField("fire","TimerFired")
+                m.timer.control = "start"
+
+            End Sub
+
+            Sub TimerFired()
+
+                if m.top.hasFocus() = m.lastHasFocus then return
+                m.lastHasFocus = m.top.hasFocus()
+                UpdateLabelColor()
+
+            End Sub
+
+            Sub UpdateLabelColor()
+
+                if m.top.hasFocus() then
+                    m.textLabel.color = m.global.theme["textOnPrimary"]
+                else
+                    m.textLabel.color = m.top.textColor
+                end if
+
+            End Sub
+
+            Sub OnTextChanged()
+
+                if m.top.text = invalid then return
+                m.textLabel.text = m.top.text
+                m.top.text = invalid
+
+            End Sub
+
+            Sub OnSizeChanged()
+
+                m.top.minWidth = m.top.width
+                m.top.maxWidth = m.top.width
+                m.textLabel.width = m.top.width
+                m.textLabel.height = m.top.height
+
+            End Sub
+
+            Sub ThemeChanged()
+
+                m.top.focusBitmapUri = m.global.theme["primaryBitmap"]
+                UpdateLabelColor()
+            
+            End Sub
+
+        ]]>
+    </script>
+
+    <interface>
+        <field id="isThemed" type="bool" value="true" />
+        <field id="themeChanged" type="bool" alwaysNotify="true" />
+        <field id="width" type="float" value="250" alwaysNotify="true" />
+    </interface>
+
+    <children>
+        <Label 
+            id="textLabel"
+            vertAlign="center" 
+            horizAlign="center" />
+    </children>
+
+</component>

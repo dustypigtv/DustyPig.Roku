@@ -45,10 +45,7 @@
                 maxLines="1"
                 ellipsizeOnBoundary="true" />
 
-            <!-- 
-                titleLabel is at y=106, and 75px high
-                So this y = 181
-            -->
+            <!-- Details (Year, Rated, Duration and Remaining)-->
             <LayoutGroup
                 layoutDirection="horiz"
                 itemSpacings="[50]">
@@ -110,7 +107,7 @@
             </LayoutGroup>
 
 
-
+            <!-- Watchlist/Playlist buttons -->
             <LayoutGroup
                 layoutDirection="horiz"
                 itemSpacings="[50]">
@@ -132,7 +129,7 @@
             </LayoutGroup>
 
 
-
+            <!-- Description Label -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"

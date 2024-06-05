@@ -10,7 +10,7 @@
 
                 scene = m.top.getScene()
                 themeChangeNotifier = scene.findNode("themeChangeNotifier")
-                themeChangeNotifier.observeField("title", "ThemeChanged")
+                themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
 
             End Sub
 

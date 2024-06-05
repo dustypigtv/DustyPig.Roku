@@ -7,6 +7,11 @@
 		 
     <children>
 	
+		<!--
+			I can't seem to observe an interface field here in a scene.
+			So instead just create a content node, and set the .title to 
+			the current theme_id.  Themed controls can observe the .title
+		-->
 		<ContentNode
 			id="themeChangeNotifier" />
 

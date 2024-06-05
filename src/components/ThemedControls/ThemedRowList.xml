@@ -5,12 +5,18 @@
         <![CDATA[
 
             Sub Init()
-                m.top.observeField("themeChanged", "ThemeChanged")
+
+                scene = m.top.getScene()
+                themeChangeNotifier = scene.findNode("themeChangeNotifier")
+                themeChangeNotifier.observeField("title", "ThemeChanged")
+
             End Sub
 
             Sub ThemeChanged()
+
                 m.top.rowLabelColor = m.global.theme.textOnBackground
                 m.top.focusBitmapBlendColor = m.global.theme.primary
+
             End Sub
 
         ]]>

@@ -2,10 +2,14 @@
 <component name="BaseScene" extends="Scene">
     
     <script type = "text/brightscript" uri = "pkg:/components/BaseScene.bs" />
-	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
-	 
+	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />
+
+		 
     <children>
 	
+		<ContentNode
+			id="themeChangeNotifier" />
+
 		<!-- Background Color -->
 		<Rectangle
         	id = "shader"

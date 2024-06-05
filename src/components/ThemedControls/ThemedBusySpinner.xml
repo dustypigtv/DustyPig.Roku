@@ -5,20 +5,22 @@
         <![CDATA[
 
             Sub Init()
+
                 m.top.poster.uri = "pkg:/images/spinner.png"
-                m.top.observeField("themeChanged", "ThemeChanged")
+
+                scene = m.top.getScene()
+                themeChangeNotifier = scene.findNode("themeChangeNotifier")
+                themeChangeNotifier.observeField("title", "ThemeChanged")
+
             End Sub
 
             Sub ThemeChanged()
+
                 m.top.poster.blendColor = m.global.theme.primary
+            
             End Sub
 
         ]]>
     </script>
-
-    <interface>
-        <field id="isThemed" type="bool" value="true" />
-        <field id="themeChanged" type="bool" alwaysNotify="true" />
-    </interface>
 
 </component>

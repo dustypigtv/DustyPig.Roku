@@ -50,7 +50,7 @@ Sub Init()
 
 
     ' *** THEME ***
-    m.lastThemeId = invalid
+    m.themeChangeNotifier = m.top.findNode("themeChangeNotifier")
 
     ' Make sure theme is set on all controls before showing any views
     ThemeTimerFired()
@@ -117,30 +117,12 @@ End Sub
 
 Sub ThemeTimerFired()
 
-    if m.lastThemeId = m.global.theme.id  then return
-    m.lastThemeId = m.global.theme.id
-    
-    for i = 0 to m.top.getChildCount() - 1
-        SetControlTheme(m.top.getChild(i))
-    end for
+    if m.themeChangeNotifier.title = m.global.theme.id  then return
+    m.themeChangeNotifier.title = m.global.theme.id
 
 End sub
 
-Sub SetControlTheme(item as object)
 
-    try
-        if item.isThemed = true then item.themeChanged = true
-    catch e
-    end try
-
-    try
-        for i = 0 to item.getChildCount() - 1
-            SetControlTheme(item.getChild(i))
-        end for
-    catch e
-    end try
-
-End Sub
 
 
 Sub SwitchToLoginAccountView(event as object)

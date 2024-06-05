@@ -9,7 +9,9 @@ Sub Init()
     m.lengthLabel = m.top.findNode("lengthLabel")
     m.remainingLabel = m.top.findNode("remainingLabel")
     m.playButton = m.top.findNode("playButton")
+    m.requestButton = m.top.findNode("requestButton")
     m.resumeButton = m.top.findNode("resumeButton")
+    m.markWatchedButton = m.top.findNode("markWatchedButton")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
 
 
@@ -73,7 +75,9 @@ Sub OnContentSet()
     m.lengthLabel.text = invalid
     m.remainingLabel.text = invalid
     m.playButton.visible = false
+    m.requestButton.visible = false
     m.resumeButton.visible = false
+    m.markWatchedButton.visible = false
     m.descriptionLabel.text = invalid
 
     ' Load
@@ -132,24 +136,36 @@ Sub OnMovieDataAvailable()
             m.ratedLabel.text = "Not Rated"
         end if
 
+        if data.length <> invalid and data.length > 0 then m.lengthLabel.text = GetDurationString(data.length)
 
         if data.canPlay then
+           
+            m.playButton.text = "Play"
 
-            m.playButton.visible = true
-            
-            if data.length <> invalid and data.length > 0 then 
-                m.lengthLabel.text = GetDurationString(data.length)
-                if data.played <> invalid and data.played > 60 then
-                    m.remainingLabel.text = GetDurationString(data.length - data.played) + " remaining"
-                    m.resumeButton.visible = true
-                    m.resumeButton.setFocus(true)
-                end if
+            if data.length <> invalid and data.length > 0 and data.played <> invalid and data.played > 60 then 
+                m.remainingLabel.text = GetDurationString(data.length - data.played) + " remaining"
+                m.resumeButton.visible = true
+                m.resumeButton.setFocus(true)
+                m.markWatchedButton.visible = true
             end if
 
-            if not m.resumeButton.visible then m.playButton.setFocus(true)
-            
+            m.playButton.visible = true
+
+        else
+
+            m.requestButton.visible = true
+
         end if
         
+        if not m.resumeButton.visible then 
+            if m.playButton.visible then 
+                m.playButton.setFocus(true)
+            else if m.requestButton.visible then 
+                m.requestButton.setFocus(true)
+            end if
+        end if
+
+
         m.descriptionLabel.text = data.description
 
 
@@ -175,25 +191,48 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     if not press then return false
 
     if key = "back" then 
+
         m.top.hideView = true
         return true
+
     end if
+
 
 
     if key = "right" then
 
         if m.playButton.hasFocus() and m.resumeButton.visible then 
+            
             m.resumeButton.setFocus(true)
             return true
+        
+        end if
+
+        if m.resumeButton.hasFocus() then
+
+            m.markWatchedButton.setFocus(true)
+            return true
+
         end if
 
     end if
 
+
+
+
     if key = "left" then
 
+        if m.markWatchedButton.hasFocus() then
+
+            m.resumeButton.setFocus(true)
+            return true
+        end if
+
         if m.resumeButton.hasFocus() then 
+
             m.playButton.setFocus(true)
             return true
+        
         end if
 
     end if

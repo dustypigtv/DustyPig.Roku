@@ -75,23 +75,36 @@
             </LayoutGroup>
 
 
+            <!-- Playback/Request Buttons -->
             <LayoutGroup
                 layoutDirection="horiz"
                 itemSpacings="[50]">
 
-                <ThemedButton
-                    id="playButton"
-                    width="250"
-                    height="75"
-                    text="Play">
-                </ThemedButton>
+                <Group>
+                    <ThemedButton
+                        id="playButton"
+                        width="300"
+                        height="75"
+                        text="Play" />
+                    
+                    <ThemedButton
+                        id="requestButton"
+                        width="300"
+                        height="75"
+                        text="Request" />
+                </Group>
 
                 <ThemedButton
                     id="resumeButton"
-                    width="250"
+                    width="300"
                     height="75"
-                    text="Resume">
-                </ThemedButton>
+                    text="Resume" />
+
+                <ThemedButton
+                    id="markWatchedButton"
+                    width="300"
+                    height="75"
+                    text="Mark Watched" />
 
             </LayoutGroup>
 

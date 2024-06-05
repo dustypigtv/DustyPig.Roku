@@ -5,11 +5,17 @@
         <![CDATA[
 
             Sub Init()
-                m.top.observeField("themeChanged", "ThemeChanged")
+
+                scene = m.top.getScene()
+                themeChangeNotifier = scene.findNode("themeChangeNotifier")
+                themeChangeNotifier.observeField("title", "ThemeChanged")
+
             End Sub
 
             Sub ThemeChanged()
+
                 m.top.color = m.global.theme[m.top.themeColor]
+
             End Sub
 
         ]]>

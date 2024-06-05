@@ -18,7 +18,9 @@
                 m.top.iconUri=""
                 m.top.focusedIconUri=""
 
-                m.top.observeField("themeChanged", "ThemeChanged")
+                scene = m.top.getScene()
+                themeChangeNotifier = scene.findNode("themeChangeNotifier")
+                themeChangeNotifier.observeField("title", "ThemeChanged")
 
                 UpdateLabelColor()
 

@@ -38,11 +38,11 @@
             Generate gradients from https://pinetools.com/image-gradient-generator
             Black to Black
             0 to 100% Transparancy
+            For left side, Orientation = 0 degrees
+            For bottom side, Orientation = 90 degrees
          -->
-        <!-- 
-            Left side gradient
-            Orientation = 0 degrees
-         -->
+
+        <!-- Left side gradient -->
         <Poster
             loadWidth="1137"
             loadHeight="640"
@@ -50,10 +50,7 @@
             uri="pkg:/images/left_gradient.png" />
         
 
-        <!-- 
-            Bottom gradient
-            Orientation = 90 degrees
-        -->
+        <!-- Bottom gradient -->
 		<Poster
             loadWidth="1137"
             loadHeight="640"
@@ -61,39 +58,47 @@
             uri="pkg:/images/bottom_gradient.png" />
 
             
-        <!--
-            Give 75px padding on top
+         <!-- Give 75px padding on top -->
+        <LayoutGroup
+            itemSpacings="[25]"
+            translation="[0,75]">
 
-            Max Width = 1770 / 2 = 885
-            Give 50 px padding on the right, end up with 835
-        -->
-        <ThemedLabel
-            id="titleLabel"
-            themeColor="primary"
-            font="font:LargeBoldSystemFont"
-            width="835"
-            wrap="false"
-            maxLines="1"
-            ellipsizeOnBoundary="true"
-			translation="[0,75]" />
+            <!-- Max Width = 1770 / 2 = 885 -->
+            <ThemedLabel
+                id="titleLabel"
+                themeColor="primary"
+                font="font:LargeBoldSystemFont"
+                width="885"
+                wrap="false"
+                maxLines="1"
+                ellipsizeOnBoundary="true" />
 
-        <!-- 
-            titleLabel is at y=75, and 75px high
-            So this y = 150
-            give 25px bottom padding
+            <!-- 
+                titleLabel uses LargeBoldSystemFont, which is 34pts
+                font px = pts * 1.3333(3)
+                titleLabel.height will be 34 * 1.3333(3) = 45.3333(3) = 46
+                Spacing = 25
+                Layout.y = 75
+                This label needs 25 padding on bottom
+                RowList.y = 540
 
-            540 - 150 - 25 = 365
-        -->
-        <ThemedLabel
-            id="descriptionLabel"
-            themeColor="textOnBackground"
-            width="835"
-            height="365"
-            wrap="true"
-            ellipsizeOnBoundary="true"
-			translation="[0,150]" />
+                MaxHeight = RowList.y - BottomPadding - Layout.y - titleLabel.height - Spacing
+                MaxHeight = 540       - 25            - 75       - 46                - 25      
+                MaxHeight = 369
+             -->
+            <ThemedLabel
+                id="descriptionLabel"
+                themeColor="textOnBackground"
+                width="885"
+                height="369"
+                wrap="true"
+                ellipsizeOnBoundary="true" />
+
+        </LayoutGroup>
 
 
+
+        
 
 		<!--
             Poster items are 300px high

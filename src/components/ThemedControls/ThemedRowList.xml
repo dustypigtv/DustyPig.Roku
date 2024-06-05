@@ -22,9 +22,4 @@
         ]]>
     </script>
 
-    <interface>
-        <field id="isThemed" type="bool" value="true" />
-        <field id="themeChanged" type="bool" alwaysNotify="true" />
-    </interface>
-
 </component>

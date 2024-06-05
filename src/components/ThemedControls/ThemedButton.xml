@@ -79,8 +79,6 @@
     </script>
 
     <interface>
-        <field id="isThemed" type="bool" value="true" />
-        <field id="themeChanged" type="bool" alwaysNotify="true" />
         <field id="width" type="float" value="250" alwaysNotify="true" />
     </interface>
 

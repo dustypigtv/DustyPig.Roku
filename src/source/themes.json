@@ -7,7 +7,6 @@
             "primary": "0xED6DC7FF",
             "textOnPrimary":"0XFFFFFFFF",
             "textOnBackground":"0xDBD160FF",
-            "background":"0x000000FF",
             "secondary":"0x2D222DFF",
             "primaryBitmap":"pkg:/images/primary_color_theme_0.bmp"
         },
@@ -17,7 +16,6 @@
             "primary":"0xCC5500FF",
             "textOnPrimary":"0XFFFFFFFF",
             "textOnBackground":"0XFFFFFFFF",
-            "background":"0x0A0400FF",
             "secondary":"0x1A0B00FF",
             "primaryBitmap":"pkg:/images/primary_color_theme_1.bmp"
         },
@@ -27,7 +25,6 @@
             "primary":"0x355ACAFF",
             "textOnPrimary":"0XFFFFFFFF",
             "textOnBackground":"0XFFFFFFFF",
-            "background":"0x03050AFF",
             "secondary":"0x070C1AFF",
             "primaryBitmap":"pkg:/images/primary_color_theme_2.bmp"
         },
@@ -37,7 +34,6 @@
             "primary":"0XFFFFFFFF",
             "textOnPrimary":"0x000000FF",
             "textOnBackground":"0XFFFFFFFF",
-            "background":"0x000000FF",
             "secondary":"0x2C2C2CFF",
             "primaryBitmap":"pkg:/images/primary_color_theme_3.bmp"
         },
@@ -47,7 +43,6 @@
             "primary":"0x355E3BFF",
             "textOnPrimary":"0XFFFFFFFF",
             "textOnBackground":"0XFFFFFFFF",
-            "background":"0x030503FF",
             "secondary":"0x070C08FF",
             "primaryBitmap":"pkg:/images/primary_color_theme_4.bmp"
         },
@@ -57,7 +52,6 @@
             "primary":"0xE50914FF",
             "textOnPrimary":"0XFFFFFFFF",
             "textOnBackground":"0XFFFFFFFF",
-            "background":"0x0B0001FF",
             "secondary":"0x1D0103FF",
             "primaryBitmap":"pkg:/images/primary_color_theme_5.bmp"
         }

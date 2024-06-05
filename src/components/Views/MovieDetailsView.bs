@@ -12,6 +12,7 @@ Sub Init()
     m.requestButton = m.top.findNode("requestButton")
     m.resumeButton = m.top.findNode("resumeButton")
     m.markWatchedButton = m.top.findNode("markWatchedButton")
+    m.watchlistButton = m.top.findNode("watchlistButton")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
 
 
@@ -46,6 +47,9 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
+    x = m.playButton.getChild(1)
+
+    p = 0
     
 End Sub
 
@@ -78,6 +82,7 @@ Sub OnContentSet()
     m.requestButton.visible = false
     m.resumeButton.visible = false
     m.markWatchedButton.visible = false
+    m.watchlistButton.visible = false
     m.descriptionLabel.text = invalid
 
     ' Load
@@ -168,6 +173,8 @@ Sub OnMovieDataAvailable()
 
         m.descriptionLabel.text = data.description
 
+        ' ******** DEBUG **********
+        m.watchlistButton.visible = true
 
     else if result.statusCode = 401 then
     
@@ -236,6 +243,29 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         end if
 
     end if
+
+
+    if key = "up" then
+
+        if m.watchlistButton.hasFocus() then
+            m.playButton.setFocus(true)
+            return true
+        end if
+
+    end if
+
+
+
+    if key = "down" then
+
+        if m.playButton.hasFocus() or m.resumeButton.hasFocus() or m.markWatchedButton.hasFocus() then
+            m.watchlistButton.setFocus(true)
+            return true
+        end if
+
+    end if
+
+
     
     return false
 

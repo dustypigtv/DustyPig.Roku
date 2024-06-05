@@ -20,6 +20,7 @@
             failedBitmapUri="pkg:/images/failed_poster.jpg" />
 
         
+        <!-- Dimmer -->
         <Rectangle
             width="1920"
             height="1080"
@@ -83,30 +84,38 @@
                 <Group>
                     <ThemedButton
                         id="playButton"
-                        width="300"
+                        width="250"
                         height="75"
                         text="Play" />
                     
                     <ThemedButton
                         id="requestButton"
-                        width="300"
+                        width="250"
                         height="75"
                         text="Request" />
                 </Group>
 
                 <ThemedButton
                     id="resumeButton"
-                    width="300"
+                    width="250"
                     height="75"
                     text="Resume" />
 
                 <ThemedButton
                     id="markWatchedButton"
-                    width="300"
+                    width="250"
                     height="75"
-                    text="Mark Watched" />
+                    text="Watched" />
 
             </LayoutGroup>
+
+
+            <ThemedIconButton
+                id="watchlistButton"
+                width="50"
+                height="50"
+                focusBitmapUri="pkg:/images/add.png"
+                focusFootprintBitmapUri="pkg:/images/add.png" />
 
 
             <ThemedLabel

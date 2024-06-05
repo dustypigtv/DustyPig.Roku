@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="ThemedButton" extends="Button">
+<component name="ThemedIconButton" extends="Button">
     
     <script type="text/brightscript" >
         <![CDATA[
@@ -9,24 +9,10 @@
                 m.top.showFocusFootprint = true
                 m.top.iconUri=""
                 m.top.focusedIconUri=""
-                
-                
+
                 m.top.observeFieldScoped("width", "OnSizeChanged")
                 m.top.observeFieldScoped("height", "OnSizeChanged")
 
-                m.focusedPoster = m.top.getChild(0)
-                m.unfocusedPoster = m.top.getChild(1)
-
-                ' Set the unfocused poster to the same as the focused poster,
-                ' then change the blend color
-                m.unfocusedPoster.bitmap = m.focusedPoster.bitmap 
-                m.unfocusedPoster.blendColor = "0x3C3C3CFF"
-
-                ' Keep the label centered
-                m.label = m.top.getChild(2)
-                m.label.observeFieldScoped("horizAlign", "SetLabelAlignment")
-
-                ' Watch for theme updates
                 scene = m.top.getScene()
                 themeChangeNotifier = scene.findNode("themeChangeNotifier")
                 themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
@@ -42,17 +28,9 @@
             End Sub
 
 
-            Sub SetLabelAlignment()
-
-                if m.label.horizAlign <> "center" then m.label.horizAlign = "center"
-
-            End Sub
-
-
             Sub ThemeChanged()
 
-                m.top.focusedTextColor = m.global.theme.textOnPrimary
-                m.focusedPoster.blendColor = m.global.theme.primary
+                m.top.getChild(0).blendColor = m.global.theme.primary
 
             End Sub
         ]]>

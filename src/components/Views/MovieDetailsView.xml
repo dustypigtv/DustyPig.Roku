@@ -110,12 +110,27 @@
             </LayoutGroup>
 
 
-            <ThemedIconButton
-                id="watchlistButton"
-                width="50"
-                height="50"
-                focusBitmapUri="pkg:/images/add.png"
-                focusFootprintBitmapUri="pkg:/images/add.png" />
+
+            <LayoutGroup
+                layoutDirection="horiz"
+                itemSpacings="[50]">
+            
+                <ThemedIconButton
+                    id="watchlistButton"
+                    width="50"
+                    height="50"
+                    focusBitmapUri="pkg:/images/add.png"
+                    focusFootprintBitmapUri="pkg:/images/add.png" />
+
+                <ThemedIconButton
+                    id="playlistButton"
+                    width="50"
+                    height="50"
+                    focusBitmapUri="pkg:/images/add.png"
+                    focusFootprintBitmapUri="pkg:/images/playlist.png" />
+
+            </LayoutGroup>
+
 
 
             <ThemedLabel

@@ -13,6 +13,7 @@ Sub Init()
     m.resumeButton = m.top.findNode("resumeButton")
     m.markWatchedButton = m.top.findNode("markWatchedButton")
     m.watchlistButton = m.top.findNode("watchlistButton")
+    m.playlistButton = m.top.findNode("playlistButton")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
 
 
@@ -47,9 +48,6 @@ end sub
 Sub OnVisibleChanged(event as object)
     
     if not event.getData() then return
-    x = m.playButton.getChild(1)
-
-    p = 0
     
 End Sub
 
@@ -83,6 +81,7 @@ Sub OnContentSet()
     m.resumeButton.visible = false
     m.markWatchedButton.visible = false
     m.watchlistButton.visible = false
+    m.playButton.visible = false
     m.descriptionLabel.text = invalid
 
     ' Load
@@ -155,7 +154,9 @@ Sub OnMovieDataAvailable()
             end if
 
             m.playButton.visible = true
-
+            m.watchlistButton.visible = true
+            m.playlistButton.visible = true
+        
         else
 
             m.requestButton.visible = true
@@ -173,9 +174,7 @@ Sub OnMovieDataAvailable()
 
         m.descriptionLabel.text = data.description
 
-        ' ******** DEBUG **********
-        m.watchlistButton.visible = true
-
+        
     else if result.statusCode = 401 then
     
         m.top.switchToLoginAccountView = true

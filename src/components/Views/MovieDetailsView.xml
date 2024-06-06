@@ -33,7 +33,7 @@
         -->
 
         <LayoutGroup
-            itemSpacings="[50]"
+            itemSpacings="[25]"
             translation="[192,106]">
 
             <ThemedLabel
@@ -75,8 +75,9 @@
 
             <!-- Playback/Request Buttons -->
             <LayoutGroup
+                id="playbackButtonLayoutGroup"
                 layoutDirection="horiz"
-                itemSpacings="[50]">
+                itemSpacings="[25]">
 
                 <Group>
                     <ThemedButton
@@ -109,6 +110,7 @@
 
             <!-- Watchlist/Playlist buttons -->
             <LayoutGroup
+                id="otherActionLayoutGroup"
                 layoutDirection="horiz"
                 itemSpacings="[50]">
             
@@ -123,19 +125,64 @@
                     id="playlistButton"
                     width="50"
                     height="50"
-                    focusBitmapUri="pkg:/images/add.png"
+                    focusBitmapUri="pkg:/images/playlist.png"
                     focusFootprintBitmapUri="pkg:/images/playlist.png" />
 
             </LayoutGroup>
 
 
-            <!-- Description Label -->
+            <!-- 
+                Description Label 
+                I set the height on this by just looking and adusting the scenegraph inspector
+            -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
+                height="250"
+                vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />
+
+            
+            <Group>
+
+                <!-- 
+                    Cast & Crew 
+                    Set rowItemSize to 133x200
+                    100px spacing between rows for labels padding
+
+                    itemSize = 1534x300
+
+                    label on right is 200
+                    itemSize = 1534 - 200 = 1334
+                -->
+                <ThemedRowList
+                    id="castCrewRowList"
+                    rowitemSize="[[133,200]]"
+                    rowItemSpacing= "[[20,0]]"
+                    itemSize= "[1534,300]"
+                    numRows="2"
+                    rowLabelOffset= "[[0,10]]"
+                    showRowLabel= "[true]"
+                    rowFocusAnimationStyle= "floatingFocus"
+                    vertFocusAnimationStyle="fixedFocus"
+                    loadingBitmapUri="pkg:/images/grey_profile.png"
+                    failedBitmapUri="pkg:/images/grey_profile.png"/>
+
+
+                <ThemedLabel 
+                    id="selectedPersonLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont"
+                    width="1000"
+                    numLines="1"
+                    wrap="true"
+                    horizAlign="right"
+                    ellipsizeOnBoundary="true"
+                    translation="[534,0]" />
+
+            </LayoutGroup>
 
         </LayoutGroup>
 

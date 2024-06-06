@@ -7,6 +7,68 @@ Sub RunTask()
     id = m.top.id
     url = `/Movies/Details/${id}`
 
-    m.top.data = GetData(url, m.global.profileToken)
+    result = GetData(url, m.global.profileToken)
+
+    if result.success then
+
+        ' Create a content node for the cast & crew
+        root = createObject("roSGNode", "ContentNode")
+            
+        ' public enum CreditRoles : int
+        ' {
+        '     Cast = 1,
+        '     Director = 2,
+        '     Producer = 3,
+        '     Writer = 4,
+        '     ExecutiveProducer = 5
+        ' }
+        
+        cast = createObject("roSGNode", "ContentNode")
+        directors = createObject("roSGNode", "ContentNode")
+        producers = createObject("roSGNode", "ContentNode")
+        writers = createObject("roSGNode", "ContentNode")
+        executiveProducers = createObject("roSGNode", "ContentNode")
+
+        for each bp in result.data.credits
+
+            item = invalid
+            if bp.role = 1 then item = cast.createChild("ContentNode")
+            if bp.role = 2 then item = directors.createChild("ContentNode")
+            if bp.role = 3 then item = producers.createChild("ContentNode")
+            if bp.role = 4 then item = writers.createChild("ContentNode")
+            if bp.role = 5 then item = executiveProducers.createChild("ContentNode")
+
+            if item <> invalid then
+                item.id = bp.TMDB_Id
+                item.title = bp.Name
+                item.FHDGRIDPOSTERURL = bp.AvatarUrl
+                item.addFields({initials: bp.initials})
+            end if
+
+        end for
+            
+        AddSectionIfHasPeople(root, cast, "Cast", false)
+        AddSectionIfHasPeople(root, directors, "Director", true)
+        AddSectionIfHasPeople(root, executiveProducers, "Executive Producer", true)
+        AddSectionIfHasPeople(root, producers, "Producer", true)
+        AddSectionIfHasPeople(root, writers, "Writer", true)
+                
+        m.top.castCrew = root
+        
+    end if
+
+    m.top.data = result
+
+End Sub
+
+Sub AddSectionIfHasPeople(root as object, child as object, singularName as string, addPlural as boolean)
+
+    if child.getChildCount() > 0 then
+
+        child.title = singularName
+        if addPlural and child.getChildCount() > 1 then child.title += "s"
+        root.appendChild(child)
+
+    end if
 
 End Sub

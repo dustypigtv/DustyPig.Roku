@@ -15,6 +15,25 @@ Sub Init()
     m.watchlistButton = m.top.findNode("watchlistButton")
     m.playlistButton = m.top.findNode("playlistButton")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
+    m.castCrewRowList = m.top.findNode("castCrewRowList")
+    m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
+
+    m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
+    m.otherActionLayoutGroup = m.top.findNode("otherActionLayoutGroup")
+
+    ' Tracking focus
+    m.lastPlaybackButtonFocused = m.playButton
+    m.playButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
+    m.requestButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
+    m.resumeButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
+    m.markWatchedButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
+
+    m.lastOtherActionButtonFocused = m.watchlistButton
+    m.watchlistButton.observeField("focusedChild", "OnOtherActionsButtonsFocusedChildChanged")
+    m.playlistButton.observeField("focusedChild", "OnOtherActionsButtonsFocusedChildChanged")
+
+    m.castCrewRowList.observeField("focusedChild", "HidePersonName")
+    m.castCrewRowList.observeField("rowItemFocused", "OnFocusedPersonChanged")
 
 
     ' Error dialog
@@ -38,17 +57,22 @@ Sub Init()
   
 
     ' Observers
-    m.top.observeField("visible", "OnVisibleChanged")
     m.top.observeField("content", "OnContentSet")
 
 end sub
 
 
 
-Sub OnVisibleChanged(event as object)
-    
-    if not event.getData() then return
-    
+Sub OnPlaybackButtonsFocusedChildChanged(event as object)
+
+    m.lastPlaybackButtonFocused = event.getRoSGNode()
+
+End Sub
+
+Sub OnOtherActionsButtonsFocusedChildChanged(event as object)
+
+    m.lastOtherActionButtonFocused = event.getRoSGNode()
+
 End Sub
 
 
@@ -67,6 +91,23 @@ End sub
 
 
 
+Sub OnFocusedPersonChanged()
+
+    idx = m.castCrewRowList.rowItemFocused
+    rowContent = m.castCrewRowList.content.getChild(idx[0])
+    selItem = rowContent.getChild(idx[1])
+    m.selectedPersonLabel.text = selItem.title
+
+End sub
+
+
+Sub HidePersonName()
+
+    if not m.castCrewRowList.hasFocus() then m.selectedPersonLabel.text = invalid 
+
+End Sub
+
+
 ' Fires when the BaseScene sets the Content node
 Sub OnContentSet()
 
@@ -83,6 +124,11 @@ Sub OnContentSet()
     m.watchlistButton.visible = false
     m.playButton.visible = false
     m.descriptionLabel.text = invalid
+    m.castCrewRowList.content = invalid
+    m.selectedPersonLabel.text = invalid
+
+    m.lastOtherActionButtonFocused = m.watchlistButton
+
 
     ' Load
     content = m.top.content
@@ -174,6 +220,9 @@ Sub OnMovieDataAvailable()
 
         m.descriptionLabel.text = data.description
 
+        m.castCrewRowList.content = m.movieDetailsTask.castCrew
+        
+
         
     else if result.statusCode = 401 then
     
@@ -221,6 +270,13 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         end if
 
+        if m.watchlistButton.hasFocus() then
+
+            m.playlistButton.setFocus(true)
+            return true
+
+        end if
+
     end if
 
 
@@ -232,6 +288,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
             m.resumeButton.setFocus(true)
             return true
+
         end if
 
         if m.resumeButton.hasFocus() then 
@@ -241,14 +298,30 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         
         end if
 
+        if m.playlistButton.hasFocus() then
+
+            m.watchlistButton.setFocus(true)
+            return true
+
+        end if
+
     end if
 
 
     if key = "up" then
 
-        if m.watchlistButton.hasFocus() then
-            m.playButton.setFocus(true)
+        if m.otherActionLayoutGroup.isInFocusChain() then
+
+            m.lastPlaybackButtonFocused.setFocus(true)
             return true
+
+        end if
+
+        if m.castCrewRowList.isInFocusChain() then
+
+            m.lastOtherActionButtonFocused.setFocus(true)
+            return true
+
         end if
 
     end if
@@ -257,9 +330,18 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
     if key = "down" then
 
-        if m.playButton.hasFocus() or m.resumeButton.hasFocus() or m.markWatchedButton.hasFocus() then
-            m.watchlistButton.setFocus(true)
+        if m.playbackButtonLayoutGroup.isInFocusChain() then
+
+            m.lastOtherActionButtonFocused.setFocus(true)
             return true
+
+        end if
+
+        if m.otherActionLayoutGroup.isInFocusChain() then
+
+            m.castCrewRowList.setFocus(true)
+            return true
+
         end if
 
     end if

@@ -102,19 +102,18 @@
 
 		<!--
             Poster items are 300px high
-            Add 75px for label and some spacing  = 375
-            itemSize = [1770, 375]
+            Add 100px for label and some spacing  = 400
+            itemSize = [1770, 300]
 
             top info will take half the screen, so y translation = 1080 / 2 = 540
             translation = [0,540]
-
         -->
 		<ThemedRowList
 			id="rowList"
 			translation="[0,540]"
             rowitemSize="[[200,300]]"
       		rowItemSpacing= "[[20,0]]"
-       		itemSize= "[1770,375]"
+       		itemSize= "[1770,400]"
        		rowLabelOffset= "[[0,10]]"
        		showRowLabel= "[true]"
        		rowFocusAnimationStyle= "fixedFocusWrap"

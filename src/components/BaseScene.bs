@@ -43,6 +43,7 @@ Sub Init()
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
     m.movieDetailsView.observeField("hideView", "HideTopView")
+    m.movieDetailsView.observeField("updateHomeScreen", "UpdateHomeScreen")
 
     
     ' Video View
@@ -185,5 +186,12 @@ Sub SwitchToMovieDetailsView(event as object)
 
     m.movieDetailsView.content = node
     ShowView(m.movieDetailsView)
+
+End Sub
+
+
+Sub UpdateHomeScreen()
+
+    m.homeScreenView.callFunc("UpdateData")
 
 End Sub

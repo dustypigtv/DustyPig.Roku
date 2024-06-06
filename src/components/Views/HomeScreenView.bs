@@ -29,7 +29,11 @@ sub Init()
     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
     m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
 
-     
+    ' Update timer
+    m.updateTimer = CreateObject("roSGNode", "Timer")
+    m.updateTimer.repeat = true
+    m.updateTimer.duration = 10
+    m.updateTimer.ObserveField("fire", "UpdateData")
 
     ' Observe this
     m.top.observeField("visible", "OnVisibleChanged")
@@ -49,9 +53,17 @@ Sub OnVisibleChanged(event as object)
     if event.getData() 
         if m.firstLoad then
             m.firstLoad = false
-            m.homeScreenTask.control = "run"
+            UpdateData()
         end if
     end if
+
+End Sub
+
+
+Sub UpdateData()
+
+    m.homeScreenTask.control = "stop"
+    m.homeScreenTask.control = "run"
 
 End Sub
 
@@ -63,8 +75,18 @@ Sub OnHomeScreenDataAvailable()
     m.busyLabel.visible = false
     
     if m.homeScreenTask.success then
+    
+        print "***** DATA AVAILABLE *****"
+
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()
-        m.rowList.content = m.homeScreenTask.data
+        
+        if m.rowList.content = invalid then
+            m.rowList.content = m.homeScreenTask.data
+        else
+            m.rowList.content.update(m.homeScreenTask.data)
+        end if
+        OnFocusedItemChanged()
+
     else if m.homeScreenTask.unauthorized then
         m.switchToLoginAccountView = true
     else
@@ -72,6 +94,7 @@ Sub OnHomeScreenDataAvailable()
         m.top.getScene().dialog = m.errorDialog
     end if
 
+    if m.updateTimer.control <> "start" then m.updateTimer.control = "start"
 
 End Sub
 
@@ -87,20 +110,26 @@ End Sub
 ' Fires when an item in the rowList gets focus
 Sub OnFocusedItemChanged()
 
-    x = m.rowList.rowItemFocused
-    rowContent = m.rowList.content.getChild(x[0])
-    selItem = rowContent.getChild(x[1])
+    try
+    
+        x = m.rowList.rowItemFocused
+        rowContent = m.rowList.content.getChild(x[0])
+        selItem = rowContent.getChild(x[1])
 
-    backdropUrl = selItem.backdropUrl
-    if backdropUrl = "" or backdropUrl = invalid then backdropUrl = selItem.FHDGRIDPOSTERURL
-    m.backdropPoster.uri = backdropUrl
+        backdropUrl = selItem.backdropUrl
+        if backdropUrl = "" or backdropUrl = invalid then backdropUrl = selItem.FHDGRIDPOSTERURL
+        m.backdropPoster.uri = backdropUrl
 
-    m.titleLabel.text = selItem.title
-    if selItem.mediaType = 4 then
-        m.descriptionLabel.text = " * Playlist *"
-    else
-        m.descriptionLabel.text = selItem.description
-    end if
+        m.titleLabel.text = selItem.title
+        if selItem.mediaType = 4 then
+            m.descriptionLabel.text = " * Playlist *"
+        else
+            m.descriptionLabel.text = selItem.description
+        end if
+    
+    catch e
+    
+    end try
 
 End Sub
 

@@ -9,6 +9,8 @@
 
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
         <field id="switchToMovieDetailsView" type="node" alwaysNotify="true" />
+
+        <function name="UpdateData" />
     </interface>
 	
     <children>

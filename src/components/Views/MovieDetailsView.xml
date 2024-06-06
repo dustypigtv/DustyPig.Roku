@@ -8,6 +8,7 @@
         <field id="content" type="node" alwaysNotify="true" />
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
         <field id="hideView" type="bool" alwaysNotify="true" />
+        <field id="updateHomeScreen" type="bool" alwaysNotify="true" />
     </interface>
 
     <children>

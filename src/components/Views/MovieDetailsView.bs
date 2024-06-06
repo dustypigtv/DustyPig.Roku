@@ -36,6 +36,16 @@ Sub Init()
     m.castCrewRowList.observeField("rowItemFocused", "OnFocusedPersonChanged")
 
 
+    ' Button clicks
+    m.playButton.observeField("buttonSelected", "OnPlayClicked")
+    m.requestButton.observeField("buttonSelected", "OnRequestClicked")
+    m.resumeButton.observeField("buttonSelected", "OnResumeClicked")
+    m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchClicked")
+    m.watchlistButton.observeField("buttonSelected", "OnWatchlistClicked")
+    m.playlistButton.observeField("buttonSelected", "OnAddToPlaylistClicked")
+
+
+
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
@@ -48,6 +58,11 @@ Sub Init()
     m.movieDetailsTask.observeField("data", "OnMovieDataAvailable")
 
 
+    ' Mark Watched task
+    m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
+    m.markMovieWatchedTask.observeField("success", "OnMarkMovieWatchedComplete")
+
+
     ' Timer - Create AFTER creating the movieDetailsTask
     m.timer = CreateObject("roSGNode", "Timer")
     m.timer.repeat = true
@@ -57,10 +72,17 @@ Sub Init()
   
 
     ' Observers
+    m.top.observeField("visible", "OnVisibilityChanged")
     m.top.observeField("content", "OnContentSet")
 
 end sub
 
+
+Sub OnVisibilityChanged(event as object)
+
+    if not event.getData() then m.movieDetailsTask.control = "stop"
+
+End Sub
 
 
 Sub OnPlaybackButtonsFocusedChildChanged(event as object)
@@ -111,6 +133,9 @@ End Sub
 ' Fires when the BaseScene sets the Content node
 Sub OnContentSet()
 
+    m.movieDetailsTask.control = "stop"
+    
+
     ' Reset
     m.titleLabel.text = invalid
     m.yearLabel.text = invalid
@@ -133,17 +158,17 @@ Sub OnContentSet()
     ' Load
     content = m.top.content
     
-    m.movieDetailsTask.control = "stop"
     m.movieDetailsTask.id = content.id
     m.movieDetailsTask.control = "run"
 
     m.backdropPoster.uri = content.backdropUrl
     
-
 End Sub
 
 
 Sub OnMovieDataAvailable()
+
+    if not m.top.visible then return
 
     result = m.movieDetailsTask.data
     if result.success then
@@ -237,7 +262,50 @@ Sub OnMovieDataAvailable()
 End Sub
 
 
+Sub OnPlayClicked()
 
+End Sub
+
+
+
+Sub OnRequestClicked()
+
+End Sub
+
+
+
+Sub OnResumeClicked()
+
+End Sub
+
+
+
+Sub OnMarkWatchClicked()
+
+    m.markMovieWatchedTask.id = m.top.content.id
+    m.markMovieWatchedTask.control = "run"
+    m.playButton.setFocus(true)
+    m.markWatchedButton.visible = false
+    m.resumeButton.visible = false
+    m.remainingLabel.text = "invalid"
+
+End Sub
+
+Sub OnMarkMovieWatchedComplete()
+
+    if m.markMovieWatchedTask.success then m.top.updateHomeScreen = true
+End sub
+
+
+Sub OnWatchlistClicked()
+
+End Sub
+
+
+
+Sub OnAddToPlaylistClicked()
+
+End Sub
 
 
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MarkMovieWatchedTask" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
+	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+				m.top.functionName = "RunTask"
+			End Sub
+
+			Sub RunTask()
+				result = GetData("/Movies/MarkWatched/" + m.top.id, m.global.profileToken)
+				m.top.success = result.success
+			End Sub
+
+        ]]>
+    </script>
+	
+	<interface>
+        <field id="id" type="string" />
+		<field id="success" type="bool" alwaysNotify="true" />
+    </interface>
+
+	
+</component>

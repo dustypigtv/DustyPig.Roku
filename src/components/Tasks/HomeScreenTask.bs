@@ -42,8 +42,15 @@ Sub RunTask()
         
         else
         
-            current = m.top.data
+            ' Updating nodes in place provides the least amount of flickering
+            ' But first a quick scan to see if anything changed
+            ' Scan id's in positions, and for the playlist row also can posters
 
+            current = m.top.data
+            if AreNodesTheSame(current, root) then return
+            
+
+            ' At this point, do in-place updates
             while current.getChildCount() > root.getChildCount()
                 current.removeChildIndex(current.getChildCount() - 1)
             end while
@@ -88,8 +95,8 @@ Sub RunTask()
                             ' appendChild(newItem) MOVES the child from 1 parent to another, screwing up the update
                             ' So instead manually create a new one
 
-                            appendedChild = curSection.createChild("ContentNode")
-                            CopyItemFields(newItem, appendedChild)
+                            curItem = curSection.createChild("ContentNode")
+                            CopyItemFields(newItem, curItem)
                             
                         end if
                 
@@ -101,8 +108,8 @@ Sub RunTask()
                     ' appendChild(newSection) MOVES the child from 1 parent to another, screwing up the update
                     ' So instead manually create a new one
 
-                    appendedChild = current.createChild("ContentNode")
-                    CopySectionFields(newSection, appendedChild)
+                    curSection = current.createChild("ContentNode")
+                    CopySectionFields(newSection, curSection)
                 
                 end if
 
@@ -112,7 +119,7 @@ Sub RunTask()
 
        
         m.top.success = true
-
+        
     else if result.statusCode = 401 then
 
         m.top.unauthorized = true
@@ -122,11 +129,41 @@ Sub RunTask()
 
         m.top.errMsg = result.error
         m.top.success = false
-
+        
     end if
 
 End Sub
 
+
+Function AreNodesTheSame(src as roSGNode, dst as roSGNode) as boolean
+
+    if src.getChildCount() <> dst.getChildCount() then return false
+
+    for i = 0 to src.getChildCount() - 1
+
+        srcSection = src.getChild(i)
+        dstSection = dst.getChild(i)
+        if srcSection.id <> dstSection.id then return false
+        if srcSection.getChildCount() <> dstSection.getChildCount() then return false
+
+        for j = 0 to srcSection.getChildCount() - 1
+
+            srcItem = srcSection.getChild(j)
+            dstItem = dstSection.getChild(j)
+            if srcItem.id <> dstItem.id then return false
+
+            ' public const long ID_WATCHLIST = -400;
+            if srcSection.id = "-400" then
+                if srcItem.FHDGRIDPOSTERURL <> dstItem.FHDGRIDPOSTERURL then return false
+            end if
+
+        end for
+
+    end for
+
+    return true
+
+End Function
 
 Sub CopySectionFields(srcSection as roSGNode, dstSection as roSGNode)
 

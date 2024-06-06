@@ -2,7 +2,8 @@
 <component name="HomeScreenView" extends="Group">
     
     <script type = "text/brightscript" uri = "pkg:/components/Views/HomeScreenView.bs" />
-
+    <script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
+	
 	<interface>
         <!-- Required interface for subView of MainView-->
         <field id="isFocused" type="bool" value="false" alwaysNotify="true" />
@@ -10,7 +11,7 @@
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
         <field id="switchToMovieDetailsView" type="node" alwaysNotify="true" />
 
-        <function name="UpdateData" />
+        <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
     </interface>
 	
     <children>
@@ -31,7 +32,7 @@
             id="backdropPoster"
             loadWidth="1137"
             loadHeight="640"
-            loadDisplayMode="scaleToFit"
+            loadDisplayMode="scaleToZoom"
             failedBitmapUri="pkg:/images/failed_poster.jpg"
             translation="[633,0]" />
 

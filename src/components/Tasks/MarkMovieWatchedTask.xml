@@ -13,7 +13,6 @@
 
 			Sub RunTask()
 				result = GetData("/Movies/MarkWatched/" + m.top.id, m.global.profileToken)
-				m.top.success = result.success
 			End Sub
 
         ]]>
@@ -21,7 +20,6 @@
 	
 	<interface>
         <field id="id" type="string" />
-		<field id="success" type="bool" alwaysNotify="true" />
     </interface>
 
 	

@@ -60,7 +60,6 @@ Sub Init()
 
     ' Mark Watched task
     m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
-    m.markMovieWatchedTask.observeField("success", "OnMarkMovieWatchedComplete")
 
 
     ' Timer - Create AFTER creating the movieDetailsTask
@@ -288,13 +287,11 @@ Sub OnMarkWatchClicked()
     m.markWatchedButton.visible = false
     m.resumeButton.visible = false
     m.remainingLabel.text = "invalid"
+    m.top.removeFromContinueWatching = m.top.content.id
 
 End Sub
 
-Sub OnMarkMovieWatchedComplete()
 
-    if m.markMovieWatchedTask.success then m.top.updateHomeScreen = true
-End sub
 
 
 Sub OnWatchlistClicked()

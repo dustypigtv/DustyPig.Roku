@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="MovieDetailsView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/source/Converters.bs" />
+    <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
     <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
    
     <interface>
         <field id="content" type="node" alwaysNotify="true" />
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
         <field id="hideView" type="bool" alwaysNotify="true" />
-        <field id="updateHomeScreen" type="bool" alwaysNotify="true" />
+        <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
+        <field id="addToWatchlist" type="string" alwaysNotify="true" />
+        <field id="removeFromWatchlist" type="string" alwaysNotify="true" />
+        <field id="switchToAddToPlaylist" type="string" alwaysNotify="true" />
     </interface>
 
     <children>
@@ -183,7 +186,7 @@
                     ellipsizeOnBoundary="true"
                     translation="[534,0]" />
 
-            </LayoutGroup>
+            </Group>
 
         </LayoutGroup>
 

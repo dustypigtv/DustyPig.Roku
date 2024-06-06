@@ -57,3 +57,32 @@ Function PadLeft(value As String, padChar As String, totalLength As Integer) As 
     End While
     Return value
 End Function
+
+
+Function StringHasValue(s as string) as boolean
+
+    if s = invalid then return false
+    if s.IsEmpty() then return false
+    if s.trim().IsEmpty() then return false
+    return true
+
+End Function
+
+
+Function FindChildNode(node as roSGNode, id as string) as roSGNode
+
+    ' Sometimes, node.findNode(id) fails. Not sure why. So this is a backup
+    if node = invalid then return invalid
+    if not StringHasValue(id) then return invalid
+
+    ret = node.findNode(id)
+    if ret = invalid then
+        for i = 0 to node.getChildCount() - 1
+            child = node.getChild(i)
+            if child.id = id then return child
+        end for
+    end if
+
+    return invalid
+
+End Function

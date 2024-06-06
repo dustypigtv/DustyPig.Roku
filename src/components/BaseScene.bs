@@ -43,7 +43,7 @@ Sub Init()
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
     m.movieDetailsView.observeField("hideView", "HideTopView")
-    m.movieDetailsView.observeField("updateHomeScreen", "UpdateHomeScreen")
+    m.movieDetailsView.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
 
     
     ' Video View
@@ -190,8 +190,8 @@ Sub SwitchToMovieDetailsView(event as object)
 End Sub
 
 
-Sub UpdateHomeScreen()
+Sub RemoveFromContinueWatching(event as object)
 
-    m.homeScreenView.callFunc("UpdateData")
+    m.homeScreenView.removeFromContinueWatching = event.getData()
 
 End Sub

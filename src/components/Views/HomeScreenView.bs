@@ -14,7 +14,7 @@ sub Init()
     ' Observers
     m.rowList.observeField("rowItemFocused", "OnFocusedItemChanged")
     m.rowList.observeField("rowItemSelected", "OnItemClicked")
-
+    
     
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
@@ -32,13 +32,14 @@ sub Init()
     ' Update timer
     m.updateTimer = CreateObject("roSGNode", "Timer")
     m.updateTimer.repeat = true
-    m.updateTimer.duration = 10
+    m.updateTimer.duration = 300
     m.updateTimer.ObserveField("fire", "UpdateData")
 
     ' Observe this
     m.top.observeField("visible", "OnVisibleChanged")
     m.top.observeField("isFocused", "SetFocus")
-    
+    m.top.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
+
 end sub
 
 
@@ -76,15 +77,12 @@ Sub OnHomeScreenDataAvailable()
     
     if m.homeScreenTask.success then
     
-        print "***** DATA AVAILABLE *****"
-
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()
         
-        if m.rowList.content = invalid then
-            m.rowList.content = m.homeScreenTask.data
-        else
-            m.rowList.content.update(m.homeScreenTask.data)
-        end if
+        ' Only set the first time. After updates are handled 'in-place'.
+        ' Ok not really in-place, there are deep copies and thread rendevous etc,
+        ' But for the purpose of this code, just consider it an in-place update
+        if m.rowList.content = invalid then m.rowList.content = m.homeScreenTask.data
         OnFocusedItemChanged()
 
     else if m.homeScreenTask.unauthorized then
@@ -116,16 +114,15 @@ Sub OnFocusedItemChanged()
         rowContent = m.rowList.content.getChild(x[0])
         selItem = rowContent.getChild(x[1])
 
+        ' Check values before changing to prevent flickering
         backdropUrl = selItem.backdropUrl
         if backdropUrl = "" or backdropUrl = invalid then backdropUrl = selItem.FHDGRIDPOSTERURL
-        m.backdropPoster.uri = backdropUrl
+        if m.backdropPoster.uri <> backdropUrl then m.backdropPoster.uri = backdropUrl
 
-        m.titleLabel.text = selItem.title
-        if selItem.mediaType = 4 then
-            m.descriptionLabel.text = " * Playlist *"
-        else
-            m.descriptionLabel.text = selItem.description
-        end if
+        if m.titleLabel.text <> selItem.title then m.titleLabel.text = selItem.title
+        
+        description = selItem.mediaType = 4 ? "* Playlist *" : selItem.description
+        if m.descriptionLabel.text <> description then m.descriptionLabel.text = description
     
     catch e
     
@@ -144,3 +141,20 @@ Sub OnItemClicked()
     if selItem.mediaType = 1 then m.top.switchToMovieDetailsView = selItem
 
 End sub
+
+
+Sub RemoveFromContinueWatching(event as object)
+
+    ' public const long ID_CONTINUE_WATCHING = -500;
+    section = FindChildNode(m.homeScreenTask.data, "-500")
+    if section = invalid then return
+
+    id = event.getData()
+    item = FindChildNode(section, id)
+    if item = invalid then return
+
+    section.removeChild(item)
+
+    if section.getChildCount() = 0 then m.homeScreenTask.data.removeChild(section)
+
+End Sub

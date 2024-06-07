@@ -54,8 +54,8 @@ Sub Init()
     m.allViews.push(m.movieDetailsView)
     m.movieDetailsView.observeField("relay_RemoveFromContinueWatching", "OnRelay_RemoveFromContinueWatching")
     m.movieDetailsView.observeField("relay_AddToWatchlist", "OnRelay_AddToWatchlist")
-    m.movieDetailsView.observeField("removeFromWatchlist", "OnRelay_RemoveFromWatchlist")
-    m.movieDetailsView.observeField("switchToAddToPlaylist", "OnShowView_AddToPlaylist")
+    m.movieDetailsView.observeField("relay_RemoveFromWatchlist", "OnRelay_RemoveFromWatchlist")
+    m.movieDetailsView.observeField("relay_switchToAddToPlaylist", "OnShowView_AddToPlaylist")
     m.movieDetailsView.observeField("playVideo", "OnPlayVideo")
 
     

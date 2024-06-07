@@ -69,6 +69,7 @@ Sub Init()
 
     ' Observers
     m.top.observeField("visible", "OnThis_VisibleChanged")
+    m.top.observeField("focusedChild", "OnThis_FocusChanged")
     m.top.observeField("content", "OnThis_ContentChanged")
 
 end sub
@@ -81,6 +82,14 @@ Sub OnThis_VisibleChanged(event as object)
     if not event.getData() then m.movieDetailsTask.control = "stop"
 
 End Sub
+
+
+Sub OnThis_FocusChanged()
+
+
+
+End sub
+
 
 
 Sub OnPlaybackButtons_FocusChanged(event as object)
@@ -350,7 +359,7 @@ Sub OnWatchlistButton_Selected()
         m.top.relay_AddToWatchlist = node
     
     else 
-        m.top.removeFromWatchlist = id
+        m.top.relay_RemoveFromWatchlist = id
     end if
 
     
@@ -362,7 +371,7 @@ Sub OnAddToPlaylistButton_Selected()
 
     print "MovieDetailsView:OnAddToPlaylistButton_Selected"
 
-    m.top.switchToAddToPlaylist = {
+    m.top.relay_switchToAddToPlaylist = {
         id:m.data.id,
         mediaType:m.data.mediaType
     }

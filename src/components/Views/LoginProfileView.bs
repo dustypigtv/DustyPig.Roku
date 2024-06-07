@@ -93,7 +93,6 @@ sub OnLoadErrorDialogClosed()
     print "LoginProfileView:OnLoadErrorDialogClosed"
 
     m.top.getScene().dialog = invalid
-    m.top.cancel = true
 
 end sub
 

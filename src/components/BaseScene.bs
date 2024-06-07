@@ -7,11 +7,15 @@ Sub Init()
 
     m.loggedIn = false
 
+    m.allViews =[]
+
     ' Landing view
     m.landingView = m.top.findNode("landingView")
+    m.allViews.push(m.landingView)
 
     ' Login Account View
     m.loginAccountView = m.top.findNode("loginAccountView")
+    m.allViews.push(m.loginAccountView)
     m.loginAccountView.observeField("switchToSignUpView", "SwitchToSignUpView")
     m.loginAccountView.observeField("switchToLoginProfileView", "SwitchToLoginProfileView")
     m.loginAccountView.observeField("switchToMainView", "SwitchToMainView")
@@ -19,6 +23,7 @@ Sub Init()
 
     ' SignUp View
     m.signUpView = m.top.findNode("signupView")
+    m.allViews.push(m.signUpView)
     m.signUpView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
     m.signUpView.observeField("switchToLoginProfileView", "SwitchToLoginProfileView")
     m.signUpView.observeField("switchToMainView", "SwitchToMainView")
@@ -26,6 +31,7 @@ Sub Init()
 
     ' Login Profile View
     m.loginProfileView = m.top.findNode("loginProfileView")
+    m.allViews.push(m.loginProfileView)
     m.loginProfileView.observeField("cancel", "CancelLoginProfileView")
     m.loginProfileView.observeField("switchToMainView", "SwitchToMainView")
     m.loginProfileView.observeField("switchToLoginAccountView", "SwitchToLoginAccountView")
@@ -33,6 +39,7 @@ Sub Init()
 
     ' Main View
     m.mainView = m.top.findNode("mainView")
+    m.allViews.push(m.mainView)
     ' *** Sub views of Main View ***
 
         m.homeScreenView = m.mainView.findNode("homeScreenView")
@@ -44,6 +51,7 @@ Sub Init()
 
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
+    m.allViews.push(m.movieDetailsView)
     m.movieDetailsView.observeField("hideView", "HideTopView")
     m.movieDetailsView.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
     m.movieDetailsView.observeField("addToWatchlist", "AddToWatchlist")
@@ -54,6 +62,7 @@ Sub Init()
     
     ' Video View
     m.videoView = m.top.findNode("videoView")
+    m.allViews.push(m.videoView)
     m.videoView.observeField("errorStr", "OnVideoError")
 
 
@@ -130,6 +139,15 @@ Sub HideView(node as Object)
 
 End Sub
 
+Sub HideAllViews()
+
+    for each item in m.allViews
+        item.visible = false
+    end for
+    m.viewStack = []
+
+End Sub
+
 
 Sub ThemeTimerFired()
 
@@ -149,6 +167,7 @@ Sub SwitchToLoginAccountView(event as object)
 
     if event.getData() then
         m.loggedIn = false
+        HideAllViews()
         ShowView(m.loginAccountView)
     end if
 
@@ -160,6 +179,7 @@ Sub SwitchToSignUpView(event as object)
 
     if event.getData() then
         m.loggedIn = false
+        HideAllViews()
         ShowView(m.signUpView)
     end if
 
@@ -181,27 +201,12 @@ Sub SwitchToMainView(event as object)
 
     if event.getData() then
         m.loggedIn = true
-        m.viewStack = []
+        HideAllViews()
         ShowView(m.mainView)
     end if 
 
 End Sub
 
-
-
-sub CancelLoginProfileView(event as object)
-
-    print "BaseScene:CancelLoginProfileView"
-
-    if not event.getData() then return
-
-    if m.loggedIn then
-        ShowView(m.mainView)
-    else
-        ShowView(m.loginAccountView)
-    end if
-
-end sub
 
 
 Sub SwitchToMovieDetailsView(event as object)

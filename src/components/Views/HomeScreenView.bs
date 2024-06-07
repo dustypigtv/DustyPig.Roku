@@ -98,6 +98,18 @@ End Sub
 
 
 
+
+' This needs a root content node
+' root.Children are sections, and need the following fields set:
+'   id
+'   title
+' section.children are items, and need the following fields set:
+'   id
+'   title
+'   description
+'   FHDGRIDPOSTERURL
+'   backdropUrl
+'   mediaType
 Sub OnHomeScreenTask_DataAvailable()
 
     print "HomeScreenView:OnHomeScreenTask_DataAvailable"
@@ -127,13 +139,8 @@ Sub OnHomeScreenTask_DataAvailable()
 End Sub
 
 
-' public enum MediaTypes
-' {
-'     Movie = 1,
-'     Series = 2,
-'     Episode = 3,
-'     Playlist = 4
-' }
+
+
 
 ' Fires when an item in the rowList gets focus
 Sub OnRowList_ItemFocused()
@@ -152,7 +159,15 @@ Sub OnRowList_ItemFocused()
         if m.backdropPoster.uri <> backdropUrl then m.backdropPoster.uri = backdropUrl
 
         if m.titleLabel.text <> selItem.title then m.titleLabel.text = selItem.title
-        
+
+        ' public enum MediaTypes
+        ' {
+        '     Movie = 1,
+        '     Series = 2,
+        '     Episode = 3,
+        '     Playlist = 4
+        ' }
+
         description = selItem.mediaType = 4 ? "* Playlist *" : selItem.description
         if m.descriptionLabel.text <> description then m.descriptionLabel.text = description
     
@@ -173,6 +188,14 @@ Sub OnRowList_ItemSelected()
     idx = m.rowList.rowItemSelected
     rowContent = m.rowList.content.getChild(idx[0])
     selItem = rowContent.getChild(idx[1])
+
+    ' public enum MediaTypes
+    ' {
+    '     Movie = 1,
+    '     Series = 2,
+    '     Episode = 3,
+    '     Playlist = 4
+    ' }
 
     if selItem.mediaType = 1 then m.top.switchToMovieDetailsView = selItem
 
@@ -199,6 +222,13 @@ Sub OnThis_RemoveFromContinueWatching(event as object)
 End Sub
 
 
+' This needs a content node with the following fields set:
+' id
+' title
+' description
+' FHDGRIDPOSTERURL
+' backdropUrl
+' mediaType
 Sub OnThis_AddToWatchlist(event as object)
 
     print "HomeScreenView:OnThis_AddToWatchlist"
@@ -229,6 +259,9 @@ Sub OnThis_AddToWatchlist(event as object)
     section.appendChild(newNode)
     
 End Sub
+
+
+
 
 Sub OnThis_RemoveFromWatchlist(event as object)
 

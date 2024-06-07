@@ -24,6 +24,8 @@ Sub Init()
     m.otherActionButtonLayoutGroup = m.top.findNode("otherActionButtonLayoutGroup")
 
     ' Tracking focus
+    m.lastFocusedControl = invalid
+
     m.lastPlaybackButtonFocused = m.playButton
     m.playButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
     m.requestButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
@@ -69,7 +71,6 @@ Sub Init()
 
     ' Observers
     m.top.observeField("visible", "OnThis_VisibleChanged")
-    m.top.observeField("focusedChild", "OnThis_FocusChanged")
     m.top.observeField("content", "OnThis_ContentChanged")
 
 end sub
@@ -79,24 +80,49 @@ Sub OnThis_VisibleChanged(event as object)
 
     print "MovieDetailsView:OnThis_VisibleChanged"
 
-    if not event.getData() then m.movieDetailsTask.control = "stop"
+    if event.getData() then 
+        RestoreFocus()
+    else
+        m.movieDetailsTask.control = "stop"
+    end if
 
 End Sub
 
 
-Sub OnThis_FocusChanged()
 
+Sub RestoreFocus()
 
+    print "MovieDetailsView:RestoreFocus"
 
-End sub
+    if m.lastFocusedControl <> invalid then
 
+        print "*****", m.lastFocusedControl.id
+
+        if m.lastFocusedControl.visible then
+            m.lastFocusedControl.setFocus(true)
+        else
+            if m.playButton.visible then
+                m.playButton.setFocus(true)
+            else if m.requestButton.visible then
+                m.requestButton.setFocus(true)
+            else if m.castCrewRowList.visible then
+                m.castCrewRowList.setFocus(true)
+            end if
+        end if
+
+    end if
+
+End Sub
 
 
 Sub OnPlaybackButtons_FocusChanged(event as object)
 
     print "MovieDetailsView:OnPlaybackButtons_FocusChanged"
 
-    m.lastPlaybackButtonFocused = event.getRoSGNode()
+    if m.playbackButtonLayoutGroup.isInFocusChain() then
+        m.lastPlaybackButtonFocused = event.getRoSGNode()
+        m.lastFocusedControl = m.lastPlaybackButtonFocused
+    end if
 
 End Sub
 
@@ -104,7 +130,10 @@ Sub OnOtherActionButtons_FocusChanged(event as object)
 
     print "MovieDetailsView:OnOtherActionButtons_FocusChanged"
 
-    m.lastOtherActionButtonFocused = event.getRoSGNode()
+    if m.otherActionButtonLayoutGroup.isInFocusChain() then
+        m.lastOtherActionButtonFocused = event.getRoSGNode()
+        m.lastFocusedControl = m.lastOtherActionButtonFocused
+    end if
 
 End Sub
 
@@ -114,6 +143,7 @@ Sub OnErrorDialog_Closed()
     print "MovieDetailsView:OnErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
+    RestoreFocus()
 
 End Sub
 
@@ -134,7 +164,11 @@ Sub OnCastCrewList_FocusChanged()
 
     print "MovieDetailsView:OnCastCrewList_FocusChanged"
 
-    if not m.castCrewRowList.hasFocus() then m.selectedPersonLabel.text = invalid 
+    if m.castCrewRowList.hasFocus() then 
+        m.lastFocusedControl = m.castCrewRowList    
+    else
+        m.selectedPersonLabel.text = invalid 
+    end if
 
 End Sub
 
@@ -191,41 +225,8 @@ Sub OnMovieDetailsTask_DataAvailable()
         
         m.data = result.data
         m.titleLabel.text = m.data.title
-
-        try
-            date = CreateObject("roDateTime")
-            date.FromISO8601String(m.data.date)
-            m.yearLabel.text = str(date.getYear())
-        catch e
-            m.yearLabel.text = "1900"
-        end try
-
-        ' From API
-        ' public enum MovieRatings
-        ' {
-        '     None = 0,
-        '     G = 1,
-        '     PG = 2,
-        '     PG_13 = 3,
-        '     R = 4,
-        '     NC_17 = 5,
-        '     Unrated = 6
-        ' }        
-        if m.data.rated = 1 then 
-            m.ratedLabel.text = "Rated G"
-        else if m.data.rated = 2 then 
-            m.ratedLabel.text = "Rated PG"
-        else if m.data.rated = 3 then 
-            m.ratedLabel.text = "Rated PG-13"
-        else if m.data.rated = 4 then 
-            m.ratedLabel.text = "Rated R"
-        else if m.data.rated = 5 then 
-            m.ratedLabel.text = "Rated NC-17"
-        else if m.data.rated = 6 then 
-            m.ratedLabel.text = "Unrated"
-        else  
-            m.ratedLabel.text = "Not Rated"
-        end if
+        m.yearLabel.text = m.data.year
+        m.ratedLabel.text = "Rated: " + m.data.rated
 
         if m.data.length <> invalid and m.data.length > 0 then m.lengthLabel.text = GetDurationString(m.data.length)
 
@@ -285,14 +286,51 @@ Sub OnPlayButton_Selected()
 
     print "MovieDetailsView:OnPlayButton_Selected"
 
+    StartPlayback(false)
+
+End Sub
+
+Sub OnResumeButton_Selected()
+
+    print "MovieDetailsView:OnResumeButton_Selected"
+
+    StartPlayback(true)
+
+End Sub
+
+
+Sub StartPlayback(resume as boolean)
+
+    print "MovieDetailsView:StartPlayback", resume
+
+    playStart = resume ? m.data.played : 0
+
+    subtitleTracks = []
+    if m.data.srtSubtitles <> invalid then
+        for each st in m.data.srtSubtitles
+            subtitleTracks.push({
+                Language:"eng",
+                Description:st.name,
+                TrackName:st.url
+            })
+        end for
+    end if
+
     m.top.playVideo = {
         id:m.data.id,
+        contentType:"movie",
         title:m.data.title,
-        secondaryTitle:m.yearLabel.text,
-        videoUrl:m.data.videoUrl
+        secondaryTitle:m.data.year,
+        url:m.data.videoUrl,
+        playStart:playStart,
+        SDBifUrl:m.data.bifUrl,
+        HDBifUrl:m.data.bifUrl,
+        FHDBifUrl:m.data.bifUrl,
+        subtitleTracks:subtitleTracks
     }
 
 End Sub
+
 
 
 
@@ -304,11 +342,7 @@ End Sub
 
 
 
-Sub OnResumeButton_Selected()
 
-    print "MovieDetailsView:OnResumeButton_Selected"
-
-End Sub
 
 
 

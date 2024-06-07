@@ -211,7 +211,7 @@ Sub OnRelay_AddToWatchlist(event as object)
 
     print "BaseScene:OnRelay_AddToWatchlist"
 
-    m.homeScreenView.relay_AddToWatchlist = event.getData()
+    m.homeScreenView.addToWatchlist = event.getData()
 
 End Sub
 
@@ -237,9 +237,10 @@ Sub OnPlayVideo(event as object)
     print "BaseScene:OnPlayVideo"
 
     data = event.getData()
+    print data
+
     content = createObject("roSGNode", "ContentNode")
-    content.id = data.id
-    content.url = data.videoUrl
+    content.setFields(data)    
     content.streamFormat = "mp4"
     m.videoView.content = content
     m.videoView.control = "play"

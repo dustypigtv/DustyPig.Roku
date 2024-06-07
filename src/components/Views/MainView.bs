@@ -11,20 +11,19 @@ sub Init()
 
     
      ' Observe this.visible
-     m.top.observeField("visible", "OnVisibleChanged")
+     m.top.observeField("visible", "OnThis_VisibleChanged")
 
 end sub
 
-Sub OnVisibleChanged(event as object)
+Sub OnThis_VisibleChanged(event as object)
     
-    print "MainView:OnVisibleChanged"
+    print "MainView:OnThis_VisibleChanged"
     
     if not event.getData() then return
 
     ' Set the last selected view to visible + focused
     m.lastSelectedView.visible = true
     m.lastSelectedView.setFocus(true)
-    m.lastSelectedView.isFocused = true
     
 End Sub
 

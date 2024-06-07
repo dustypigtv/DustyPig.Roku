@@ -19,10 +19,10 @@ sub Init()
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
     
     m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
-    m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountClicked")
+    m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountButton_Selected")
 
     m.signUpButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
-    m.signUpButton.observeField("buttonSelected", "OnSignUpClicked")
+    m.signUpButton.observeField("buttonSelected", "OnSignUpButton_Selected")
 
 
 
@@ -30,21 +30,23 @@ sub Init()
     ' Build keyboard dialog
     m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
     m.keyboardDialog.buttons=["Cancel","OK"]
-    m.keyboardDialog.observeField("wasClosed", "OnKeyboardDialogClosed")
-    m.keyboardDialog.observeField("buttonSelected", "OnKeyboardDialogButtonSelected")
+    m.keyboardDialog.observeField("wasClosed", "OnKeyboardDialog_Closed")
+    m.keyboardDialog.observeField("buttonSelected", "OnKeyboardDialog_TextEntered")
+
+
 
 
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
     m.errorDialog.title = "Sign up error"
-    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
-    m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
+    m.errorDialog.observeField("wasClosed", "OnErrorDialog_Closed")
 
 
     ' Signup task
     m.signUpTask = CreateObject("roSGNode", "SignUpTask")
-    m.signUpTask.observeField("data", "OnSignUpResult")
+    m.signUpTask.observeField("data", "OnSignUpTask_DataAvailable")
 
 
     'variables
@@ -53,15 +55,15 @@ sub Init()
 
 
     ' Observe this.visible
-    m.top.observeField("visible", "OnVisibleChanged")
+    m.top.observeField("visible", "OnThis_VisibleChanged")
 
 end sub
 
 
 ' Fires when this view's visibility changes
-Sub OnVisibleChanged(event as object)
+Sub OnThis_VisibleChanged(event as object)
 
-    print "SignUpView:OnVisibleChanged"
+    print "SignUpView:OnThis_VisibleChanged"
 
     m.busySpinner.visible = false
     if not event.getData() then return
@@ -88,7 +90,7 @@ Sub OnVisibleChanged(event as object)
         m.channelStore.requestedUserDataInfo = info
         
         m.channelStore.requestedUserData = "firstName, email"
-        m.channelStore.observeField("userData", "OnChannelStoreGetInfo")
+        m.channelStore.observeField("userData", "OnChannelStore_DataAvailable")
         m.channelStore.command = "getUserData"
 
     end if
@@ -96,9 +98,9 @@ Sub OnVisibleChanged(event as object)
 End Sub
 
 
-sub OnChannelStoreGetInfo()
+sub OnChannelStore_DataAvailable()
 
-    print "SignUpView:OnChannelStoreGetInfo"
+    print "SignUpView:OnChannelStore_DataAvailable"
 
     if m.channelStore.userData <> invalid then
         m.nameTextBox.text = m.channelStore.userData.firstName
@@ -163,18 +165,18 @@ Sub FocusOnButton(btn as object)
 End Sub
 
 
-Sub OnKeyboardDialogClosed()
+Sub OnKeyboardDialog_Closed()
 
-    print "SignUpView:OnKeyboardDialogClosed"
+    print "SignUpView:OnKeyboardDialog_Closed"
 
     ShowControls(true)
 
 End Sub
 
 
-Sub OnKeyboardDialogButtonSelected(event as object)
+Sub OnKeyboardDialog_TextEntered(event as object)
 
-    print "SignUpView:OnKeyboardDialogButtonSelected"
+    print "SignUpView:OnKeyboardDialog_TextEntered"
 
     m.top.getScene().dialog = invalid
     idx = event.getData()
@@ -192,9 +194,9 @@ Sub OnKeyboardDialogButtonSelected(event as object)
 
 End Sub
 
-Sub OnErrorDialogClosed()
+Sub OnErrorDialog_Closed()
 
-    print "SignUpView:OnErrorDialogClosed"
+    print "SignUpView:OnErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
     ShowControls(true)
@@ -202,18 +204,18 @@ Sub OnErrorDialogClosed()
 End Sub
 
 
-Sub OnLoginAccountClicked()
+Sub OnLoginAccountButton_Selected()
 
-    print "SignUpView:OnLoginAccountClicked"
+    print "SignUpView:OnLoginAccountButton_Selected"
 
     m.top.switchToLoginAccountView = true
 
 End sub
 
 
-Sub OnSignUpClicked()
+Sub OnSignUpButton_Selected()
 
-    print "SignUpView:OnSignUpClicked"
+    print "SignUpView:OnSignUpButton_Selected"
 
     m.signUpButton.setFocus(false)
     m.busySpinner.visible = true
@@ -248,9 +250,9 @@ End Function
 
 
 
-Sub OnSignUpResult()
+Sub OnSignUpTask_DataAvailable()
 
-    print "SignUpView:OnSignUpResult"
+    print "SignUpView:OnSignUpTask_DataAvailable"
 
     m.signUpButton.setFocus(true)
     m.busySpinner.visible = false

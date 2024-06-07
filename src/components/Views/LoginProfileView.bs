@@ -8,18 +8,20 @@ sub Init()
     m.headerLabel = m.top.findNode("headerLabel")
     m.profileGrid = m.top.findNode("profileGrid")
 
+
+
     ' Init controls
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
     m.busyLabel.color = m.global.defaultTheme.textOnBackground
     m.headerLabel.color = m.global.defaultTheme.textOnBackground
     m.profileGrid.focusBitmapBlendColor = m.global.defaultTheme.primary
     m.profileGrid.caption1Color = m.global.defaultTheme.textOnBackground
-    m.profileGrid.observeField("itemSelected", "OnProfileSelected")
+    m.profileGrid.observeField("itemSelected", "OnProfileGrid_ItemSelected")
 
 
     ' Login profile task
     m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
-    m.loginProfileTask.observeField("data", "OnLoginProfileResult")
+    m.loginProfileTask.observeField("data", "OnLoginProfileTask_DataAvailable")
 
 
     ' Pin dialog
@@ -27,35 +29,35 @@ sub Init()
     m.pinDialog.title = "Enter your Pin #:"
     m.pinDialog.buttons = ["OK"]
     m.pinDialog.textEditBox.maxTextLength = 4
-    m.pinDialog.observeField("buttonSelected", "OnPinSubmitted")
+    m.pinDialog.observeField("buttonSelected", "OnPinDialog_PinEntered")
 
 
     ' Load Error dialog
     m.loadErrorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.loadErrorDialog.title = "Error Loading Profiles"
     m.loadErrorDialog.buttons = ["OK"]
-    m.loadErrorDialog.observeField("buttonSelected", "OnLoadErrorDialogClosed")
-    m.loadErrorDialog.observeField("wasClosed", "OnLoadErrorDialogClosed")
+    m.loadErrorDialog.observeField("buttonSelected", "OnLoadErrorDialog_Closed")
+    m.loadErrorDialog.observeField("wasClosed", "OnLoadErrorDialog_Closed")
     
 
     ' Login error dialog
     m.loginErrorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.loginErrorDialog.buttons = ["OK"]
     m.loginErrorDialog.title = "Error Signing In To Profile"
-    m.loginErrorDialog.observeField("buttonSelected", "OnLoginErrorDialogClosed")
-    m.loginErrorDialog.observeField("wasClosed", "OnLoginErrorDialogClosed")
+    m.loginErrorDialog.observeField("buttonSelected", "OnLoginErrorDialog_Closed")
+    m.loginErrorDialog.observeField("wasClosed", "OnLoginErrorDialog_Closed")
     
 
      ' Observe this.visible
-    m.top.observeField("visible", "OnVisibleChanged")
+    m.top.observeField("visible", "OnThis_VisibleChanged")
 
 end sub
 
 
 ' Fires when this view's visibility changes
-Sub OnVisibleChanged(event as object)
+Sub OnThis_VisibleChanged(event as object)
 
-    print "LoginProfileView:OnVisibleChanged"
+    print "LoginProfileView:OnThis_VisibleChanged"
     
     if not event.getData() then return
 
@@ -88,17 +90,17 @@ end sub
 
 
 
-sub OnLoadErrorDialogClosed()
+sub OnLoadErrorDialog_Closed()
 
-    print "LoginProfileView:OnLoadErrorDialogClosed"
+    print "LoginProfileView:OnLoadErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
 
 end sub
 
-sub OnProfileSelected()
+sub OnProfileGrid_ItemSelected()
 
-    print "LoginProfileView:OnProfileSelected"
+    print "LoginProfileView:OnProfileGrid_ItemSelected"
 
     idx = m.profileGrid.itemSelected
     profile = m.global.allProfiles.getChild(idx)    
@@ -117,9 +119,9 @@ sub OnProfileSelected()
 end sub
 
 
-sub OnPinSubmitted()
+sub OnPinDialog_PinEntered()
 
-    print "LoginProfileView:OnPinSubmitted"
+    print "LoginProfileView:OnPinDialog_PinEntered"
 
     m.top.getScene().dialog = invalid
     
@@ -137,9 +139,9 @@ end sub
 
 
 
-Sub OnLoginProfileResult()
+Sub OnLoginProfileTask_DataAvailable()
 
-    print "LoginProfileView:OnLoginProfileResult"
+    print "LoginProfileView:OnLoginProfileTask_DataAvailable"
 
     SetBusy(false)
     
@@ -156,9 +158,9 @@ Sub OnLoginProfileResult()
 End Sub
 
 
-sub OnLoginErrorDialogClosed()
+sub OnLoginErrorDialog_Closed()
 
-    print "LoginProfileView:OnLoginErrorDialogClosed"
+    print "LoginProfileView:OnLoginErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
     m.profileGrid.setFocus(true)

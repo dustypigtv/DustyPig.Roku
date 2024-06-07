@@ -114,7 +114,7 @@
 
             <!-- Watchlist/Playlist buttons -->
             <LayoutGroup
-                id="otherActionLayoutGroup"
+                id="otherActionButtonLayoutGroup"
                 layoutDirection="horiz"
                 itemSpacings="[50]">
             
@@ -125,7 +125,7 @@
                     icon="pkg:/images/add.png" />
 
                 <ThemedIconButton
-                    id="playlistButton"
+                    id="addToPlaylistButton"
                     width="50"
                     height="50"
                     icon="pkg:/images/playlist.png" />

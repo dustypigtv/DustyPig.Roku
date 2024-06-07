@@ -15,36 +15,36 @@ Sub Init()
     m.resumeButton = m.top.findNode("resumeButton")
     m.markWatchedButton = m.top.findNode("markWatchedButton")
     m.watchlistButton = m.top.findNode("watchlistButton")
-    m.playlistButton = m.top.findNode("playlistButton")
+    m.addToPlaylistButton = m.top.findNode("addToPlaylistButton")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
     m.castCrewRowList = m.top.findNode("castCrewRowList")
     m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
-    m.otherActionLayoutGroup = m.top.findNode("otherActionLayoutGroup")
+    m.otherActionButtonLayoutGroup = m.top.findNode("otherActionButtonLayoutGroup")
 
     ' Tracking focus
     m.lastPlaybackButtonFocused = m.playButton
-    m.playButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
-    m.requestButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
-    m.resumeButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
-    m.markWatchedButton.observeField("focusedChild", "OnPlaybackButtonsFocusedChildChanged")
+    m.playButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
+    m.requestButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
+    m.resumeButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
+    m.markWatchedButton.observeField("focusedChild", "OnPlaybackButtons_FocusChanged")
 
     m.lastOtherActionButtonFocused = m.watchlistButton
-    m.watchlistButton.observeField("focusedChild", "OnOtherActionsButtonsFocusedChildChanged")
-    m.playlistButton.observeField("focusedChild", "OnOtherActionsButtonsFocusedChildChanged")
+    m.watchlistButton.observeField("focusedChild", "OnOtherActionButtons_FocusChanged")
+    m.addToPlaylistButton.observeField("focusedChild", "OnOtherActionButtons_FocusChanged")
 
-    m.castCrewRowList.observeField("focusedChild", "HidePersonName")
-    m.castCrewRowList.observeField("rowItemFocused", "OnFocusedPersonChanged")
+    m.castCrewRowList.observeField("focusedChild", "OnCastCrewList_FocusChanged")
+    m.castCrewRowList.observeField("rowItemFocused", "OnCastCrewList_ItemFocused")
 
 
     ' Button clicks
-    m.playButton.observeField("buttonSelected", "OnPlayClicked")
-    m.requestButton.observeField("buttonSelected", "OnRequestClicked")
-    m.resumeButton.observeField("buttonSelected", "OnResumeClicked")
-    m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchClicked")
-    m.watchlistButton.observeField("buttonSelected", "OnWatchlistClicked")
-    m.playlistButton.observeField("buttonSelected", "OnAddToPlaylistClicked")
+    m.playButton.observeField("buttonSelected", "OnPlayButton_Selected")
+    m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
+    m.resumeButton.observeField("buttonSelected", "OnResumeButton_Selected")
+    m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchedButton_Selected")
+    m.watchlistButton.observeField("buttonSelected", "OnWatchlistButton_Selected")
+    m.addToPlaylistButton.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
 
 
 
@@ -52,68 +52,66 @@ Sub Init()
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
     m.errorDialog.title = "Error"
-    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
 
 
     ' Movie Details task
     m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
-    m.movieDetailsTask.observeField("data", "OnMovieDataAvailable")
+    m.movieDetailsTask.observeField("data", "OnMovieDetailsTask_DataAvailable")
 
 
     ' Mark Watched task
     m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
+
+    ' Toggle Watchlist task
     m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
 
 
-
     ' Observers
-    m.top.observeField("visible", "OnVisibilityChanged")
-    m.top.observeField("content", "OnContentSet")
+    m.top.observeField("visible", "OnThis_VisibleChanged")
+    m.top.observeField("content", "OnThis_ContentChanged")
 
 end sub
 
 
-Sub OnVisibilityChanged(event as object)
+Sub OnThis_VisibleChanged(event as object)
 
-    print "MovieDetailsView:OnVisibilityChanged"
+    print "MovieDetailsView:OnThis_VisibleChanged"
 
     if not event.getData() then m.movieDetailsTask.control = "stop"
 
 End Sub
 
 
-Sub OnPlaybackButtonsFocusedChildChanged(event as object)
+Sub OnPlaybackButtons_FocusChanged(event as object)
 
-    print "MovieDetailsView:OnPlaybackButtonsFocusedChildChanged"
+    print "MovieDetailsView:OnPlaybackButtons_FocusChanged"
 
     m.lastPlaybackButtonFocused = event.getRoSGNode()
 
 End Sub
 
-Sub OnOtherActionsButtonsFocusedChildChanged(event as object)
+Sub OnOtherActionButtons_FocusChanged(event as object)
 
-    print "MovieDetailsView:OnOtherActionsButtonsFocusedChildChanged"
+    print "MovieDetailsView:OnOtherActionButtons_FocusChanged"
 
     m.lastOtherActionButtonFocused = event.getRoSGNode()
 
 End Sub
 
 
-Sub OnErrorDialogClosed()
+Sub OnErrorDialog_Closed()
 
-    print "MovieDetailsView:OnErrorDialogClosed"
+    print "MovieDetailsView:OnErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
 
 End Sub
 
 
+Sub OnCastCrewList_ItemFocused()
 
-
-
-Sub OnFocusedPersonChanged()
-
-    print "MovieDetailsView:OnFocusedPersonChanged"
+    print "MovieDetailsView:OnCastCrewList_ItemFocused"
 
     idx = m.castCrewRowList.rowItemFocused
     rowContent = m.castCrewRowList.content.getChild(idx[0])
@@ -123,9 +121,9 @@ Sub OnFocusedPersonChanged()
 End sub
 
 
-Sub HidePersonName()
+Sub OnCastCrewList_FocusChanged()
 
-    print "MovieDetailsView:HidePersonName"
+    print "MovieDetailsView:OnCastCrewList_FocusChanged"
 
     if not m.castCrewRowList.hasFocus() then m.selectedPersonLabel.text = invalid 
 
@@ -133,9 +131,9 @@ End Sub
 
 
 ' Fires when the BaseScene sets the Content node
-Sub OnContentSet()
+Sub OnThis_ContentChanged()
 
-    print "MovieDetailsView:OnContentSet"
+    print "MovieDetailsView:OnThis_ContentChanged"
 
     m.movieDetailsTask.control = "stop"
     
@@ -171,9 +169,9 @@ Sub OnContentSet()
 End Sub
 
 
-Sub OnMovieDataAvailable()
+Sub OnMovieDetailsTask_DataAvailable()
 
-    print "MovieDetailsView:OnMovieDataAvailable"
+    print "MovieDetailsView:OnMovieDetailsTask_DataAvailable"
 
     if not m.top.visible then return
 
@@ -238,7 +236,7 @@ Sub OnMovieDataAvailable()
             m.watchlistButton.icon = m.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
             m.watchlistButton.visible = true
             
-            m.playlistButton.visible = true
+            m.addToPlaylistButton.visible = true
         
         else
 
@@ -274,9 +272,9 @@ Sub OnMovieDataAvailable()
 End Sub
 
 
-Sub OnPlayClicked()
+Sub OnPlayButton_Selected()
 
-    print "MovieDetailsView:OnPlayClicked"
+    print "MovieDetailsView:OnPlayButton_Selected"
 
     m.top.playVideo = {
         id:m.data.id,
@@ -289,25 +287,25 @@ End Sub
 
 
 
-Sub OnRequestClicked()
+Sub OnRequestButton_Selected()
 
-    print "MovieDetailsView:OnRequestClicked"
-
-End Sub
-
-
-
-Sub OnResumeClicked()
-
-    print "MovieDetailsView:OnResumeClicked"
+    print "MovieDetailsView:OnRequestButton_Selected"
 
 End Sub
 
 
 
-Sub OnMarkWatchClicked()
+Sub OnResumeButton_Selected()
 
-    print "MovieDetailsView:OnMarkWatchClicked"
+    print "MovieDetailsView:OnResumeButton_Selected"
+
+End Sub
+
+
+
+Sub OnMarkWatchedButton_Selected()
+
+    print "MovieDetailsView:OnMarkWatchedButton_Selected"
 
     m.markMovieWatchedTask.id = m.data.id
     m.markMovieWatchedTask.control = "run"
@@ -323,9 +321,9 @@ End Sub
 
 
 
-Sub OnWatchlistClicked()
+Sub OnWatchlistButton_Selected()
 
-    print "MovieDetailsView:OnWatchlistClicked"
+    print "MovieDetailsView:OnWatchlistButton_Selected"
 
     m.toggleWatchlistTask.control = "stop"
     
@@ -360,9 +358,9 @@ End Sub
 
 
 
-Sub OnAddToPlaylistClicked()
+Sub OnAddToPlaylistButton_Selected()
 
-    print "MovieDetailsView:OnAddToPlaylistClicked"
+    print "MovieDetailsView:OnAddToPlaylistButton_Selected"
 
     m.top.switchToAddToPlaylist = {
         id:m.data.id,
@@ -397,7 +395,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         if m.watchlistButton.hasFocus() then
 
-            m.playlistButton.setFocus(true)
+            m.addToPlaylistButton.setFocus(true)
             return true
 
         end if
@@ -423,7 +421,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         
         end if
 
-        if m.playlistButton.hasFocus() then
+        if m.addToPlaylistButton.hasFocus() then
 
             m.watchlistButton.setFocus(true)
             return true
@@ -435,7 +433,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
     if key = "up" then
 
-        if m.otherActionLayoutGroup.isInFocusChain() then
+        if m.otherActionButtonLayoutGroup.isInFocusChain() then
 
             m.lastPlaybackButtonFocused.setFocus(true)
             return true
@@ -462,7 +460,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         end if
 
-        if m.otherActionLayoutGroup.isInFocusChain() then
+        if m.otherActionButtonLayoutGroup.isInFocusChain() then
 
             m.castCrewRowList.setFocus(true)
             return true

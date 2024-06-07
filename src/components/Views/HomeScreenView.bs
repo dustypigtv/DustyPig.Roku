@@ -14,8 +14,8 @@ sub Init()
 
     
     ' Observers
-    m.rowList.observeField("rowItemFocused", "OnFocusedItemChanged")
-    m.rowList.observeField("rowItemSelected", "OnItemClicked")
+    m.rowList.observeField("rowItemFocused", "OnRowList_ItemFocused")
+    m.rowList.observeField("rowItemSelected", "OnRowList_ItemSelected")
     
     
     ' Error dialog
@@ -29,35 +29,33 @@ sub Init()
     
     ' Home screen task
     m.homeScreenTask = CreateObject("roSGNode", "HomeScreenTask")
-    m.homeScreenTask.observeField("success", "OnHomeScreenDataAvailable")
+    m.homeScreenTask.observeField("success", "OnHomeScreenTask_DataAvailable")
+
+
 
     ' Update timer
     m.updateTimer = CreateObject("roSGNode", "Timer")
     m.updateTimer.repeat = true
     m.updateTimer.duration = 300
-    m.updateTimer.ObserveField("fire", "UpdateData")
+    m.updateTimer.ObserveField("fire", "OnUpdateDataTimer_Fired")
+
+
 
     ' Observe this
-    m.top.observeField("visible", "OnVisibleChanged")
-    m.top.observeField("isFocused", "SetFocus")
-    m.top.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
-    m.top.observeField("addToWatchlist", "AddToWatchlist")
-    m.top.observeField("removeFromWatchlist", "RemoveFromWatchlist")
+    m.top.observeField("visible", "OnThis_VisibleChanged")
+    m.top.observeField("focusedChild", "OnThis_FocusChanged")
+    m.top.observeField("removeFromContinueWatching", "OnThis_RemoveFromContinueWatching")
+    m.top.observeField("addToWatchlist", "OnThis_AddToWatchlist")
+    m.top.observeField("removeFromWatchlist", "OnThis_RemoveFromWatchlist")
 
 end sub
 
 
-Sub SetFocus()
 
-    print "HomeScreenView:SetFocus"
 
-    m.rowList.setFocus(true)
-
-End Sub
-
-Sub OnVisibleChanged(event as object)
+Sub OnThis_VisibleChanged(event as object)
     
-    print "HomeScreenView:OnVisibleChanged"
+    print "HomeScreenView:OnThis_VisibleChanged"
 
     if event.getData() 
         if m.firstLoad then
@@ -67,6 +65,26 @@ Sub OnVisibleChanged(event as object)
     end if
 
 End Sub
+
+
+
+Sub OnThis_FocusChanged()
+
+    print "HomeScreenView:OnThis_FocusChanged"
+
+    if m.top.isInFocusChain() then m.rowList.setFocus(true)
+
+End Sub
+
+
+
+Sub OnUpdateDataTimer_Fired()
+
+    print "HomeScreenView:OnUpdateDataTimer_Fired"
+
+    UpdateData()
+
+End sub
 
 
 Sub UpdateData()
@@ -80,9 +98,9 @@ End Sub
 
 
 
-Sub OnHomeScreenDataAvailable()
+Sub OnHomeScreenTask_DataAvailable()
 
-    print "HomeScreenView:OnHomeScreenDataAvailable"
+    print "HomeScreenView:OnHomeScreenTask_DataAvailable"
 
     m.busySpinner.visible = false
     m.busyLabel.visible = false
@@ -95,7 +113,7 @@ Sub OnHomeScreenDataAvailable()
         ' Ok not really in-place, there are deep copies and thread rendevous etc,
         ' But for the purpose of this code, just consider it an in-place update
         if m.rowList.content = invalid then m.rowList.content = m.homeScreenTask.data
-        OnFocusedItemChanged()
+        OnRowList_ItemFocused()
 
     else if m.homeScreenTask.unauthorized then
         m.switchToLoginAccountView = true
@@ -118,9 +136,9 @@ End Sub
 ' }
 
 ' Fires when an item in the rowList gets focus
-Sub OnFocusedItemChanged()
+Sub OnRowList_ItemFocused()
 
-    print "HomeScreenView:OnFocusedItemChanged"
+    print "HomeScreenView:OnRowList_ItemFocused"
 
     try
     
@@ -148,9 +166,9 @@ End Sub
 
 
 ' Fires when an item in the rowList is selected (ok button pressed)
-Sub OnItemClicked()
+Sub OnRowList_ItemSelected()
 
-    print "HomeScreenView:OnItemClicked"
+    print "HomeScreenView:OnRowList_ItemSelected"
 
     idx = m.rowList.rowItemSelected
     rowContent = m.rowList.content.getChild(idx[0])
@@ -161,9 +179,10 @@ Sub OnItemClicked()
 End sub
 
 
-Sub RemoveFromContinueWatching(event as object)
 
-    print "HomeScreenView:RemoveFromContinueWatching"
+Sub OnThis_RemoveFromContinueWatching(event as object)
+
+    print "HomeScreenView:OnThis_RemoveFromContinueWatching"
 
     ' public const long ID_CONTINUE_WATCHING = -500
     section = FindChildNode(m.homeScreenTask.data, "-500")
@@ -180,9 +199,9 @@ Sub RemoveFromContinueWatching(event as object)
 End Sub
 
 
-Sub AddToWatchlist(event as object)
+Sub OnThis_AddToWatchlist(event as object)
 
-    print "HomeScreenView:AddToWatchlist"
+    print "HomeScreenView:OnThis_AddToWatchlist"
 
     ' public const long ID_CONTINUE_WATCHING = -500
     ' public const long ID_WATCHLIST = -400
@@ -211,9 +230,9 @@ Sub AddToWatchlist(event as object)
     
 End Sub
 
-Sub RemoveFromWatchlist(event as object)
+Sub OnThis_RemoveFromWatchlist(event as object)
 
-    print "HomeScreenView:RemoveFromWatchlist"
+    print "HomeScreenView:OnThis_RemoveFromWatchlist"
 
     ' public const long ID_WATCHLIST = -400
     section = FindChildNode(m.homeScreenTask.data, "-400")

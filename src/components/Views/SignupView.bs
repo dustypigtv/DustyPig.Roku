@@ -1,4 +1,6 @@
 sub Init()
+    
+    print "SignUpView:Init"
 
     ' Find controls    
     m.headerLabel = m.top.findNode("headerLabel")
@@ -59,6 +61,8 @@ end sub
 ' Fires when this view's visibility changes
 Sub OnVisibleChanged(event as object)
 
+    print "SignUpView:OnVisibleChanged"
+
     m.busySpinner.visible = false
     if not event.getData() then return
 
@@ -94,6 +98,8 @@ End Sub
 
 sub OnChannelStoreGetInfo()
 
+    print "SignUpView:OnChannelStoreGetInfo"
+
     if m.channelStore.userData <> invalid then
         m.nameTextBox.text = m.channelStore.userData.firstName
         m.emailTextBox.text = m.channelStore.userData.email
@@ -104,6 +110,8 @@ end sub
 
 
 Sub ShowControls(s as boolean)
+
+    print "SignUpView:ShowControls", s
 
     if not s then
 
@@ -127,6 +135,8 @@ End Sub
 
 Sub FocusOnTB(tb as object)
 
+    print "SignUpView:FocusOnTB"
+
     m.nameTextBox.textColor = "#808080"
     m.emailTextBox.textColor = "#808080"
     m.passwordTextBox.textColor = "#808080"
@@ -141,6 +151,8 @@ End Sub
 
 Sub FocusOnButton(btn as object)
 
+    print "SignUpView:FocusOnButton"
+
     m.emailTextBox.textColor = "#808080"
     m.passwordTextBox.textColor = "#808080"
 
@@ -153,12 +165,16 @@ End Sub
 
 Sub OnKeyboardDialogClosed()
 
+    print "SignUpView:OnKeyboardDialogClosed"
+
     ShowControls(true)
 
 End Sub
 
 
 Sub OnKeyboardDialogButtonSelected(event as object)
+
+    print "SignUpView:OnKeyboardDialogButtonSelected"
 
     m.top.getScene().dialog = invalid
     idx = event.getData()
@@ -178,6 +194,8 @@ End Sub
 
 Sub OnErrorDialogClosed()
 
+    print "SignUpView:OnErrorDialogClosed"
+
     m.top.getScene().dialog = invalid
     ShowControls(true)
 
@@ -186,12 +204,16 @@ End Sub
 
 Sub OnLoginAccountClicked()
 
+    print "SignUpView:OnLoginAccountClicked"
+
     m.top.switchToLoginAccountView = true
 
 End sub
 
 
 Sub OnSignUpClicked()
+
+    print "SignUpView:OnSignUpClicked"
 
     m.signUpButton.setFocus(false)
     m.busySpinner.visible = true
@@ -205,6 +227,8 @@ Sub OnSignUpClicked()
 End Sub
 
 Function GetCredentials() as object
+
+    print "SignUpView:GetCredentials"
 
     displayName = m.nameTextBox.text
     if displayName = invalid or displayName = "" then return invalid
@@ -225,6 +249,8 @@ End Function
 
 
 Sub OnSignUpResult()
+
+    print "SignUpView:OnSignUpResult"
 
     m.signUpButton.setFocus(true)
     m.busySpinner.visible = false
@@ -253,6 +279,8 @@ End Sub
 
 Function onKeyEvent(key as String, press as Boolean) as Boolean
 
+    print "SignUpView:OnKeyEvent", key, press
+    
     if not press then return false
 
     if key = "back" then return true

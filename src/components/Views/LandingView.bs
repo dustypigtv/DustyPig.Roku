@@ -1,5 +1,7 @@
 sub Init()
 
+    print "LandinView:Init"
+    
     m.busySpinner = m.top.findNode("busySpinner")
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
     

@@ -7,11 +7,11 @@
     <interface>
         <field id="content" type="node" alwaysNotify="true" />
         <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
-        <field id="hideView" type="bool" alwaysNotify="true" />
+        <field id="playVideo" type="assocarray" alwaysNotify="true" />
         <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
-        <field id="addToWatchlist" type="string" alwaysNotify="true" />
+        <field id="addToWatchlist" type="node" alwaysNotify="true" />
         <field id="removeFromWatchlist" type="string" alwaysNotify="true" />
-        <field id="switchToAddToPlaylist" type="string" alwaysNotify="true" />
+        <field id="switchToAddToPlaylist" type="assocarray" alwaysNotify="true" />
     </interface>
 
     <children>
@@ -122,15 +122,13 @@
                     id="watchlistButton"
                     width="50"
                     height="50"
-                    focusBitmapUri="pkg:/images/add.png"
-                    focusFootprintBitmapUri="pkg:/images/add.png" />
+                    icon="pkg:/images/add.png" />
 
                 <ThemedIconButton
                     id="playlistButton"
                     width="50"
                     height="50"
-                    focusBitmapUri="pkg:/images/playlist.png"
-                    focusFootprintBitmapUri="pkg:/images/playlist.png" />
+                    icon="pkg:/images/playlist.png" />
 
             </LayoutGroup>
 

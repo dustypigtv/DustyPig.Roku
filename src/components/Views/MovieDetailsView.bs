@@ -1,5 +1,7 @@
 Sub Init()
 
+    print "MovieDetailsView:Init"
+
     ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
@@ -60,15 +62,9 @@ Sub Init()
 
     ' Mark Watched task
     m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
+    m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
 
 
-    ' Timer - Create AFTER creating the movieDetailsTask
-    m.timer = CreateObject("roSGNode", "Timer")
-    m.timer.repeat = true
-    m.timer.duration = 0.250
-    m.timer.ObserveField("fire","TimerFired")
-    m.timer.control = "start"
-  
 
     ' Observers
     m.top.observeField("visible", "OnVisibilityChanged")
@@ -79,6 +75,8 @@ end sub
 
 Sub OnVisibilityChanged(event as object)
 
+    print "MovieDetailsView:OnVisibilityChanged"
+
     if not event.getData() then m.movieDetailsTask.control = "stop"
 
 End Sub
@@ -86,11 +84,15 @@ End Sub
 
 Sub OnPlaybackButtonsFocusedChildChanged(event as object)
 
+    print "MovieDetailsView:OnPlaybackButtonsFocusedChildChanged"
+
     m.lastPlaybackButtonFocused = event.getRoSGNode()
 
 End Sub
 
 Sub OnOtherActionsButtonsFocusedChildChanged(event as object)
+
+    print "MovieDetailsView:OnOtherActionsButtonsFocusedChildChanged"
 
     m.lastOtherActionButtonFocused = event.getRoSGNode()
 
@@ -99,20 +101,19 @@ End Sub
 
 Sub OnErrorDialogClosed()
 
+    print "MovieDetailsView:OnErrorDialogClosed"
+
     m.top.getScene().dialog = invalid
 
 End Sub
 
 
-Sub TimerFired()
-
-    m.busySpinner.visible = m.top.visible and m.movieDetailsTask.state = "run"
-
-End sub
 
 
 
 Sub OnFocusedPersonChanged()
+
+    print "MovieDetailsView:OnFocusedPersonChanged"
 
     idx = m.castCrewRowList.rowItemFocused
     rowContent = m.castCrewRowList.content.getChild(idx[0])
@@ -124,6 +125,8 @@ End sub
 
 Sub HidePersonName()
 
+    print "MovieDetailsView:HidePersonName"
+
     if not m.castCrewRowList.hasFocus() then m.selectedPersonLabel.text = invalid 
 
 End Sub
@@ -132,9 +135,11 @@ End Sub
 ' Fires when the BaseScene sets the Content node
 Sub OnContentSet()
 
+    print "MovieDetailsView:OnContentSet"
+
     m.movieDetailsTask.control = "stop"
     
-
+    
     ' Reset
     m.titleLabel.text = invalid
     m.yearLabel.text = invalid
@@ -150,6 +155,7 @@ Sub OnContentSet()
     m.descriptionLabel.text = invalid
     m.castCrewRowList.content = invalid
     m.selectedPersonLabel.text = invalid
+    m.busySpinner.visible = true
 
     m.lastOtherActionButtonFocused = m.watchlistButton
 
@@ -160,24 +166,28 @@ Sub OnContentSet()
     m.movieDetailsTask.id = content.id
     m.movieDetailsTask.control = "run"
 
-    m.backdropPoster.uri = content.backdropUrl
+    m.backdropPoster.uri = content.backdropUrl ?? ""
     
 End Sub
 
 
 Sub OnMovieDataAvailable()
 
+    print "MovieDetailsView:OnMovieDataAvailable"
+
     if not m.top.visible then return
+
+    m.busySpinner.visible = false
 
     result = m.movieDetailsTask.data
     if result.success then
         
-        data = result.data
-        m.titleLabel.text = data.title
+        m.data = result.data
+        m.titleLabel.text = m.data.title
 
         try
             date = CreateObject("roDateTime")
-            date.FromISO8601String(data.date)
+            date.FromISO8601String(m.data.date)
             m.yearLabel.text = str(date.getYear())
         catch e
             m.yearLabel.text = "1900"
@@ -194,37 +204,40 @@ Sub OnMovieDataAvailable()
         '     NC_17 = 5,
         '     Unrated = 6
         ' }        
-        if data.rated = 1 then 
+        if m.data.rated = 1 then 
             m.ratedLabel.text = "Rated G"
-        else if data.rated = 2 then 
+        else if m.data.rated = 2 then 
             m.ratedLabel.text = "Rated PG"
-        else if data.rated = 3 then 
+        else if m.data.rated = 3 then 
             m.ratedLabel.text = "Rated PG-13"
-        else if data.rated = 4 then 
+        else if m.data.rated = 4 then 
             m.ratedLabel.text = "Rated R"
-        else if data.rated = 5 then 
+        else if m.data.rated = 5 then 
             m.ratedLabel.text = "Rated NC-17"
-        else if data.rated = 6 then 
+        else if m.data.rated = 6 then 
             m.ratedLabel.text = "Unrated"
         else  
             m.ratedLabel.text = "Not Rated"
         end if
 
-        if data.length <> invalid and data.length > 0 then m.lengthLabel.text = GetDurationString(data.length)
+        if m.data.length <> invalid and m.data.length > 0 then m.lengthLabel.text = GetDurationString(m.data.length)
 
-        if data.canPlay then
+        if m.data.canPlay then
            
             m.playButton.text = "Play"
 
-            if data.length <> invalid and data.length > 0 and data.played <> invalid and data.played > 60 then 
-                m.remainingLabel.text = GetDurationString(data.length - data.played) + " remaining"
+            if m.data.length <> invalid and m.data.length > 0 and m.data.played <> invalid and m.data.played > 60 then 
+                m.remainingLabel.text = GetDurationString(m.data.length - m.data.played) + " remaining"
                 m.resumeButton.visible = true
                 m.resumeButton.setFocus(true)
                 m.markWatchedButton.visible = true
             end if
 
             m.playButton.visible = true
+
+            m.watchlistButton.icon = m.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
             m.watchlistButton.visible = true
+            
             m.playlistButton.visible = true
         
         else
@@ -242,7 +255,7 @@ Sub OnMovieDataAvailable()
         end if
 
 
-        m.descriptionLabel.text = data.description
+        m.descriptionLabel.text = m.data.description
 
         m.castCrewRowList.content = m.movieDetailsTask.castCrew
         
@@ -263,11 +276,22 @@ End Sub
 
 Sub OnPlayClicked()
 
+    print "MovieDetailsView:OnPlayClicked"
+
+    m.top.playVideo = {
+        id:m.data.id,
+        title:m.data.title,
+        secondaryTitle:m.yearLabel.text,
+        videoUrl:m.data.videoUrl
+    }
+
 End Sub
 
 
 
 Sub OnRequestClicked()
+
+    print "MovieDetailsView:OnRequestClicked"
 
 End Sub
 
@@ -275,19 +299,24 @@ End Sub
 
 Sub OnResumeClicked()
 
+    print "MovieDetailsView:OnResumeClicked"
+
 End Sub
 
 
 
 Sub OnMarkWatchClicked()
 
-    m.markMovieWatchedTask.id = m.top.content.id
+    print "MovieDetailsView:OnMarkWatchClicked"
+
+    m.markMovieWatchedTask.id = m.data.id
     m.markMovieWatchedTask.control = "run"
+    m.data.played = 0
     m.playButton.setFocus(true)
     m.markWatchedButton.visible = false
     m.resumeButton.visible = false
     m.remainingLabel.text = "invalid"
-    m.top.removeFromContinueWatching = m.top.content.id
+    m.top.removeFromContinueWatching = m.data.id
 
 End Sub
 
@@ -296,11 +325,49 @@ End Sub
 
 Sub OnWatchlistClicked()
 
+    print "MovieDetailsView:OnWatchlistClicked"
+
+    m.toggleWatchlistTask.control = "stop"
+    
+    add = not m.data.inWatchList
+    id = m.data.id
+
+    m.toggleWatchlistTask.add = add
+    m.toggleWatchlistTask.id = id
+    m.toggleWatchlistTask.control = "run"
+
+    m.watchlistButton.icon = add ? "pkg:/images/check.png" : "pkg:/images/add.png"
+    if add then 
+    
+        node = createObject("roSGNode", "ContentNode")
+        node.setFields({
+            id:m.data.id,
+            title:m.data.title,
+            description:m.data.description,
+            FHDGRIDPOSTERURL:m.data.artworkUrl
+        })
+
+        ' Movie = 1
+        node.addFields({backdropUrl: m.data.backdropUrl, mediaType: 1})
+        m.top.addToWatchlist = node
+    
+    else 
+        m.top.removeFromWatchlist = id
+    end if
+
+    
 End Sub
 
 
 
 Sub OnAddToPlaylistClicked()
+
+    print "MovieDetailsView:OnAddToPlaylistClicked"
+
+    m.top.switchToAddToPlaylist = {
+        id:m.data.id,
+        mediaType:m.data.mediaType
+    }
 
 End Sub
 
@@ -308,16 +375,9 @@ End Sub
 
 Function onKeyEvent(key as String, press as Boolean) as Boolean
 
+    print "MovieDetailsView:OnKeyEvent", key, press
+    
     if not press then return false
-
-    if key = "back" then 
-
-        m.top.hideView = true
-        return true
-
-    end if
-
-
 
     if key = "right" then
 

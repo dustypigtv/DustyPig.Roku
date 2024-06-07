@@ -6,6 +6,8 @@
 
             Sub Init()
 
+                print "ThemedRowList:Init"
+
                 scene = m.top.getScene()
                 themeChangeNotifier = scene.findNode("themeChangeNotifier")
                 themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
@@ -14,6 +16,8 @@
 
             Sub ThemeChanged()
 
+                print "ThemedRowList:ThemeChanged"
+                
                 m.top.rowLabelColor = m.global.theme.textOnBackground
                 m.top.focusBitmapBlendColor = m.global.theme.primary
 

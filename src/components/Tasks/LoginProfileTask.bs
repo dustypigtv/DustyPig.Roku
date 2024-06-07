@@ -1,9 +1,15 @@
 sub Init()
+
+    print "LoginProfileTask:Init"
+    
     m.top.functionName = "RunTask"
+
 end sub
 
 sub RunTask()
 
+    print "LoginProfileTask:RunTask"
+    
     di=createobject("roDeviceInfo")
     deviceId=di.GetChannelClientId()
 

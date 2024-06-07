@@ -8,11 +8,19 @@
         <![CDATA[
 
             Sub Init()
+
+				print "MarkMovieWatchedTask:Init"
+
 				m.top.functionName = "RunTask"
+			
 			End Sub
 
 			Sub RunTask()
+			
+				print "MarkMovieWatchedTask:RunTask"
+				
 				result = GetData("/Movies/MarkWatched/" + m.top.id, m.global.profileToken)
+			
 			End Sub
 
         ]]>

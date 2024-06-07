@@ -1,5 +1,7 @@
 sub Init()
 
+    print "MainView:Init"
+
     ' Find controls    
     m.sideBarView = m.top.findNode("sideBarView")
     m.homeScreenView = m.top.findNode("homeScreenView")
@@ -14,6 +16,8 @@ sub Init()
 end sub
 
 Sub OnVisibleChanged(event as object)
+    
+    print "MainView:OnVisibleChanged"
     
     if not event.getData() then return
 

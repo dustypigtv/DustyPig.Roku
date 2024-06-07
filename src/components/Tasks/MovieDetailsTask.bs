@@ -1,8 +1,14 @@
 Sub Init()
+
+    print "MovieDetailsTask:Init"
+
     m.top.functionName = "RunTask"
-End Sub
+
+    End Sub
 
 Sub RunTask()
+
+    print "MovieDetailsTask:RunTask"
 
     id = m.top.id
     url = `/Movies/Details/${id}`
@@ -63,6 +69,8 @@ End Sub
 
 Sub AddSectionIfHasPeople(root as object, child as object, singularName as string, addPlural as boolean)
 
+    print "MovieDetailsTask:AddSectionIfHasPeople"
+    
     if child.getChildCount() > 0 then
 
         child.title = singularName

@@ -41,7 +41,8 @@
 	
 		<Video
         	id = "videoView"
-        	enableUI = "true"
+			width="1920"
+			height="1080"
         	visible = "false"/>
 
 	</children>

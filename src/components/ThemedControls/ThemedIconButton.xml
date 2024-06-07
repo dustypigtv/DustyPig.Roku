@@ -6,6 +6,8 @@
 
             Sub Init()
 
+                print "ThemedIconButton:Init"
+
                 m.top.showFocusFootprint = true
                 m.top.iconUri=""
                 m.top.focusedIconUri=""
@@ -17,10 +19,14 @@
                 themeChangeNotifier = scene.findNode("themeChangeNotifier")
                 themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
 
+                m.top.observeFieldScoped("icon", "IconChanged")
+
             End Sub
 
 
             Sub OnSizeChanged()
+
+                print "ThemedIconButton:OnSizeChanged"
 
                 m.top.minWidth = m.top.width
                 m.top.maxWidth = m.top.width
@@ -28,7 +34,20 @@
             End Sub
 
 
+            Sub IconChanged()
+
+                print "ThemedIconButton:IconChanged"
+
+                m.top.focusBitmapUri = m.top.icon
+                m.top.focusFootprintBitmapUri =  m.top.icon
+                ThemeChanged()
+
+            End Sub
+
+
             Sub ThemeChanged()
+
+                print "ThemedIconButton:ThemeChanged"
 
                 m.top.getChild(0).blendColor = m.global.theme.primary
 
@@ -38,6 +57,7 @@
 
      <interface>
         <field id="width" type="float" value="250" alwaysNotify="true" />
+        <field id="icon" type="string" alwaysNotify="true" />
     </interface>
 
 </component>

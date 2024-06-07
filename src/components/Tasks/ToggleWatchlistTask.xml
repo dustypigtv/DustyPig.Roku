@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ToggleWatchlistTask" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
+	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+                print "ToggleWatchlistTask:Init"
+
+				m.top.functionName = "RunTask"
+
+			End Sub
+
+			Sub RunTask()
+
+                print "ToggleWatchlistTask:RunTask"
+
+                if m.top.add then
+    				GetData("/Media/AddToWatchlist/" + m.top.id, m.global.profileToken)
+                else
+                    DeleteData("/Media/DeleteFromWatchlist/" + m.top.id, m.global.profileToken)
+                end if
+			
+            End Sub
+
+        ]]>
+    </script>
+	
+	<interface>
+        <field id="id" type="string" />
+        <field id="add" type="bool" />
+    </interface>
+
+	
+</component>

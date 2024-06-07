@@ -12,7 +12,8 @@
             "password": "saflok",
             "rootDir": "${workspaceFolder}/dist",
             "preLaunchTask": "build",
-            "injectRdbOnDeviceComponent": true
+            "injectRdbOnDeviceComponent": true,
+            "stopDebuggerOnAppExit": true
         }
     ]
 }

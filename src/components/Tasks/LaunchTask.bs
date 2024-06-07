@@ -1,5 +1,7 @@
 Sub Init()
 
+    print "LaunchTask:Init"
+
     m.top.functionName = "RunTask"
 
 End Sub
@@ -7,6 +9,8 @@ End Sub
 
 Sub RunTask()
 
+    print "LaunchTask:RunTask"
+    
     ' DeleteAccountToken()
 
     result = CheckAccountToken()

@@ -1,5 +1,7 @@
 Sub Init()
 
+    print "BaseScene:Init"
+
     m.top.backgroundURI = ""
     m.top.backgroundColor ="0x000000FF"
 
@@ -44,11 +46,15 @@ Sub Init()
     m.movieDetailsView = m.top.findNode("movieDetailsView")
     m.movieDetailsView.observeField("hideView", "HideTopView")
     m.movieDetailsView.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
+    m.movieDetailsView.observeField("addToWatchlist", "AddToWatchlist")
+    m.movieDetailsView.observeField("removeFromWatchlist", "RemoveFromWatchlist")
+    m.movieDetailsView.observeField("switchToAddToPlaylist", "SwitchToAddToPlaylist")
+    m.movieDetailsView.observeField("playVideo", "PlayVideo")
 
     
     ' Video View
     m.videoView = m.top.findNode("videoView")
-
+    m.videoView.observeField("errorStr", "OnVideoError")
 
 
 
@@ -90,6 +96,8 @@ End Sub
 
 Sub ShowView(node)
 
+    print "BaseScene:ShowView"
+
     prev = m.viewStack.peek()
     if prev <> invalid then prev.visible = false    
     node.visible = true
@@ -100,11 +108,15 @@ End Sub
 
 Sub HideTopView()
 
+    print "BaseScene:HideTopView"
+
    HideView(invalid)
 
 end Sub
 
 Sub HideView(node as Object)
+
+    print "BaseScene:HideView"
 
     if node = invalid OR (m.viewStack.peek() <> invalid AND m.viewStack.peek().isSameNode(node))     
         last = m.viewStack.pop()
@@ -121,6 +133,8 @@ End Sub
 
 Sub ThemeTimerFired()
 
+    ' print "BaseScene:ThemeTimerFired"
+
     if m.themeChangeNotifier.title = m.global.theme.id  then return
     m.themeChangeNotifier.title = m.global.theme.id
 
@@ -131,6 +145,8 @@ End sub
 
 Sub SwitchToLoginAccountView(event as object)
 
+    print "BaseScene:SwitchToLoginAccountView"
+
     if event.getData() then
         m.loggedIn = false
         ShowView(m.loginAccountView)
@@ -139,6 +155,8 @@ Sub SwitchToLoginAccountView(event as object)
 End Sub
 
 Sub SwitchToSignUpView(event as object)
+
+    print "BaseScene:SwitchToSignUpView"
 
     if event.getData() then
         m.loggedIn = false
@@ -150,6 +168,8 @@ End Sub
 
 Sub SwitchToLoginProfileView(event as object)
 
+    print "BaseScene:SwitchToLoginProfileView"
+
     if event.getData() then ShowView(m.loginProfileView)
 
 End Sub
@@ -157,8 +177,11 @@ End Sub
 
 Sub SwitchToMainView(event as object)
 
+    print "BaseScene:SwitchToMainView"
+
     if event.getData() then
         m.loggedIn = true
+        m.viewStack = []
         ShowView(m.mainView)
     end if 
 
@@ -167,6 +190,8 @@ End Sub
 
 
 sub CancelLoginProfileView(event as object)
+
+    print "BaseScene:CancelLoginProfileView"
 
     if not event.getData() then return
 
@@ -181,6 +206,8 @@ end sub
 
 Sub SwitchToMovieDetailsView(event as object)
 
+    print "BaseScene:SwitchToMovieDetailsView"
+
     node = event.getData()
     if node = invalid then return
 
@@ -192,6 +219,92 @@ End Sub
 
 Sub RemoveFromContinueWatching(event as object)
 
+    print "BaseScene:RemoveFromContinueWatching"
+
     m.homeScreenView.removeFromContinueWatching = event.getData()
 
 End Sub
+
+
+Sub AddToWatchlist(event as object)
+
+    print "BaseScene:AddToWatchlist"
+
+    m.homeScreenView.addToWatchlist = event.getData()
+
+End Sub
+
+Sub RemoveFromWatchlist(event as object)
+
+    print "BaseScene:RemoveFromWatchlist"
+
+    m.homeScreenView.removeFromWatchlist = event.getData()
+
+End Sub
+
+
+Sub SwitchToAddToPlaylist(event as object)
+
+    print "BaseScene:SwitchToAddToPlaylist"
+
+    print "*** ADD TO PLAYLIST ***"
+
+End Sub
+
+Sub PlayVideo(event as object)
+
+    print "BaseScene:PlayVideo"
+
+    data = event.getData()
+    content = createObject("roSGNode", "ContentNode")
+    content.id = data.id
+    content.url = data.videoUrl
+    content.streamFormat = "mp4"
+    m.videoView.content = content
+    m.videoView.control = "play"
+
+    ShowView(m.videoView)
+    
+End Sub
+
+Sub OnVideoError(event as object)
+
+    print "BaseScene:OnVideoError"
+
+    m.videoView.control = "stop"
+        print event.getData()
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    print "BaseScene:OnKeyEvent", key, press
+    
+    if not press then return false
+
+    if key = "back" then
+
+        if m.videoView.visible then 
+
+            m.videoView.control = "stop"
+
+        end if
+
+        if not m.mainView.visible then HideTopView()
+        return true
+
+    end if
+
+    return false
+
+End Function

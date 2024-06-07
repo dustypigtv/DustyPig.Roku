@@ -6,6 +6,8 @@
 
             Sub Init()
 
+                print "ThemedLabel:Init"
+
                 scene = m.top.getScene()
                 themeChangeNotifier = scene.findNode("themeChangeNotifier")
                 themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
@@ -14,6 +16,8 @@
 
             Sub ThemeChanged()
 
+                print "ThemedLabel:ThemeChanged"
+                
                 m.top.color = m.global.theme[m.top.themeColor]
 
             End Sub

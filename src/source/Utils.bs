@@ -1,5 +1,7 @@
 function ProfilesToNode(data as object) as object
 
+    print "Utils:ProfilesToNode"
+
     ' Create a root content node, with child nodes holding info
     ret = createObject("roSGNode", "ContentNode")
     for each item in data
@@ -17,24 +19,11 @@ function ProfilesToNode(data as object) as object
 end function
 
 
-' Function GetDurationString(totalSeconds As float) As String
-'     remaining = Int(totalSeconds)
-'     hours = Int(remaining / 3600).ToStr()
-'     remaining = remaining Mod 3600
-'     minutes = Int(remaining / 60).ToStr()
-'     remaining = remaining Mod 60
-'     seconds = remaining.ToStr()
-
-'     If hours <> "0" Then
-'         Return PadLeft(hours, "0", 2) + ":" + PadLeft(minutes, "0", 2) + ":" + PadLeft(seconds, "0", 2)
-'     Else
-'         Return PadLeft(minutes, "0", 2) + ":" + PadLeft(seconds, "0", 2)
-'     End If
-' End Function
-
-
 
 Function GetDurationString(totalSeconds As float) As String
+
+    print "Utils:GetDurationString"
+
     remaining = Int(totalSeconds)
     hours = Int(remaining / 3600).ToStr()
     remaining = remaining Mod 3600
@@ -49,19 +38,28 @@ Function GetDurationString(totalSeconds As float) As String
     Else
         Return minutes + " min"
     End If
+
 End Function
 
 Function PadLeft(value As String, padChar As String, totalLength As Integer) As String
+    
+    print "Utils:PadLeft"
+
     While value.Len() < totalLength
         value = padChar + value
     End While
+    
     Return value
+
 End Function
 
 
-Function StringHasValue(s as string) as boolean
+Function StringHasValue(s as object) as boolean
+
+    print "Utils:StringHasValue", s
 
     if s = invalid then return false
+    if getInterface(s, "ifString") = invalid then return false
     if s.IsEmpty() then return false
     if s.trim().IsEmpty() then return false
     return true
@@ -70,6 +68,8 @@ End Function
 
 
 Function FindChildNode(node as roSGNode, id as string) as roSGNode
+
+    print "Utils:FindChildNode:", id
 
     ' Sometimes, node.findNode(id) fails. Not sure why. So this is a backup
     if node = invalid then return invalid

@@ -6,6 +6,8 @@
 
             Sub Init()
 
+                print "ThemedBusySpinner:Init"
+
                 m.top.poster.uri = "pkg:/images/spinner.png"
 
                 scene = m.top.getScene()
@@ -16,6 +18,8 @@
 
             Sub ThemeChanged()
 
+                print "ThemedBusySpinner:ThemeChanged"
+                
                 m.top.poster.blendColor = m.global.theme.primary
             
             End Sub

@@ -1,5 +1,7 @@
 sub Init()
 
+    print "HomeScreenView:Init"
+
     m.firstLoad = true
 
     ' Find controls    
@@ -39,11 +41,15 @@ sub Init()
     m.top.observeField("visible", "OnVisibleChanged")
     m.top.observeField("isFocused", "SetFocus")
     m.top.observeField("removeFromContinueWatching", "RemoveFromContinueWatching")
+    m.top.observeField("addToWatchlist", "AddToWatchlist")
+    m.top.observeField("removeFromWatchlist", "RemoveFromWatchlist")
 
 end sub
 
 
 Sub SetFocus()
+
+    print "HomeScreenView:SetFocus"
 
     m.rowList.setFocus(true)
 
@@ -51,6 +57,8 @@ End Sub
 
 Sub OnVisibleChanged(event as object)
     
+    print "HomeScreenView:OnVisibleChanged"
+
     if event.getData() 
         if m.firstLoad then
             m.firstLoad = false
@@ -63,6 +71,8 @@ End Sub
 
 Sub UpdateData()
 
+    print "HomeScreenView:UpdateData"
+
     m.homeScreenTask.control = "stop"
     m.homeScreenTask.control = "run"
 
@@ -71,6 +81,8 @@ End Sub
 
 
 Sub OnHomeScreenDataAvailable()
+
+    print "HomeScreenView:OnHomeScreenDataAvailable"
 
     m.busySpinner.visible = false
     m.busyLabel.visible = false
@@ -108,6 +120,8 @@ End Sub
 ' Fires when an item in the rowList gets focus
 Sub OnFocusedItemChanged()
 
+    print "HomeScreenView:OnFocusedItemChanged"
+
     try
     
         x = m.rowList.rowItemFocused
@@ -116,7 +130,7 @@ Sub OnFocusedItemChanged()
 
         ' Check values before changing to prevent flickering
         backdropUrl = selItem.backdropUrl
-        if backdropUrl = "" or backdropUrl = invalid then backdropUrl = selItem.FHDGRIDPOSTERURL
+        if not StringHasValue(backdropUrl) then backdropUrl = ""
         if m.backdropPoster.uri <> backdropUrl then m.backdropPoster.uri = backdropUrl
 
         if m.titleLabel.text <> selItem.title then m.titleLabel.text = selItem.title
@@ -125,7 +139,9 @@ Sub OnFocusedItemChanged()
         if m.descriptionLabel.text <> description then m.descriptionLabel.text = description
     
     catch e
-    
+
+        print e
+
     end try
 
 End Sub
@@ -133,6 +149,8 @@ End Sub
 
 ' Fires when an item in the rowList is selected (ok button pressed)
 Sub OnItemClicked()
+
+    print "HomeScreenView:OnItemClicked"
 
     idx = m.rowList.rowItemSelected
     rowContent = m.rowList.content.getChild(idx[0])
@@ -145,8 +163,60 @@ End sub
 
 Sub RemoveFromContinueWatching(event as object)
 
-    ' public const long ID_CONTINUE_WATCHING = -500;
+    print "HomeScreenView:RemoveFromContinueWatching"
+
+    ' public const long ID_CONTINUE_WATCHING = -500
     section = FindChildNode(m.homeScreenTask.data, "-500")
+    if section = invalid then return
+
+    id = event.getData()
+    item = FindChildNode(section, id)
+    if item = invalid then return
+
+    section.removeChild(item)
+
+    if section.getChildCount() = 0 then m.homeScreenTask.data.removeChild(section)
+
+End Sub
+
+
+Sub AddToWatchlist(event as object)
+
+    print "HomeScreenView:AddToWatchlist"
+
+    ' public const long ID_CONTINUE_WATCHING = -500
+    ' public const long ID_WATCHLIST = -400
+    section = FindChildNode(m.homeScreenTask.data, "-400")
+    if section = invalid then
+       
+        ' Add Section
+        ' Section is second under Continue Watching 
+        continueWatching = FindChildNode(m.homeScreenTask.data, "-500")
+        if continueWatching = invalid then idx = 0 else idx = 1
+        section = createObject("roSGNode", "ContentNode")
+        section.setFields({
+            id:"-400",
+            title:"Watchlist"
+        })
+        m.homeScreenTask.data.insertChild(section, idx)
+
+    end if
+
+    newNode = event.getData()
+    item = FindChildNode(section, newNode.id)
+    if item <> invalid then return
+
+    ' Add Item
+    section.appendChild(newNode)
+    
+End Sub
+
+Sub RemoveFromWatchlist(event as object)
+
+    print "HomeScreenView:RemoveFromWatchlist"
+
+    ' public const long ID_WATCHLIST = -400
+    section = FindChildNode(m.homeScreenTask.data, "-400")
     if section = invalid then return
 
     id = event.getData()

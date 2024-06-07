@@ -1,11 +1,15 @@
 Sub Init()
 
+    print "HomeScreenTask:Init"
+
     m.top.functionName = "RunTask"
 
     End Sub
 
 
 Sub RunTask()
+
+    print "HomeScreenTask:RunTask"
 
     m.top.unauthorized = false
 
@@ -137,6 +141,9 @@ End Sub
 
 Function AreNodesTheSame(src as roSGNode, dst as roSGNode) as boolean
 
+    print "HomeScreenTask:AreNoedesTheSame"
+    print src, dst
+
     if src.getChildCount() <> dst.getChildCount() then return false
 
     for i = 0 to src.getChildCount() - 1
@@ -152,7 +159,7 @@ Function AreNodesTheSame(src as roSGNode, dst as roSGNode) as boolean
             dstItem = dstSection.getChild(j)
             if srcItem.id <> dstItem.id then return false
 
-            ' public const long ID_WATCHLIST = -400;
+            ' public const long ID_WATCHLIST = -400
             if srcSection.id = "-400" then
                 if srcItem.FHDGRIDPOSTERURL <> dstItem.FHDGRIDPOSTERURL then return false
             end if
@@ -167,6 +174,8 @@ End Function
 
 Sub CopySectionFields(srcSection as roSGNode, dstSection as roSGNode)
 
+    print "HomeScreenTask:CopySectionFields"
+
     dstSection.setFields({
         id:srcSection.id,
         title:srcSection.title
@@ -177,6 +186,8 @@ End Sub
 
 Sub CopyItemFields(srcItem as roSGNode, dstItem as roSGNode)
 
+    print "HomeScreenTask:CopyItemFields"
+    
     dstItem.setFields({
         id:srcItem.id,
         title:srcItem.title,

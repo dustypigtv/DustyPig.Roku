@@ -1,5 +1,7 @@
 function GetAccountToken() as string
 
+    print "API:GetAccountToken"
+
     ' Try to get from the registry
     reg = CreateObject("roRegistrySection", "default")
     if reg.Exists("accountToken") then return reg.Read("accountToken")
@@ -27,6 +29,8 @@ end function
 
 sub SaveAccountToken(accountToken as String)
 
+    print "API:SaveAccountToken"
+
     reg = CreateObject("roRegistrySection", "default")
     reg.Write("accountToken", accountToken)
     reg.Flush()
@@ -38,6 +42,8 @@ sub SaveAccountToken(accountToken as String)
 end sub
 
 sub DeleteAccountToken()
+
+    print "API:DeleteAccountToken"
 
     reg = CreateObject("roRegistrySection", "default")
     if reg.Exists("accountToken") then reg.delete("accountToken")
@@ -51,11 +57,15 @@ end sub
 
 function GetUrl(endpoint as string) as string
 
+    print "API:GetUrl", endpoint
+
     return "https://service.dustypig.tv/api/v3" + endpoint
         
 end function
 
 function TranslateErrorCode(code as integer) as string
+
+    print "API:TranslateErrorCode", code.toStr()
 
     if code = 400 then return "Bad Request"
     if code = 401 then return "Unauthorized"
@@ -74,6 +84,8 @@ end function
 
 function BuildResult(response as dynamic) as object
 
+    print "API:BuildResult"
+
     if response.ok
         json = response.json()
         json.statusCode = response.status
@@ -89,6 +101,8 @@ end function
 
 function CheckAccountToken() as boolean
 
+    print "API:CheckAccountToken"
+
     response = fetch({
         url: GetUrl("/NoOp/HelloAccount")
         headers: {
@@ -101,6 +115,8 @@ end function
 
 
 function Login(email as string, password as string) as object
+
+    print "API:Login"
 
     di=createobject("roDeviceInfo")
     deviceId=di.GetChannelClientId()
@@ -123,6 +139,8 @@ end function
 
 function SignUp(displayName as string, email as string, password as string) as object
 
+    print "API:SignUp"
+
     response = fetch({
         url: GetUrl("/Account/Create"),
         headers: {
@@ -139,6 +157,8 @@ end function
 
 
 sub Logout()
+
+    print "API:Logout"
 
     response = fetch({
         url: GetUrl("/Auth/Signout")
@@ -157,6 +177,8 @@ end sub
 
 function GetData(subUrl as string, token as string) as object
 
+    print "API:GetData", subUrl
+
     response = fetch({
         url: GetUrl(subUrl),
         headers: {
@@ -170,6 +192,8 @@ end function
 
 
 function PostAndGetData(subUrl as string, data as object, token as string) as object
+
+    print "API:PostAndGetData", subUrl, data
 
     response = fetch({
         url: GetUrl(subUrl),
@@ -185,4 +209,23 @@ function PostAndGetData(subUrl as string, data as object, token as string) as ob
     return ret
 
 end function
+
+
+Function DeleteData(subUrl as string, token as string) as object
+
+    print "API:DeleteData", subUrl
+
+    response = fetch({
+        url: GetUrl(subUrl),
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+        method: "DELETE"
+    })
+
+    ret = BuildResult(response)
+
+    return ret
+
+End function
 

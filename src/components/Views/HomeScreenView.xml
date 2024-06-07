@@ -12,6 +12,8 @@
         <field id="switchToMovieDetailsView" type="node" alwaysNotify="true" />
 
         <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
+        <field id="addToWatchlist" type="node" alwaysNotify="true" />
+        <field id="removeFromWatchlist" type="string" alwaysNotify="true" />
     </interface>
 	
     <children>

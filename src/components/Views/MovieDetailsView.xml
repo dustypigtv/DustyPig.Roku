@@ -6,10 +6,10 @@
    
     <interface>
         <field id="content" type="node" alwaysNotify="true" />
-        <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
+        <field id="showView_LoginAccount" type="bool" value="false" alwaysNotify="true" />
         <field id="playVideo" type="assocarray" alwaysNotify="true" />
-        <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
-        <field id="addToWatchlist" type="node" alwaysNotify="true" />
+        <field id="relay_RemoveFromContinueWatching" type="string" alwaysNotify="true" />
+        <field id="relay_AddToWatchlist" type="node" alwaysNotify="true" />
         <field id="removeFromWatchlist" type="string" alwaysNotify="true" />
         <field id="switchToAddToPlaylist" type="assocarray" alwaysNotify="true" />
     </interface>

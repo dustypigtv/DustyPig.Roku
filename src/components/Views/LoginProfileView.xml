@@ -4,8 +4,8 @@
     <script type = "text/brightscript" uri = "pkg:/components/Views/LoginProfileView.bs" />
 
     <interface>
-        <field id="switchToMainView" type="bool" value="false" alwaysNotify="true" />
-        <field id="switchToLoginAccountView" type="bool" value="false" alwaysNotify="true" />
+        <field id="showView_Main" type="bool" value="false" alwaysNotify="true" />
+        <field id="showView_LoginAccount" type="bool" value="false" alwaysNotify="true" />
     </interface>
 	
     <children>

@@ -33,7 +33,7 @@ Sub RunTask()
 
                     ' Set theme AFTER setting profileId
                     m.global.theme = GetTheme()
-                    m.top.switchToMainView = true
+                    m.top.showView_Main = true
 
                 else
 

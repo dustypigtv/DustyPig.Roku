@@ -261,7 +261,7 @@ Sub OnMovieDetailsTask_DataAvailable()
         
     else if result.statusCode = 401 then
     
-        m.top.switchToLoginAccountView = true
+        m.top.showView_LoginAccount = true
     else
     
         m.errorDialog.message = [result.error]
@@ -314,7 +314,7 @@ Sub OnMarkWatchedButton_Selected()
     m.markWatchedButton.visible = false
     m.resumeButton.visible = false
     m.remainingLabel.text = "invalid"
-    m.top.removeFromContinueWatching = m.data.id
+    m.top.relay_RemoveFromContinueWatching = m.data.id
 
 End Sub
 
@@ -347,7 +347,7 @@ Sub OnWatchlistButton_Selected()
 
         ' Movie = 1
         node.addFields({backdropUrl: m.data.backdropUrl, mediaType: 1})
-        m.top.addToWatchlist = node
+        m.top.relay_AddToWatchlist = node
     
     else 
         m.top.removeFromWatchlist = id

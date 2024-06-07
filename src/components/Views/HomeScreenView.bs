@@ -128,7 +128,7 @@ Sub OnHomeScreenTask_DataAvailable()
         OnRowList_ItemFocused()
 
     else if m.homeScreenTask.unauthorized then
-        m.switchToLoginAccountView = true
+        m.showView_LoginAccount = true
     else
         m.errorDialog.message = [m.homeScreenTask.errMsg]
         m.top.getScene().dialog = m.errorDialog
@@ -197,7 +197,7 @@ Sub OnRowList_ItemSelected()
     '     Playlist = 4
     ' }
 
-    if selItem.mediaType = 1 then m.top.switchToMovieDetailsView = selItem
+    if selItem.mediaType = 1 then m.top.showView_MovieDetails = selItem
 
 End sub
 

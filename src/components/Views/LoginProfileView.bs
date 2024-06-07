@@ -147,9 +147,9 @@ Sub OnLoginProfileTask_DataAvailable()
     
     result = m.loginProfileTask.data
     if result.success then
-        m.top.switchToMainView = true
+        m.top.showView_Main = true
     else if result.statusCode = 401 then
-        m.switchToLoginAccountView = true
+        m.showView_LoginAccount = true
     else
         m.loginErrorDialog.message = [result.error]
         m.top.getScene().dialog = m.loginErrorDialog

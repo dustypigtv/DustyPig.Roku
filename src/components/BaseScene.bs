@@ -17,24 +17,24 @@ Sub Init()
     ' Login Account View
     m.loginAccountView = m.top.findNode("loginAccountView")
     m.allViews.push(m.loginAccountView)
-    m.loginAccountView.observeField("switchToSignUpView", "OnShowView_SignUp")
-    m.loginAccountView.observeField("switchToLoginProfileView", "OnShowView_LoginProfile")
-    m.loginAccountView.observeField("switchToMainView", "OnShowView_Main")
+    m.loginAccountView.observeField("showView_Signup", "OnShowView_SignUp")
+    m.loginAccountView.observeField("showView_LoginProfile", "OnShowView_LoginProfile")
+    m.loginAccountView.observeField("showView_Main", "OnShowView_Main")
 
 
     ' SignUp View
     m.signUpView = m.top.findNode("signupView")
     m.allViews.push(m.signUpView)
-    m.signUpView.observeField("switchToLoginAccountView", "OnShowView_LoginAccount")
-    m.signUpView.observeField("switchToLoginProfileView", "OnShowView_LoginProfile")
-    m.signUpView.observeField("switchToMainView", "OnShowView_Main")
+    m.signUpView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
+    m.signUpView.observeField("showView_LoginProfile", "OnShowView_LoginProfile")
+    m.signUpView.observeField("showView_Main", "OnShowView_Main")
 
 
     ' Login Profile View
     m.loginProfileView = m.top.findNode("loginProfileView")
     m.allViews.push(m.loginProfileView)
-    m.loginProfileView.observeField("switchToMainView", "OnShowView_Main")
-    m.loginProfileView.observeField("switchToLoginAccountView", "OnShowView_LoginAccount")
+    m.loginProfileView.observeField("showView_Main", "OnShowView_Main")
+    m.loginProfileView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
 
 
     ' Main View
@@ -43,8 +43,8 @@ Sub Init()
     ' *** Sub views of Main View ***
 
         m.homeScreenView = m.mainView.findNode("homeScreenView")
-        m.homeScreenView.observeField("switchToLoginAccountView", "OnShowView_LoginAccount")
-        m.homeScreenView.observeField("switchToMovieDetailsView", "OnShowView_MovieDetails")
+        m.homeScreenView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
+        m.homeScreenView.observeField("showView_MovieDetails", "OnShowView_MovieDetails")
         
     ' ******************************
 
@@ -52,8 +52,8 @@ Sub Init()
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
     m.allViews.push(m.movieDetailsView)
-    m.movieDetailsView.observeField("removeFromContinueWatching", "OnRelay_RemoveFromContinueWatching")
-    m.movieDetailsView.observeField("addToWatchlist", "OnRelay_AddToWatchlist")
+    m.movieDetailsView.observeField("relay_RemoveFromContinueWatching", "OnRelay_RemoveFromContinueWatching")
+    m.movieDetailsView.observeField("relay_AddToWatchlist", "OnRelay_AddToWatchlist")
     m.movieDetailsView.observeField("removeFromWatchlist", "OnRelay_RemoveFromWatchlist")
     m.movieDetailsView.observeField("switchToAddToPlaylist", "OnShowView_AddToPlaylist")
     m.movieDetailsView.observeField("playVideo", "OnPlayVideo")
@@ -77,7 +77,7 @@ Sub Init()
     m.launchTask = CreateObject("roSGNode", "LaunchTask")
     m.launchTask.observeField("startAuthFlow", "OnShowView_LoginAccount")
     m.launchTask.observeField("startProfileFlow", "OnShowView_LoginProfile")
-    m.launchTask.observeField("switchToMainView", "OnShowView_Main")
+    m.launchTask.observeField("showView_Main", "OnShowView_Main")
     m.launchTask.Control = "RUN"
 
 
@@ -211,7 +211,7 @@ Sub OnRelay_AddToWatchlist(event as object)
 
     print "BaseScene:OnRelay_AddToWatchlist"
 
-    m.homeScreenView.addToWatchlist = event.getData()
+    m.homeScreenView.relay_AddToWatchlist = event.getData()
 
 End Sub
 

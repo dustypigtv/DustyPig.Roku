@@ -208,7 +208,7 @@ Sub OnLoginAccountButton_Selected()
 
     print "SignUpView:OnLoginAccountButton_Selected"
 
-    m.top.switchToLoginAccountView = true
+    m.top.showView_LoginAccount = true
 
 End sub
 
@@ -262,9 +262,9 @@ Sub OnSignUpTask_DataAvailable()
 
         data = result.data
         if data.loginType = 1 then '1 = Main Profile in api
-            m.top.switchToMainView = true
+            m.top.showView_Main = true
         else
-            m.top.switchToLoginProfileView = true
+            m.top.showView_LoginProfile = true
         end if
 
     else

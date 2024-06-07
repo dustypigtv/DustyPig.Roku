@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="BaseScene" extends="Scene">
+<component name="BaseScene" extends="Scene" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
     
     <script type = "text/brightscript" uri = "pkg:/components/BaseScene.bs" />
 	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />
 
+	<interface>
+		<field id="test" type="bool" value="false" alwaysNotify="true" />
+	</interface>
 		 
     <children>
 	
-		<!--
-			I can't seem to observe an interface field here in a scene.
-			So instead just create a content node, and set the .title to 
-			the current theme_id.  Themed controls can observe the .title
-		-->
-		<ContentNode
-			id="themeChangeNotifier" />
-
 		<!-- Views -->
 		<LandingView 
 			id="landingView" />

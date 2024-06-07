@@ -14,12 +14,10 @@
 
                 m.top.observeFieldScoped("width", "OnSizeChanged")
                 m.top.observeFieldScoped("height", "OnSizeChanged")
-
-                scene = m.top.getScene()
-                themeChangeNotifier = scene.findNode("themeChangeNotifier")
-                themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
-
+                
                 m.top.observeFieldScoped("icon", "IconChanged")
+
+                m.global.observeFieldScoped("theme", "OnThemeChanged")  
 
             End Sub
 
@@ -40,14 +38,14 @@
 
                 m.top.focusBitmapUri = m.top.icon
                 m.top.focusFootprintBitmapUri =  m.top.icon
-                ThemeChanged()
+                OnThemeChanged()
 
             End Sub
 
 
-            Sub ThemeChanged()
+            Sub OnThemeChanged()
 
-                print "ThemedIconButton:ThemeChanged"
+                print "ThemedIconButton:OnThemeChanged"
 
                 m.top.getChild(0).blendColor = m.global.theme.primary
 

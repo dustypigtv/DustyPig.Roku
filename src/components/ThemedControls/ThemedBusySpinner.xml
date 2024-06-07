@@ -9,16 +9,13 @@
                 print "ThemedBusySpinner:Init"
 
                 m.top.poster.uri = "pkg:/images/spinner.png"
-
-                scene = m.top.getScene()
-                themeChangeNotifier = scene.findNode("themeChangeNotifier")
-                themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
+                m.global.observeFieldScoped("theme", "OnThemeChanged")                
 
             End Sub
 
-            Sub ThemeChanged()
+            Sub OnThemeChanged()
 
-                print "ThemedBusySpinner:ThemeChanged"
+                print "ThemedBusySpinner:OnThemeChanged"
                 
                 m.top.poster.blendColor = m.global.theme.primary
             

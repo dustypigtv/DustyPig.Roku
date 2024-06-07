@@ -68,22 +68,8 @@ Sub Init()
 
 
 
-    ' *** THEME ***
-    m.themeChangeNotifier = m.top.findNode("themeChangeNotifier")
-
-    ' Make sure theme is set on all controls before showing any views
-    ThemeTimerFired()
-
-    ' Setup a timer to update the theme
-    m.themeTimer = CreateObject("roSGNode", "Timer")
-    m.themeTimer.repeat = true
-    m.themeTimer.duration = 0.250
-    m.themeTimer.ObserveField("fire","ThemeTimerFired")
-    m.themeTimer.control = "start"
+    
   
-
-
-
 
     ' Do this 3rd from last
     m.viewStack = []
@@ -148,15 +134,6 @@ Sub HideAllViews()
 
 End Sub
 
-
-Sub ThemeTimerFired()
-
-    ' print "BaseScene:ThemeTimerFired"
-
-    if m.themeChangeNotifier.title = m.global.theme.id  then return
-    m.themeChangeNotifier.title = m.global.theme.id
-
-End sub
 
 
 

@@ -29,9 +29,7 @@
                 m.label.observeFieldScoped("horizAlign", "SetLabelAlignment")
 
                 ' Watch for theme updates
-                scene = m.top.getScene()
-                themeChangeNotifier = scene.findNode("themeChangeNotifier")
-                themeChangeNotifier.observeFieldScoped("title", "ThemeChanged")
+                m.global.observeFieldScoped("theme", "OnThemeChanged")
 
             End Sub
 
@@ -55,9 +53,9 @@
             End Sub
 
 
-            Sub ThemeChanged()
+            Sub OnThemeChanged()
 
-                print "ThemedButton:ThemeChanged"
+                print "ThemedButton:OnThemeChanged"
 
                 m.top.focusedTextColor = m.global.theme.textOnPrimary
                 m.focusedPoster.blendColor = m.global.theme.primary

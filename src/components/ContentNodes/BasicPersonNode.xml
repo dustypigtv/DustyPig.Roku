@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="BasicPersonNode" extends="ContentNode">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/ContentNodes/BasicPersonNode.bs" />
+   
+    <interface>
+
+        <!-- Setting this will update the ContentNode fields appropriately -->
+        <field id="data" type="assocarray" alwaysNotify="true" />
+
+    </interface>
+
+</component>

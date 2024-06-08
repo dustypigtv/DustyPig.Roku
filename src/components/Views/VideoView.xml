@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="VideoView" extends="Video">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/VideoView.bs" />
+
+    <interface>
+        <field id="playbackFinished" type="bool" alwaysNotify="true" />
+    </interface>
+   
+</component>

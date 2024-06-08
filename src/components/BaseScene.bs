@@ -5,68 +5,49 @@ Sub Init()
     m.top.backgroundURI = ""
     m.top.backgroundColor ="0x000000FF"
 
-    m.loggedIn = false
-
-    m.allViews =[]
+    m.allViews = { }
 
     ' Landing view
     m.landingView = m.top.findNode("landingView")
-    m.allViews.push(m.landingView)
+    m.allViews.landingView = m.landingView
 
 
     ' Login Account View
     m.loginAccountView = m.top.findNode("loginAccountView")
-    m.allViews.push(m.loginAccountView)
-    m.loginAccountView.observeField("showView_Signup", "OnShowView_SignUp")
-    m.loginAccountView.observeField("showView_LoginProfile", "OnShowView_LoginProfile")
-    m.loginAccountView.observeField("showView_Main", "OnShowView_Main")
+    m.allViews.loginAccountView = m.loginAccountView
 
 
     ' SignUp View
     m.signUpView = m.top.findNode("signupView")
-    m.allViews.push(m.signUpView)
-    m.signUpView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
-    m.signUpView.observeField("showView_LoginProfile", "OnShowView_LoginProfile")
-    m.signUpView.observeField("showView_Main", "OnShowView_Main")
+    m.allViews.signUpView = m.signUpView
 
 
     ' Login Profile View
     m.loginProfileView = m.top.findNode("loginProfileView")
-    m.allViews.push(m.loginProfileView)
-    m.loginProfileView.observeField("showView_Main", "OnShowView_Main")
-    m.loginProfileView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
+    m.allViews.loginProfileView = m.loginProfileView
 
 
     ' Main View
     m.mainView = m.top.findNode("mainView")
-    m.allViews.push(m.mainView)
-    ' *** Sub views of Main View ***
-
-        m.homeScreenView = m.mainView.findNode("homeScreenView")
-        m.homeScreenView.observeField("showView_LoginAccount", "OnShowView_LoginAccount")
-        m.homeScreenView.observeField("showView_MovieDetails", "OnShowView_MovieDetails")
-        
-    ' ******************************
-
+    m.allViews.mainView = m.mainView
+    
 
     ' Movie Details View
     m.movieDetailsView = m.top.findNode("movieDetailsView")
-    m.allViews.push(m.movieDetailsView)
-    m.movieDetailsView.observeField("relay_RemoveFromContinueWatching", "OnRelay_RemoveFromContinueWatching")
-    m.movieDetailsView.observeField("relay_AddToWatchlist", "OnRelay_AddToWatchlist")
-    m.movieDetailsView.observeField("relay_RemoveFromWatchlist", "OnRelay_RemoveFromWatchlist")
-    m.movieDetailsView.observeField("relay_switchToAddToPlaylist", "OnShowView_AddToPlaylist")
-    m.movieDetailsView.observeField("playVideo", "OnPlayVideo")
+    m.allViews.movieDetailsView = m.movieDetailsView
 
     
     ' Video View
     m.videoView = m.top.findNode("videoView")
-    m.allViews.push(m.videoView)
-    m.videoView.observeField("errorStr", "OnVideo_Error")
-
+    m.allViews.videoView = m.videoView
+    m.videoView.observeField("playbackFinished", "OnVideoView_PlaybackFinished")
 
     
-  
+    ' Observe Globals
+    m.global.observeField("loggedOut", "OnGlobal_LoggedOut")
+    m.global.observeField("showViewWithId", "OnGlobal_ShowViewWithId")
+    m.global.observeField("startVideoPlayback", "OnGlobal_StartVideoPlayback")
+
 
     ' Do this 3rd from last
     m.viewStack = []
@@ -126,7 +107,7 @@ End Sub
 
 Sub HideAllViews()
 
-    for each item in m.allViews
+    for each item in m.viewStack
         item.visible = false
     end for
     m.viewStack = []
@@ -135,134 +116,76 @@ End Sub
 
 
 
-
-
-Sub OnShowView_LoginAccount(event as object)
-
-    print "BaseScene:OnShowView_LoginAccount"
+Sub OnGlobal_LoggedOut(event as object)
 
     if event.getData() then
-        m.loggedIn = false
+        m.global.showViewWithId = "loginAccountView"
+    else
+        m.global.showViewWithId = "mainView"
+    end if
+
+End Sub
+
+
+Sub OnGlobal_ShowViewWithId(event as object)
+
+    id = event.getData()
+
+    print "BaseScene:OnGlobal_ShowViewWithid", id
+
+    if id = "loginAccountView" then
+   
         HideAllViews()
         ShowView(m.loginAccountView)
-    end if
-
-End Sub
-
-Sub OnShowView_SignUp(event as object)
-
-    print "BaseScene:OnShowView_SignUp"
-
-    if event.getData() then
-        m.loggedIn = false
+   
+    else if id = "signUpView" then
+   
         HideAllViews()
         ShowView(m.signUpView)
+   
+    else if id = "mainView" then
+   
+        HideAllViews()
+        ShowView(m.mainView)
+   
+    else
+   
+        ShowView(m.allViews[id])
+   
     end if
 
 End Sub
 
 
-Sub OnShowView_LoginProfile(event as object)
-
-    print "BaseScene:OnShowView_LoginProfile"
-
-    if event.getData() then ShowView(m.loginProfileView)
-
-End Sub
-
-
-Sub OnShowView_Main(event as object)
-
-    print "BaseScene:OnShowView_Main"
-
-    if event.getData() then
-        m.loggedIn = true
-        HideAllViews()
-        ShowView(m.mainView)
-    end if 
-
-End Sub
 
 
 
-Sub OnShowView_MovieDetails(event as object)
-
-    print "BaseScene:OnShowView_MovieDetails"
-
-    node = event.getData()
-    if node = invalid then return
-
-    m.movieDetailsView.content = node
-    ShowView(m.movieDetailsView)
-
-End Sub
 
 
-Sub OnRelay_RemoveFromContinueWatching(event as object)
 
-    print "BaseScene:OnRelay_RemoveFromContinueWatching"
-
-    m.homeScreenView.removeFromContinueWatching = event.getData()
-
-End Sub
-
-
-Sub OnRelay_AddToWatchlist(event as object)
-
-    print "BaseScene:OnRelay_AddToWatchlist"
-
-    m.homeScreenView.addToWatchlist = event.getData()
-
-End Sub
-
-Sub OnRelay_RemoveFromWatchlist(event as object)
-
-    print "BaseScene:OnRelay_RemoveFromWatchlist"
-
-    m.homeScreenView.removeFromWatchlist = event.getData()
-
-End Sub
-
-
-Sub OnShowView_AddToPlaylist(event as object)
-
-    print "BaseScene:OnShowView_AddToPlaylist"
-
-    print "*** ADD TO PLAYLIST ***"
-
-End Sub
-
-Sub OnPlayVideo(event as object)
+Sub OnGlobal_StartVideoPlayback(event as object)
 
     print "BaseScene:OnPlayVideo"
 
     data = event.getData()
-    print data
-
-    content = createObject("roSGNode", "ContentNode")
-    content.setFields(data)    
-    content.streamFormat = "mp4"
-    m.videoView.content = content
+    if data = invalid then return
+    
+    m.videoView.content = data
     m.videoView.control = "play"
 
     ShowView(m.videoView)
     
 End Sub
 
-Sub OnVideo_Error(event as object)
 
-    print "BaseScene:OnVideo_Error"
 
-    m.videoView.control = "stop"
-        print event.getData()
+
+
+Sub OnVideoView_PlaybackFinished(event as object)
+
+    if event.getData() and m.videoView.visible then HideTopView()
 
 End Sub
-
-
-
-
-
-
 
 
 

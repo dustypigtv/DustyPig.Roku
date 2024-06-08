@@ -11,69 +11,63 @@ Sub RunTask()
 
     print "HomeScreenTask:RunTask"
 
-    m.top.unauthorized = false
-
     result = GetData("/Media/HomeScreen?itemsPerSection=100", m.global.profileToken)
         
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
+
     if result.success then
 
-        ' Create a root content node, with child nodes holding info
-        root = createObject("roSGNode", "ContentNode")
-        for each section in result.data.sections
-            
-            row = root.createChild("ContentNode")
-            row.id = section.listId
-            row.title = section.title
-            
-            for each bm in section.items
+        if m.top.data = invalid then
 
-                item = row.createChild("ContentNode")
-                item.id = bm.id
-                item.title = bm.title
-                item.description = bm.description
-                item.FHDGRIDPOSTERURL = bm.artworkUrl
-                item.addFields({backdropUrl: bm.backdropUrl, mediaType: bm.mediaType})
+            ' Create a root content node, with child nodes holding sections, and each section holding BasicMedia nodes
+            root = createObject("roSGNode", "ContentNode")
+            for each section in result.data.sections
+                
+                row = root.createChild("ContentNode")
+                row.id = section.listId.toStr()
+                row.title = section.title
+                
+                for each bm in section.items
+
+                    bm.id = bm.id.toStr()
+                    item = row.createChild("BasicMediaNode")
+                    item.data = bm
+                    
+                end for
                 
             end for
-            
-        end for
 
-        
-
-        if m.top.data = invalid then
-        
             m.top.data = root
-        
+            m.top.success = true
+
         else
         
             ' Updating nodes in place provides the least amount of flickering
-            ' But first a quick scan to see if anything changed
-            ' Scan id's in positions, and for the playlist row also can posters
+           
+            currentData = m.top.data
+            newData = result.data.sections
 
-            current = m.top.data
-            if AreNodesTheSame(current, root) then return
-            
-
-            ' At this point, do in-place updates
-            while current.getChildCount() > root.getChildCount()
-                current.removeChildIndex(current.getChildCount() - 1)
+            ' If there are more current sections than new ones, trim
+            while currentData.getChildCount() > newData.getChildCount()
+                currentData.removeChildIndex(currentData.getChildCount() - 1)
             end while
 
-            for i = 0 to root.getChildCount() - 1
+            for i = 0 to newData.getChildCount() - 1
                 
-                newSection = root.getChild(i)
+                newSection = newData.getChild(i)
+                newSection.id = newSection.id.toStr()
 
-                if i < current.getChildCount() then
+                if i < currentData.getChildCount() then
 
-                    curSection = current.getChild(i)
+                    ' Check if the section needs to update
+                    curSection = currentData.getChild(i)
+                    if newSection.id <> curSection.id then CopySectionFields(newSection, curSection)
 
-                    if newSection.id <> curSection.id then
-
-                        ' Things like replaceChild or insertChild are throwing. So just update it
-                        CopySectionFields(newSection, curSection)
-                    
-                    end if
-
+                    ' If there are more current items in the section than the new ones, trim
                     while curSection.getChildCount() > newSection.getChildCount()
                         curSection.removeChildIndex(curSection.getChildCount() - 1)
                     end while
@@ -81,55 +75,33 @@ Sub RunTask()
                     for j = 0 to newSection.getChildCount() - 1
                 
                         newItem = newSection.getChild(j)
-                
-                        if j < curSection.getChildCount() then
-                
-                            curItem = curSection.getChild(j)
-                
-                            if newItem.id <> curItem.id then 
-                
-                                ' Things like replaceChild or insertChild are throwing. So just update it
-                                CopyItemFields(newItem, curItem)
-                
-                            end if
-                
-                        else
-                
-                            ' curSection.appendChild(newItem)
-                            ' appendChild(newItem) MOVES the child from 1 parent to another, screwing up the update
-                            ' So instead manually create a new one
+                        newItem.id = newItem.id.toStr()
 
-                            curItem = curSection.createChild("ContentNode")
-                            CopyItemFields(newItem, curItem)
-                            
+                        if j < curSection.getChildCount() then
+                            ' Check if the item needs to update
+                            curItem = curSection.getChild(j)
+                            if newItem.id <> curItem.id then curItem.data = newItem
+                        else
+                            ' Need to append a new item to the section
+                            curItem = curSection.createChild("BasicMediaNode")
+                            curItem.data = newItem
                         end if
                 
                     end for
 
                 else
-                   
-                    ' current.appendChild(newSection)
-                    ' appendChild(newSection) MOVES the child from 1 parent to another, screwing up the update
-                    ' So instead manually create a new one
-
-                    curSection = current.createChild("ContentNode")
+                    ' Need to append new section
+                    curSection = currentData.createChild("ContentNode")
                     CopySectionFields(newSection, curSection)
-                
                 end if
 
             end for
             
         end if
 
-       
         m.top.success = true
-        
-    else if result.statusCode = 401 then
-
-        m.top.unauthorized = true
-        m.top.success = false
-
-    else
+               
+   else
 
         m.top.errMsg = result.error
         m.top.success = false
@@ -139,62 +111,14 @@ Sub RunTask()
 End Sub
 
 
-Function AreNodesTheSame(src as roSGNode, dst as roSGNode) as boolean
-
-    print "HomeScreenTask:AreNoedesTheSame"
-    print src, dst
-
-    if src.getChildCount() <> dst.getChildCount() then return false
-
-    for i = 0 to src.getChildCount() - 1
-
-        srcSection = src.getChild(i)
-        dstSection = dst.getChild(i)
-        if srcSection.id <> dstSection.id then return false
-        if srcSection.getChildCount() <> dstSection.getChildCount() then return false
-
-        for j = 0 to srcSection.getChildCount() - 1
-
-            srcItem = srcSection.getChild(j)
-            dstItem = dstSection.getChild(j)
-            if srcItem.id <> dstItem.id then return false
-
-            ' public const long ID_WATCHLIST = -400
-            if srcSection.id = "-400" then
-                if srcItem.FHDGRIDPOSTERURL <> dstItem.FHDGRIDPOSTERURL then return false
-            end if
-
-        end for
-
-    end for
-
-    return true
-
-End Function
-
 Sub CopySectionFields(srcSection as roSGNode, dstSection as roSGNode)
 
     print "HomeScreenTask:CopySectionFields"
 
     dstSection.setFields({
-        id:srcSection.id,
-        title:srcSection.title
+        id: srcSection.id,
+        title: srcSection.title
     })
 
 End Sub
 
-
-Sub CopyItemFields(srcItem as roSGNode, dstItem as roSGNode)
-
-    print "HomeScreenTask:CopyItemFields"
-    
-    dstItem.setFields({
-        id:srcItem.id,
-        title:srcItem.title,
-        description:srcItem.description,
-        FHDGRIDPOSTERURL:srcItem.FHDGRIDPOSTERURL,
-        backdropUrl:srcItem.backdropUrl,
-        mediaType:srcItem.mediaType
-    })
-
-End Sub

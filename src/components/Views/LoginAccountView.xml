@@ -3,12 +3,6 @@
     
     <script type = "text/brightscript" uri = "pkg:/components/Views/LoginAccountView.bs" />
 
-	<interface>
-		<field id="showView_Signup" type="bool" value="false" alwaysNotify="true" />
-		<field id="showView_LoginProfile" type="bool" value="false" alwaysNotify="true" />
-		<field id="showView_Main" type="bool" value="false" alwaysNotify="true" />
-	</interface>
-   
     <children>
 
         <!--

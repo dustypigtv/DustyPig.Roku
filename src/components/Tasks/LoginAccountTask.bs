@@ -14,14 +14,18 @@ Sub RunTask()
     result = Login(m.top.email, m.top.password)
     if result.success then 
         if result.data.loginType = 1 then
-            m.global.profileId = result.data.profileId
+            m.global.profileId = result.data.profileId.toStr()
             m.global.profileToken = result.data.profileToken
             m.global.profileIsMain = true
 
             ' Call GetTheme AFTER setting m.global.profileId
             m.global.theme = GetTheme()
+
+            m.global.loggedOut = false
+            return
         else
             m.global.allProfiles = ProfilesToNode(result.data.profiles)
+            m.global.showViewWithid = "loginProfileView"
         end if
     end if
     m.top.data = result

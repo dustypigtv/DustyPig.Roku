@@ -27,18 +27,19 @@ Sub RunTask()
 
                 if result.success then
 
-                    m.global.profileId = result.data.profileId
+                    m.global.profileId = result.data.profileId.toStr()
                     m.global.profileToken = result.data.profileToken
                     m.global.profileIsMain = true
 
                     ' Set theme AFTER setting profileId
                     m.global.theme = GetTheme()
-                    m.top.showView_Main = true
+                    
+                    m.global.loggedOut = false
 
                 else
 
                     ' Proile login failed
-                    m.top.startAuthFlow = true
+                    m.global.loggedOut = true
 
                 end if
 
@@ -46,19 +47,19 @@ Sub RunTask()
 
                 ' More than 1 profile
                 m.global.allProfiles = ProfilesToNode(profiles.data)
-                m.top.startProfileFlow = true
+                m.global.showViewWithId = "loginProfileView"
             
             end if
         else
             
             ' Loading profiles failed
-            m.top.startAuthFlow = true
+            m.global.loggedOut = true
         
         end if
     else
         
         ' Auth with account token failed
-        m.top.startAuthFlow = true
+        m.global.loggedOut = true
     
     end if
 

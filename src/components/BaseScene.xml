@@ -34,7 +34,7 @@
 			id="movieDetailsView"
 			visible="false" />
 	
-		<Video
+		<VideoView
         	id = "videoView"
 			visible = "false"/>
 

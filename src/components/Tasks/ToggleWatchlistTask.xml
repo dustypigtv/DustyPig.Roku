@@ -20,10 +20,12 @@
                 print "ToggleWatchlistTask:RunTask"
 
                 if m.top.add then
-    				GetData("/Media/AddToWatchlist/" + m.top.id, m.global.profileToken)
+    				result = GetData("/Media/AddToWatchlist/" + m.top.id, m.global.profileToken)
                 else
-                    DeleteData("/Media/DeleteFromWatchlist/" + m.top.id, m.global.profileToken)
+                    result = DeleteData("/Media/DeleteFromWatchlist/" + m.top.id, m.global.profileToken)
                 end if
+
+                if result.statusCode = 401 then m.global.loggedOut = true
 			
             End Sub
 

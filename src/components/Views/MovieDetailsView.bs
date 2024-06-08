@@ -59,7 +59,7 @@ Sub Init()
 
     ' Movie Details task
     m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
-    m.movieDetailsTask.observeField("data", "OnMovieDetailsTask_DataAvailable")
+    m.movieDetailsTask.observeField("success", "OnMovieDetailsTask_DataAvailable")
 
 
     ' Mark Watched task
@@ -71,7 +71,11 @@ Sub Init()
 
     ' Observers
     m.top.observeField("visible", "OnThis_VisibleChanged")
-    m.top.observeField("content", "OnThis_ContentChanged")
+
+    ' Global observers
+    m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
+    m.global.observeField("addToContinueWatching", "OnGlobal_AddToContinueWatching")
+    m.global.observeField("removeFromContinueWatching", "OnGlobal_RemoveFromContinueWatching")
 
 end sub
 
@@ -95,8 +99,6 @@ Sub RestoreFocus()
     print "MovieDetailsView:RestoreFocus"
 
     if m.lastFocusedControl <> invalid then
-
-        print "*****", m.lastFocusedControl.id
 
         if m.lastFocusedControl.visible then
             m.lastFocusedControl.setFocus(true)
@@ -174,9 +176,14 @@ End Sub
 
 
 ' Fires when the BaseScene sets the Content node
-Sub OnThis_ContentChanged()
+Sub OnGlobal_CurrentBasicMediaChanged(event as object)
 
-    print "MovieDetailsView:OnThis_ContentChanged"
+    print "MovieDetailsView:OnGlobal_CurrentBasicMediaChanged"
+
+    currentBasicMedia = event.getData()
+    if currentBasicMedia = invalid then return
+    if currentBasicMedia.data.mediaType <> 1 then return ' Movie
+
 
     m.movieDetailsTask.control = "stop"
     
@@ -192,22 +199,18 @@ Sub OnThis_ContentChanged()
     m.resumeButton.visible = false
     m.markWatchedButton.visible = false
     m.watchlistButton.visible = false
-    m.playButton.visible = false
+    m.addToPlaylistButton.visible = false
     m.descriptionLabel.text = invalid
     m.castCrewRowList.content = invalid
     m.selectedPersonLabel.text = invalid
     m.busySpinner.visible = true
 
     m.lastOtherActionButtonFocused = m.watchlistButton
-
-
-    ' Load
-    content = m.top.content
     
-    m.movieDetailsTask.id = content.id
+    m.movieDetailsTask.id = currentBasicMedia.id
     m.movieDetailsTask.control = "run"
 
-    m.backdropPoster.uri = content.backdropUrl ?? ""
+    m.backdropPoster.uri = currentBasicMedia.data.backdropUrl ?? ""
     
 End Sub
 
@@ -220,22 +223,22 @@ Sub OnMovieDetailsTask_DataAvailable()
 
     m.busySpinner.visible = false
 
-    result = m.movieDetailsTask.data
-    if result.success then
-        
-        m.data = result.data
-        m.titleLabel.text = m.data.title
-        m.yearLabel.text = m.data.year
-        m.ratedLabel.text = "Rated: " + m.data.rated
+    if m.movieDetailsTask.success then
+ 
+        m.movieNode = m.movieDetailsTask.data
 
-        if m.data.length <> invalid and m.data.length > 0 then m.lengthLabel.text = GetDurationString(m.data.length)
+        m.titleLabel.text = m.movieNode.title
+        m.yearLabel.text = m.movieNode.secondaryTitle
+        m.ratedLabel.text = "Rated: " + m.movieNode.rating
 
-        if m.data.canPlay then
+        if m.movieNode.length <> invalid and m.movieNode.length > 0 then m.lengthLabel.text = GetDurationString(m.movieNode.length)
+
+        if m.movieNode.data.canPlay then
            
             m.playButton.text = "Play"
 
-            if m.data.length <> invalid and m.data.length > 0 and m.data.played <> invalid and m.data.played > 60 then 
-                m.remainingLabel.text = GetDurationString(m.data.length - m.data.played) + " remaining"
+            if m.movieNode.length <> invalid and m.movieNode.length > 0 and m.movieNode.data.played <> invalid then 
+                m.remainingLabel.text = GetDurationString(m.movieNode.length - m.movieNode.data.played) + " remaining"
                 m.resumeButton.visible = true
                 m.resumeButton.setFocus(true)
                 m.markWatchedButton.visible = true
@@ -243,7 +246,7 @@ Sub OnMovieDetailsTask_DataAvailable()
 
             m.playButton.visible = true
 
-            m.watchlistButton.icon = m.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
+            m.watchlistButton.icon = m.movieNode.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
             m.watchlistButton.visible = true
             
             m.addToPlaylistButton.visible = true
@@ -263,18 +266,13 @@ Sub OnMovieDetailsTask_DataAvailable()
         end if
 
 
-        m.descriptionLabel.text = m.data.description
+        m.descriptionLabel.text = m.movieNode.description
 
-        m.castCrewRowList.content = m.movieDetailsTask.castCrew
+        m.castCrewRowList.content = m.movieNode.castCrew
         
-
-        
-    else if result.statusCode = 401 then
-    
-        m.top.showView_LoginAccount = true
     else
     
-        m.errorDialog.message = [result.error]
+        m.errorDialog.message = [m.movieDetailsTask.error]
         m.top.getScene().dialog = m.errorDialog
     
     end if
@@ -303,32 +301,10 @@ Sub StartPlayback(resume as boolean)
 
     print "MovieDetailsView:StartPlayback", resume
 
-    playStart = resume ? m.data.played : 0
-
-    subtitleTracks = []
-    if m.data.srtSubtitles <> invalid then
-        for each st in m.data.srtSubtitles
-            subtitleTracks.push({
-                Language:"eng",
-                Description:st.name,
-                TrackName:st.url
-            })
-        end for
-    end if
-
-    m.top.playVideo = {
-        id:m.data.id,
-        contentType:"movie",
-        title:m.data.title,
-        secondaryTitle:m.data.year,
-        url:m.data.videoUrl,
-        playStart:playStart,
-        SDBifUrl:m.data.bifUrl,
-        HDBifUrl:m.data.bifUrl,
-        FHDBifUrl:m.data.bifUrl,
-        subtitleTracks:subtitleTracks
-    }
-
+    played = m.movieNode.data.played = invalid ? 0 : m.movieNode.data.played
+    m.movieNode.playStart = resume ? m.movieNode.played : played
+    m.global.startVideoPlayback = m.movieNode
+    
 End Sub
 
 
@@ -350,14 +326,9 @@ Sub OnMarkWatchedButton_Selected()
 
     print "MovieDetailsView:OnMarkWatchedButton_Selected"
 
-    m.markMovieWatchedTask.id = m.data.id
+    m.markMovieWatchedTask.id = m.movieNode.id
     m.markMovieWatchedTask.control = "run"
-    m.data.played = 0
-    m.playButton.setFocus(true)
-    m.markWatchedButton.visible = false
-    m.resumeButton.visible = false
-    m.remainingLabel.text = "invalid"
-    m.top.relay_RemoveFromContinueWatching = m.data.id
+    m.global.removeFromContinueWatching = m.movieNode.id
 
 End Sub
 
@@ -370,8 +341,8 @@ Sub OnWatchlistButton_Selected()
 
     m.toggleWatchlistTask.control = "stop"
     
-    add = not m.data.inWatchList
-    id = m.data.id
+    add = not m.movieNode.inWatchList
+    id = m.movieNode.id
 
     m.toggleWatchlistTask.add = add
     m.toggleWatchlistTask.id = id
@@ -379,23 +350,10 @@ Sub OnWatchlistButton_Selected()
 
     m.watchlistButton.icon = add ? "pkg:/images/check.png" : "pkg:/images/add.png"
     if add then 
-    
-        node = createObject("roSGNode", "ContentNode")
-        node.setFields({
-            id:m.data.id,
-            title:m.data.title,
-            description:m.data.description,
-            FHDGRIDPOSTERURL:m.data.artworkUrl
-        })
-
-        ' Movie = 1
-        node.addFields({backdropUrl: m.data.backdropUrl, mediaType: 1})
-        m.top.relay_AddToWatchlist = node
-    
+        m.global.addToWatchlist = m.movieNode
     else 
-        m.top.relay_RemoveFromWatchlist = id
+        m.global.removeFromWatchlist = id
     end if
-
     
 End Sub
 
@@ -405,12 +363,50 @@ Sub OnAddToPlaylistButton_Selected()
 
     print "MovieDetailsView:OnAddToPlaylistButton_Selected"
 
-    m.top.relay_switchToAddToPlaylist = {
-        id:m.data.id,
-        mediaType:m.data.mediaType
-    }
+    ' m.top.relay_switchToAddToPlaylist = {
+    '     id:m.movieNode.id,
+    '     mediaType:m.movieNode.mediaType
+    ' }
 
 End Sub
+
+
+
+Sub OnGlobal_AddToContinueWatching(event as object)
+
+    print "MovieDetailsView:OnGlobal_AddToContinueWatching"
+
+    data = event.getData()
+    if data.id = invalid then return
+    if data.id <> m.movieNode.id then return
+    if not m.movieNode.canPlay then return
+
+    m.movieNode.played = data.played
+    m.remainingLabel.text = GetDurationString(m.movieNode.length - m.movieNode.played) + " remaining"
+    m.resumeButton.visible = true
+    m.markWatchedButton.visible = true
+
+End sub
+
+
+Sub OnGlobal_RemoveFromContinueWatching(event as object)
+
+    print "MovieDetailsView:OnGlobal_RemoveFromContinueWatching"
+
+    id = event.getData()
+    if id = invalid then return
+    if id <> m.movieNode.id then return
+    if not m.movieNode.data.canPlay then return
+
+    m.movieNode.data.played = 0
+    
+    if m.playbackButtonLayoutGroup.isInFocusChain() then m.playButton.setFocus(true)
+    m.markWatchedButton.visible = false
+    m.resumeButton.visible = false
+    m.remainingLabel.text = "invalid"
+
+End sub
+
 
 
 

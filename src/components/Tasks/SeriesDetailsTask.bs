@@ -13,6 +13,13 @@ Sub RunTask()
     id = m.top.id
     url = `/Series/Details/${id}`
 
-    m.top.data = GetData(url, m.global.profileToken)
+    result = GetData(url, m.global.profileToken)
+
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
+    m.top.data = result
 
 End Sub

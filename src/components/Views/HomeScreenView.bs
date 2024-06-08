@@ -44,9 +44,13 @@ sub Init()
     ' Observe this
     m.top.observeField("visible", "OnThis_VisibleChanged")
     m.top.observeField("focusedChild", "OnThis_FocusChanged")
-    m.top.observeField("removeFromContinueWatching", "OnThis_RemoveFromContinueWatching")
-    m.top.observeField("addToWatchlist", "OnThis_AddToWatchlist")
-    m.top.observeField("removeFromWatchlist", "OnThis_RemoveFromWatchlist")
+    
+    
+    ' Observer global fields
+    m.global.observeField("addToContinueWatching", "OnGlobal_AddToContinueWatching")
+    m.global.observeField("removeFromContinueWatching", "OnGlobal_RemoveFromContinueWatching")
+    m.global.observeField("addToWatchlist", "OnGlobal_AddToWatchlist")
+    m.global.observeField("removeFromWatchlist", "OnGlobal_RemoveFromWatchlist")
 
 end sub
 
@@ -120,18 +124,14 @@ Sub OnHomeScreenTask_DataAvailable()
     if m.homeScreenTask.success then
     
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()
-        
-        ' Only set the first time. After updates are handled 'in-place'.
-        ' Ok not really in-place, there are deep copies and thread rendevous etc,
-        ' But for the purpose of this code, just consider it an in-place update
         if m.rowList.content = invalid then m.rowList.content = m.homeScreenTask.data
         OnRowList_ItemFocused()
 
-    else if m.homeScreenTask.unauthorized then
-        m.showView_LoginAccount = true
     else
-        m.errorDialog.message = [m.homeScreenTask.errMsg]
-        m.top.getScene().dialog = m.errorDialog
+        if m.top.visible then 
+            m.errorDialog.message = [m.homeScreenTask.errMsg]
+            m.top.getScene().dialog = m.errorDialog
+        end if
     end if
 
     if m.updateTimer.control <> "start" then m.updateTimer.control = "start"
@@ -149,12 +149,16 @@ Sub OnRowList_ItemFocused()
 
     try
     
+        if not m.top.visible then return
+
         x = m.rowList.rowItemFocused
+        if x.count() < 2 then return
+
         rowContent = m.rowList.content.getChild(x[0])
         selItem = rowContent.getChild(x[1])
 
         ' Check values before changing to prevent flickering
-        backdropUrl = selItem.backdropUrl
+        backdropUrl = selItem.data.backdropUrl
         if not StringHasValue(backdropUrl) then backdropUrl = ""
         if m.backdropPoster.uri <> backdropUrl then m.backdropPoster.uri = backdropUrl
 
@@ -168,7 +172,7 @@ Sub OnRowList_ItemFocused()
         '     Playlist = 4
         ' }
 
-        description = selItem.mediaType = 4 ? "* Playlist *" : selItem.description
+        description = selItem.data.mediaType = 4 ? "* Playlist *" : selItem.description
         if m.descriptionLabel.text <> description then m.descriptionLabel.text = description
     
     catch e
@@ -189,23 +193,60 @@ Sub OnRowList_ItemSelected()
     rowContent = m.rowList.content.getChild(idx[0])
     selItem = rowContent.getChild(idx[1])
 
-    ' public enum MediaTypes
-    ' {
-    '     Movie = 1,
-    '     Series = 2,
-    '     Episode = 3,
-    '     Playlist = 4
-    ' }
+    m.global.currentBasicMedia = selItem
 
-    if selItem.mediaType = 1 then m.top.showView_MovieDetails = selItem
+    ' Movie = 1,
+    ' Series = 2,
+    ' Playlist = 4
+    if selItem.data.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
 
 End sub
 
 
+Sub OnGlobal_AddToContinueWatching(event as object)
 
-Sub OnThis_RemoveFromContinueWatching(event as object)
+    print "HomeScreenView:OnGlobal_AddToContinueWatching"
 
-    print "HomeScreenView:OnThis_RemoveFromContinueWatching"
+    ' public const long ID_CONTINUE_WATCHING = -500
+    section = FindChildNode(m.homeScreenTask.data, "-500")
+    if section = invalid then
+       
+        ' Add Section
+        section = createObject("roSGNode", "ContentNode")
+        section.setFields({
+            id:"-500",
+            title:"Watchlist"
+        })
+        m.homeScreenTask.data.insertChild(section, 0)
+
+    end if
+
+    newBasicMedia = event.getData()
+  
+    newList = []
+    newList.push(newBasicMedia.data)
+    for i = 0 to section.getChildCount() - 1
+        curItem = section.getChild(i)
+        if curItem.id <> newBasicMedia.id then newList.push(curItem.data)
+    end for
+
+    for i = 0 to newList.count() - 1
+        newItem = newList.getChild(i)
+        if i < section.getChildCount() then
+            curItem = section.getChild(i)
+            if curItem.id <> newItem.id then curItem.data = newItem
+        else
+            curItem = section.createObject("roSGNode", "BasicMediaNode")
+            curItem.data = newItem
+        end if
+    next
+
+End Sub
+
+
+Sub OnGlobal_RemoveFromContinueWatching(event as object)
+
+    print "HomeScreenView:OnGlobal_RemoveFromContinueWatching"
 
     ' public const long ID_CONTINUE_WATCHING = -500
     section = FindChildNode(m.homeScreenTask.data, "-500")
@@ -229,9 +270,9 @@ End Sub
 ' FHDGRIDPOSTERURL
 ' backdropUrl
 ' mediaType
-Sub OnThis_AddToWatchlist(event as object)
+Sub OnGlobal_AddToWatchlist(event as object)
 
-    print "HomeScreenView:OnThis_AddToWatchlist"
+    print "HomeScreenView:OnGlobal_AddToWatchlist"
 
     ' public const long ID_CONTINUE_WATCHING = -500
     ' public const long ID_WATCHLIST = -400
@@ -251,21 +292,21 @@ Sub OnThis_AddToWatchlist(event as object)
 
     end if
 
-    newNode = event.getData()
-    item = FindChildNode(section, newNode.id)
+    newBasicMedia = event.getData()
+    item = FindChildNode(section, newBasicMedia.id)
     if item <> invalid then return
 
     ' Add Item
-    section.appendChild(newNode)
+    section.appendChild(newBasicMedia)
     
 End Sub
 
 
 
 
-Sub OnThis_RemoveFromWatchlist(event as object)
+Sub OnGlobal_RemoveFromWatchlist(event as object)
 
-    print "HomeScreenView:OnThis_RemoveFromWatchlist"
+    print "HomeScreenView:OnGlobal_RemoveFromWatchlist"
 
     ' public const long ID_WATCHLIST = -400
     section = FindChildNode(m.homeScreenTask.data, "-400")

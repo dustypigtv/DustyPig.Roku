@@ -7,9 +7,4 @@
 	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
 	<script type="text/brightscript" uri="pkg:/components/Tasks/LaunchTask.bs" />
 	
-	<interface>
-        <field id="startAuthFlow" type="bool" value="false" />
-        <field id="startProfileFlow" type="bool" value="false" />
-		<field id="showView_Main" type="bool" value="false" />
-    </interface>
 </component>

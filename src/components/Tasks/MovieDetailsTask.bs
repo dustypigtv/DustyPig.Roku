@@ -15,105 +15,23 @@ Sub RunTask()
 
     result = GetData(url, m.global.profileToken)
 
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
     if result.success then
 
-        data = result.data
-        
-        ' From API
-        ' public enum MovieRatings
-        ' {
-        '     None = 0,
-        '     G = 1,
-        '     PG = 2,
-        '     PG_13 = 3,
-        '     R = 4,
-        '     NC_17 = 5,
-        '     Unrated = 6
-        ' }        
-        if data.rated = 1 then 
-            data.rated = "G"
-        else if data.rated = 2 then 
-            data.rated = "PG"
-        else if data.rated = 3 then 
-            data.rated = "PG-13"
-        else if data.rated = 4 then 
-            data.rated = "R"
-        else if data.rated = 5 then 
-            data.rated = "NC-17"
-        else if data.rated = 6 then 
-            data.rated = "Unrated"
-        else  
-            data.rated = "Not Rated"
-        end if
+        m.top.data = createObject("roSGNode", "MovieNode")
+        m.top.data.data = result.data
+        m.top.success = true
 
-        try
-            data.year = left(data.date, 4)
-        catch e
-            m.yearLabel.text = "1900"
-        end try
+    else
 
+        m.top.data = invalid
+        m.top.error = result.error
+        m.top.success = false
 
-
-        ' Create a content node for the cast & crew
-        root = createObject("roSGNode", "ContentNode")
-            
-        ' public enum CreditRoles : int
-        ' {
-        '     Cast = 1,
-        '     Director = 2,
-        '     Producer = 3,
-        '     Writer = 4,
-        '     ExecutiveProducer = 5
-        ' }
-        
-        cast = createObject("roSGNode", "ContentNode")
-        directors = createObject("roSGNode", "ContentNode")
-        producers = createObject("roSGNode", "ContentNode")
-        writers = createObject("roSGNode", "ContentNode")
-        executiveProducers = createObject("roSGNode", "ContentNode")
-
-        for each bp in data.credits
-
-            item = invalid
-            if bp.role = 1 then item = cast.createChild("ContentNode")
-            if bp.role = 2 then item = directors.createChild("ContentNode")
-            if bp.role = 3 then item = producers.createChild("ContentNode")
-            if bp.role = 4 then item = writers.createChild("ContentNode")
-            if bp.role = 5 then item = executiveProducers.createChild("ContentNode")
-
-            if item <> invalid then
-                item.id = bp.TMDB_Id
-                item.title = bp.Name
-                item.FHDGRIDPOSTERURL = bp.AvatarUrl
-                item.addFields({initials: bp.initials})
-            end if
-
-        end for
-            
-        AddSectionIfHasPeople(root, cast, "Cast", false)
-        AddSectionIfHasPeople(root, directors, "Director", true)
-        AddSectionIfHasPeople(root, executiveProducers, "Executive Producer", true)
-        AddSectionIfHasPeople(root, producers, "Producer", true)
-        AddSectionIfHasPeople(root, writers, "Writer", true)
-                
-        m.top.castCrew = root
-        
-    end if
-
-    m.top.data = result
-
-End Sub
-
-Sub AddSectionIfHasPeople(root as object, child as object, singularName as string, addPlural as boolean)
-
-    print "MovieDetailsTask:AddSectionIfHasPeople"
-    
-    if child.getChildCount() > 0 then
-
-        child.title = singularName
-        if addPlural and child.getChildCount() > 1 then child.title += "s"
-        root.appendChild(child)
-
-    end if
+    end if        
 
 End Sub

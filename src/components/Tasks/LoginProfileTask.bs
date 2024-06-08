@@ -21,14 +21,21 @@ sub RunTask()
 
     result = PostAndGetData("/Auth/ProfileLogin", creds, GetAccountToken())
 
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
     if result.success then
 
-        m.global.profileId = result.data.profileId
+        m.global.profileId = result.data.profileId.toStr()
         m.global.profileToken = result.data.profileToken
         m.global.profileIsMain = result.data.loginType = 1 ' Main profile in API
 
         ' Set theme AFTER setting profileId
         m.global.theme = GetTheme()
+        m.global.loggedOut = false
+        return
 
    end if
 

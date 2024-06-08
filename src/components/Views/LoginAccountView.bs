@@ -70,8 +70,7 @@ Sub OnThis_VisibleChanged(event as object)
     ShowControls(true)
 
     ' Test user
-    appInfo = CreateObject("roAppInfo")
-    if appInfo.isDev()
+    if m.global.isDev
        
         m.emailTextBox.text = "testuser@dustypig.tv"
         m.passwordTextBox.text = "test password"
@@ -216,7 +215,7 @@ Sub OnSignUpButton_Selected()
 
     print "LoginAccountView:OnSignUpButton_Selected"
 
-    m.top.showView_Signup = true
+    m.global.showViewWithId = "signUpView"
 
 End Sub
 
@@ -247,22 +246,14 @@ Sub OnLoginAccountTask_DataAvailable()
     m.busySpinner.visible = false
 
     result = m.loginAccountTask.data
-    if result.success then
 
-        data = result.data
-        if data.loginType = 1 then
-            m.top.showView_Main = true
-        else
-            m.top.showView_LoginProfile = true
-        end if
-        
-    else
-        
-        ShowControls(false)
-        m.errorDialog.message = [result.error]
-        m.top.getScene().dialog = m.errorDialog
+    ' This only fires on error
+    ' Other events are handled in the task
 
-    end if
+    ShowControls(false)
+    m.errorDialog.message = [result.error]
+    m.top.getScene().dialog = m.errorDialog
+
 
 End Sub
 

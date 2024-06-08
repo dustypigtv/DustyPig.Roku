@@ -20,8 +20,9 @@
 				print "MarkMovieWatchedTask:RunTask"
 				
 				result = GetData("/Movies/MarkWatched/" + m.top.id, m.global.profileToken)
-			
-			End Sub
+			    if result.statusCode = 401 then m.global.loggedOut = true
+  
+  			End Sub
 
         ]]>
     </script>

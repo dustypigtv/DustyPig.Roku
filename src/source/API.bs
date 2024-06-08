@@ -191,6 +191,32 @@ function GetData(subUrl as string, token as string) as object
 end function
 
 
+function PostData(subUrl as string, data as object, token as string) as object
+
+    print "API:PostData", subUrl, data
+
+    response = fetch({
+        url: GetUrl(subUrl),
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: FormatJson(data)
+    })
+
+    
+    if response.ok
+       return {"success": true, "statusCode": response.status}       
+    else
+        if response.status = 401 then DeleteAccountToken()
+        return {"success": false, "statusCode": response.status, "error": TranslateErrorCode(response.status)}
+    end if
+    
+    
+
+end function
+
+
 function PostAndGetData(subUrl as string, data as object, token as string) as object
 
     print "API:PostAndGetData", subUrl, data

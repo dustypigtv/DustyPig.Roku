@@ -4,15 +4,7 @@
     <script type = "text/brightscript" uri = "pkg:/components/Views/HomeScreenView.bs" />
     <script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
 	
-	<interface>
-        <field id="showView_LoginAccount" type="bool" value="false" alwaysNotify="true" />
-        <field id="showView_MovieDetails" type="node" alwaysNotify="true" />
-        <field id="removeFromContinueWatching" type="string" alwaysNotify="true" />
-        <field id="addToWatchlist" type="node" alwaysNotify="true" />
-        <field id="removeFromWatchlist" type="string" alwaysNotify="true" />
-    </interface>
-	
-    <children>
+	<children>
 
         <!-- 
             SideBar is 150px wide

@@ -11,27 +11,56 @@
 
 
     m.global = screen.getGlobalNode()
+
+    appInfo = CreateObject("roAppInfo")
+    m.global.addFields({isDev : appInfo.isDev()})
     
     ' Profile data will be memory only
     m.global.addField("allProfiles", "node", false)
-    m.global.addFields({profileId:0, profileToken:"", profileIsMain:false})
+    m.global.addFields({profileId : 0, profileToken : "", profileIsMain : false})
     
 
     ' Setup theme
-    m.global.addFields({"theme":GetTheme(), "defaultTheme":GetTheme()})
+    m.global.addFields({theme:  GetTheme(), defaultTheme:  GetTheme()})
+
+
+    ' Multiple views will need to communicate these with each other, 
+    ' so it's just easiest to observe global fields.
+    ' When adding, send a BasicMediaNode
+    ' When removing, the id is sufficient
+    m.global.addField("addToContinueWatching", "node", true)
+    m.global.addField("removeFromContinueWatching", "string", true)
+    m.global.addField("addToWatchlist", "node", true)
+    m.global.addField("removeFromWatchlist", "string", true)
+    m.global.addField("addPlaylist", "node", true)
+    m.global.addField("removePlaylist", "string", true)
+
+
+    ' BasicMediaNode for details screens to use
+    m.global.addField("currentBasicMedia", "node", true)
+
+    ' Start Playback with this ContentNode
+    m.global.addField("startVideoPlayback", "node", true)
+
+   
+    ' BaseScene will monitor these, and when 
+    ' changed will change views accordingly
+    m.global.addField("loggedOut", "boolean", true)
+    m.global.addField("showViewWithId", "string", true)
     
+
     
     'Create Base Scene
     screen.CreateScene("BaseScene") 
 
     ' Handle deep link
-    m.global.addField("deeplink", "assocarray", false)
-    m.global.deeplink = GetDeepLinks(args)
+    ' m.global.addField("deeplink", "assocarray", false)
+    ' m.global.deeplink = GetDeepLinks(args)
 
     screen.show()
     ' vscode_rdb_on_device_component_entry
 
-
+    
     'Main program loop
     while(true) 
 
@@ -49,18 +78,18 @@
 end sub
 
 
-Function GetDeepLinks(args) as Object
+' Function GetDeepLinks(args) as Object
 
-    print "Main:GetDeepLinks"
+'     print "Main:GetDeepLinks"
 
-    if args.contentid <> Invalid and args.mediaType <> Invalid
-        return {
-            id: args.contentId
-            type: args.mediaType
-        }
-    end if
+'     if args.contentid <> Invalid and args.mediaType <> Invalid
+'         return {
+'             id: args.contentId
+'             type: args.mediaType
+'         }
+'     end if
 
-    return invalid
+'     return invalid
     
-end Function
+' end Function
 

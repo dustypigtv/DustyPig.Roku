@@ -1,0 +1,98 @@
+Sub Init()
+
+    print "VideoView:Init"
+
+    m.top.notificationInterval = 10
+
+    m.updatePlaybackProgressTask = CreateObject("roSGNode", "UpdatePlaybackProgressTask")
+    m.markMovieWatchedTask = createObject("roSGNode", "MarkMovieWatchedTask")
+
+    m.top.observeField("content", "OnThis_ContentChanged")
+    m.top.observeField("state", "OnThis_StateChanged")
+    m.top.observeField("position", "OnThis_PositionChanged")
+    m.top.observeField("errorStr", "OnThis_Error")
+    
+End sub
+
+
+Sub OnThis_ContentChanged(event as object)
+
+    print "VideoView:OnThis_ContentChanged"
+
+    content = event.getData()
+    m.topLevelId = content.id
+    m.position = invalid
+
+End sub
+
+
+Sub OnThis_StateChanged(event as object)
+
+    print "VideoView:OnThis_StateChanged"
+
+    ' none	        No current play state
+    ' buffering     Video stream is currently buffering
+    ' playing	    Video is currently playing
+    ' paused	    Video is currently paused
+    ' stopping      Available since Roku OS 12.5. Video is in the process of being stopped. This value is only returned if the asyncStopSemantics field is enabled.
+    ' stopped	    Video is currently stopped
+    ' finished	    Video has successfully completed playback
+    ' error	        An error has occurred in the video play. The error code, message, and diagnostics can be found in the errorCode, errorMsg, and errorStr fields respectively.    
+
+    if m.top.content = invalid then return
+
+    state = event.getData()
+
+    print "VideoView:Video.State = " + state
+
+    if state = "finished" then
+        
+        ' Set contentType with a string, read as a number. Strange.
+        ' movie = 1
+        if m.top.content.contentType = 1 then
+            m.updatePlaybackProgressTask.control = "stop"
+            m.markMovieWatchedTask.id = m.top.content.id
+            m.markMovieWatchedTask.control = "run"
+            m.global.removeFromContinueWatching = m.top.content.id
+        end if
+
+        playbackFinished = true
+
+    end if
+
+
+End Sub
+
+
+Sub OnThis_PositionChanged(event as object)
+
+    print "VideoView:OnThis_PositionChanged"
+
+    if not m.top.visible then return
+    if m.topLevelId = invalid then return
+    if m.top.state = "finished" then return
+
+    position = event.getData()
+    print "VideoView:Postion = " + position.toStr()
+    
+    ' To Do: This only works for movies, add playlists!
+    m.updatePlaybackProgressTask.control = "stop"
+    m.updatePlaybackProgressTask.id = m.top.content.id
+    m.updatePlaybackProgressTask.seconds = position
+    m.updatePlaybackProgressTask.control = "run"
+    m.global.addToContinueWatching = m.top.content
+
+End Sub
+
+
+
+Sub OnThis_Error(event as object)
+
+    print "VideoView:OnThis_Error"
+
+    m.top.control = "stop"
+    print event.getData()
+
+End Sub
+
+

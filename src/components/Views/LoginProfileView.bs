@@ -109,7 +109,7 @@ sub OnProfileGrid_ItemSelected()
         m.pinDialog.pin = ""
         m.top.getScene().dialog = m.pinDialog
     else
-        if idx > 0 then m.busyLabel.text = "A pliglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
+        if idx > 0 then m.busyLabel.text = "A piglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
         SetBusy(true)
         m.loginProfileTask.id = profile.id
         m.loginProfileTask.pin = invalid
@@ -128,7 +128,7 @@ sub OnPinDialog_PinEntered()
     idx = m.profileGrid.itemSelected
     profile = m.global.allProfiles.getChild(idx)
     
-    if idx > 0 then m.busyLabel.text = "A pliglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
+    if idx > 0 then m.busyLabel.text = "A piglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
     SetBusy(true)
     
     m.loginProfileTask.id = profile.id
@@ -146,14 +146,11 @@ Sub OnLoginProfileTask_DataAvailable()
     SetBusy(false)
     
     result = m.loginProfileTask.data
-    if result.success then
-        m.top.showView_Main = true
-    else if result.statusCode = 401 then
-        m.showView_LoginAccount = true
-    else
-        m.loginErrorDialog.message = [result.error]
-        m.top.getScene().dialog = m.loginErrorDialog
-    end if
+
+    ' This will only fire if there is an error.
+    ' code 401 and successful logins are handled in the task
+    m.loginErrorDialog.message = [result.error]
+    m.top.getScene().dialog = m.loginErrorDialog
 
 End Sub
 

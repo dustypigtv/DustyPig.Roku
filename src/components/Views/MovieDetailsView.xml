@@ -5,18 +5,7 @@
     <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
    
     <interface>
-        <!-- Set this field to the BasicMedia to get details for-->
-        <field id="content" type="node" alwaysNotify="true" />
-
-        <!-- These are monitored by the BaseScene -->
-        <field id="showView_LoginAccount" type="bool" value="false" alwaysNotify="true" />
         <field id="playVideo" type="assocarray" alwaysNotify="true" />
-
-        <!-- These are monitored by the BaseScene, then relayed to the HomeScreenView -->
-        <field id="relay_RemoveFromContinueWatching" type="string" alwaysNotify="true" />
-        <field id="relay_AddToWatchlist" type="node" alwaysNotify="true" />
-        <field id="relay_RemoveFromWatchlist" type="string" alwaysNotify="true" />
-        <field id="relay_switchToAddToPlaylist" type="assocarray" alwaysNotify="true" />
     </interface>
 
     <children>

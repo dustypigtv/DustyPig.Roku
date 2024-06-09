@@ -396,14 +396,13 @@ Sub OnGlobal_RemoveFromContinueWatching(event as object)
     id = event.getData()
     if id = invalid then return
     if id <> m.movieNode.id then return
-    if not m.movieNode.data.canPlay then return
 
     m.movieNode.data.played = 0
     
     if m.playbackButtonLayoutGroup.isInFocusChain() then m.playButton.setFocus(true)
     m.markWatchedButton.visible = false
     m.resumeButton.visible = false
-    m.remainingLabel.text = "invalid"
+    m.remainingLabel.text = invalid
 
 End sub
 

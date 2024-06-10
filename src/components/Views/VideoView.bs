@@ -80,6 +80,7 @@ Sub OnThis_PositionChanged(event as object)
     m.updatePlaybackProgressTask.id = m.top.content.id
     m.updatePlaybackProgressTask.seconds = position
     m.updatePlaybackProgressTask.control = "run"
+    m.top.content.data.addReplace("played", position)
     m.global.addToContinueWatching = m.top.content
 
 End Sub

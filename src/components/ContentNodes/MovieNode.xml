@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="MovieNode" extends="BasicMediaNode">
     
-    <script type = "text/brightscript" uri = "pkg:/components/ContentNodes/MovieNode.bs" />
-
     <interface>
         <field id="castCrew" type="node" />
+        <field id="canPlay" type="bool" />
+        <field id="played" type="float" />
+        <field id="inWatchList" type="bool" />
     </interface>
 
 </component>

@@ -87,3 +87,15 @@ Function FindChildNode(node as roSGNode, id as string) as roSGNode
 
 End Function
 
+
+
+
+Sub SetCurrentMedia(media as object)
+
+    doIt = m.global.currentMedia = invalid
+    if not doIt then doIt = m.global.currentMedia.mediaType <> media.mediaType
+    if not doIt then doIt = m.global.currentMedia.id <> media.id
+    
+    if doIt then m.global.currentMedia = media
+
+End Sub

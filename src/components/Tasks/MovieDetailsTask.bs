@@ -22,8 +22,10 @@ Sub RunTask()
 
     if result.success then
 
-        m.top.data = createObject("roSGNode", "MovieNode")
-        m.top.data.data = result.data
+        movieData = createObject("roSGNode", "MovieNode")
+        SetMovieFields(result.data, movieData)
+
+        m.top.data = movieData
         m.top.success = true
 
     else
@@ -33,5 +35,144 @@ Sub RunTask()
         m.top.success = false
 
     end if        
+
+End Sub
+
+
+
+
+Sub SetMovieFields(src as object, dst as object)
+
+    print "MovieDetailsTask:SetMovieFields"
+
+    try
+        secondaryTitle = left(src.date, 4)
+    catch e
+        secondaryTitle = "1900"
+    end try
+
+
+    ' From API
+    ' public enum MovieRatings
+    ' {
+    '     None = 0,
+    '     G = 1,
+    '     PG = 2,
+    '     PG_13 = 3,
+    '     R = 4,
+    '     NC_17 = 5,
+    '     Unrated = 6
+    ' }        
+    if src.rated = 1 then 
+        rating = "G"
+    else if src.rated = 2 then 
+        rating = "PG"
+    else if src.rated = 3 then 
+        rating = "PG-13"
+    else if src.rated = 4 then 
+        rating = "R"
+    else if src.rated = 5 then 
+        rating = "NC-17"
+    else if src.rated = 6 then 
+        rating = "Unrated"
+    else  
+        rating = "Not Rated"
+    end if
+
+
+    subtitleTracks = []
+    if src.srtSubtitles <> invalid then
+        for each st in src.srtSubtitles
+            subtitleTracks.push({
+                Language: "eng",
+                Description: st.name,
+                TrackName: st.url
+            })
+        end for
+    end if
+
+
+    
+    castCrew = createObject("roSGNode", "ContentNode")
+       
+    cast = createObject("roSGNode", "ContentNode")
+    directors = createObject("roSGNode", "ContentNode")
+    producers = createObject("roSGNode", "ContentNode")
+    writers = createObject("roSGNode", "ContentNode")
+    executiveProducers = createObject("roSGNode", "ContentNode")
+
+    if src.credits <> invalid then 
+
+        for each bp in src.credits
+
+            item = invalid
+            if bp.role = 1 then item = cast.createChild("BasicPersonNode")
+            if bp.role = 2 then item = directors.createChild("BasicPersonNode")
+            if bp.role = 3 then item = producers.createChild("BasicPersonNode")
+            if bp.role = 4 then item = writers.createChild("BasicPersonNode")
+            if bp.role = 5 then item = executiveProducers.createChild("BasicPersonNode")
+
+            if item <> invalid then
+
+                item.id = bp.tmdbId.toStr()
+                item.title = bp.Name
+                item.sdGridPosterUrl = bp.AvatarUrl
+                item.hdGridPosterUrl = bp.AvatarUrl
+                item.fhdGridPosterUrl = bp.AvatarUrl
+            
+            end if
+
+        end for
+            
+        AddSectionIfHasPeople(castCrew, cast, "Cast", false)
+        AddSectionIfHasPeople(castCrew, directors, "Director", true)
+        AddSectionIfHasPeople(castCrew, executiveProducers, "Executive Producer", true)
+        AddSectionIfHasPeople(castCrew, producers, "Producer", true)
+        AddSectionIfHasPeople(castCrew, writers, "Writer", true)
+
+    end if
+
+
+    dst.setFields({
+        id: src.id,
+        title: src.title,
+        secondaryTitle: secondaryTitle,
+        description: src.description,
+        sdGridPosterUrl: src.artworkUrl,
+        hdGridPosterUrl: src.artworkUrl,
+        fhdGridPosterUrl: src.artworkUrl,
+        mediaType: 1,
+        contentType: 1,
+        backdropUrl: src.backdropUrl,
+        detailed: true,
+        streamFormat: "mp4",
+        url: src.videoUrl,
+        sdBifUrl: src.bifUrl,
+        hdBifUrl: src.bifUrl,
+        fhdBifUrl: src.bifUrl,
+        length: src.length,
+        played: src.played ?? 0,
+        inWatchList: src.inWatchList ?? false,
+        subtitleTracks: subtitleTracks,
+        rating: rating,
+        castCrew: castCrew,
+        canPlay: src.canPlay
+    })
+   
+End Sub
+
+
+Sub AddSectionIfHasPeople(castCrew, role as object, singularName as string, addPlural as boolean)
+
+    print "MovieDetailsTask:AddSectionIfHasPeople"
+    
+    cnt = role.getChildCount()
+    if cnt > 0 then
+
+        role.title = singularName
+        if addPlural and cnt > 1 then role.title += "s"
+        castCrew.appendChild(role)
+
+    end if
 
 End Sub

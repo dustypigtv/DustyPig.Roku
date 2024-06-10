@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="BasicMediaNode" extends="ContentNode">
     
-    <script type = "text/brightscript" uri = "pkg:/components/ContentNodes/BasicMediaNode.bs" />
-   
     <interface>
 
-        <!-- Setting this will update the ContentNode fields appropriately -->
-        <field id="data" type="assocarray" alwaysNotify="true" />
+        <field id="mediaType" type="int" />
+        <field id="backdropUrl" type="string" />
+        <field id="detailed" type="bool" value="false" />
 
     </interface>
 

@@ -103,17 +103,6 @@ End Sub
 
 
 
-' This needs a root content node
-' root.Children are sections, and need the following fields set:
-'   id
-'   title
-' section.children are items, and need the following fields set:
-'   id
-'   title
-'   description
-'   FHDGRIDPOSTERURL
-'   backdropUrl
-'   mediaType
 Sub OnHomeScreenTask_DataAvailable()
 
     print "HomeScreenView:OnHomeScreenTask_DataAvailable"
@@ -129,7 +118,7 @@ Sub OnHomeScreenTask_DataAvailable()
 
     else
         if m.top.visible then 
-            m.errorDialog.message = [m.homeScreenTask.errMsg]
+            m.errorDialog.message = [m.homeScreenTask.error]
             m.top.getScene().dialog = m.errorDialog
         end if
     end if
@@ -151,18 +140,18 @@ Sub OnRowList_ItemFocused()
     
         if not m.top.visible then return
 
-        x = m.rowList.rowItemFocused
-        if x.count() < 2 then return
-
-        rowContent = m.rowList.content.getChild(x[0])
-        selItem = rowContent.getChild(x[1])
+        idx = m.rowList.rowItemFocused
+        if idx.count() < 2 then return
+        rowContent = m.rowList.content.getChild(idx[0])
+        focusedItem = rowContent.getChild(idx[1])
+        SetCurrentMedia(focusedItem)
 
         ' Check values before changing to prevent flickering
-        backdropUrl = selItem.data.backdropUrl
+        backdropUrl = focusedItem.backdropUrl
         if not StringHasValue(backdropUrl) then backdropUrl = ""
         if m.backdropPoster.uri <> backdropUrl then m.backdropPoster.uri = backdropUrl
 
-        if m.titleLabel.text <> selItem.title then m.titleLabel.text = selItem.title
+        if m.titleLabel.text <> focusedItem.title then m.titleLabel.text = focusedItem.title
 
         ' public enum MediaTypes
         ' {
@@ -172,9 +161,9 @@ Sub OnRowList_ItemFocused()
         '     Playlist = 4
         ' }
 
-        description = selItem.data.mediaType = 4 ? "* Playlist *" : selItem.description
+        description = focusedItem.mediaType = 4 ? "* Playlist *" : focusedItem.description
         if m.descriptionLabel.text <> description then m.descriptionLabel.text = description
-    
+
     catch e
 
         print e
@@ -189,21 +178,22 @@ Sub OnRowList_ItemSelected()
 
     print "HomeScreenView:OnRowList_ItemSelected"
 
-    idx = m.rowList.rowItemSelected
+    idx = m.rowList.rowItemFocused
+    if idx.count() < 2 then return
     rowContent = m.rowList.content.getChild(idx[0])
-    selItem = rowContent.getChild(idx[1])
+    selContent = rowContent.getChild(idx[1])
+    SetCurrentMedia(selContent)
 
-    m.global.currentBasicMedia = selItem
 
     ' Movie = 1,
     ' Series = 2,
     ' Playlist = 4
-    if selItem.data.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
+    if m.global.currentMedia.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
 
 End sub
 
 
-Sub OnGlobal_AddToContinueWatching(event as object)
+Sub OnGlobal_AddToContinueWatching()
 
     print "HomeScreenView:OnGlobal_AddToContinueWatching"
 
@@ -221,30 +211,29 @@ Sub OnGlobal_AddToContinueWatching(event as object)
 
     end if
 
-    newBasicMedia = event.getData()
-  
     newList = []
-    newList.push(newBasicMedia.data)
+    newList.push(m.global.currentMedia.data)
     for i = 0 to section.getChildCount() - 1
         curItem = section.getChild(i)
-        if curItem.id <> newBasicMedia.id then newList.push(curItem.data)
+        if curItem.id <> m.global.currentMedia.id then newList.push(curItem.data)
     end for
 
-    for i = 0 to newList.count() - 1
-        newItem = newList.getChild(i)
+    i = 0
+    for each newItem in newList
         if i < section.getChildCount() then
             curItem = section.getChild(i)
             if curItem.id <> newItem.id then curItem.data = newItem
         else
-            curItem = section.createObject("roSGNode", "BasicMediaNode")
+            curItem = section.createChild("BasicMediaNode")
             curItem.data = newItem
         end if
-    next
+        i++
+    end for
 
 End Sub
 
 
-Sub OnGlobal_RemoveFromContinueWatching(event as object)
+Sub OnGlobal_RemoveFromContinueWatching()
 
     print "HomeScreenView:OnGlobal_RemoveFromContinueWatching"
 
@@ -252,8 +241,7 @@ Sub OnGlobal_RemoveFromContinueWatching(event as object)
     section = FindChildNode(m.homeScreenTask.data, "-500")
     if section = invalid then return
 
-    id = event.getData()
-    item = FindChildNode(section, id)
+    item = FindChildNode(section, m.global.currentMedia.id)
     if item = invalid then return
 
     section.removeChild(item)
@@ -264,13 +252,7 @@ End Sub
 
 
 ' This needs a content node with the following fields set:
-' id
-' title
-' description
-' FHDGRIDPOSTERURL
-' backdropUrl
-' mediaType
-Sub OnGlobal_AddToWatchlist(event as object)
+Sub OnGlobal_AddToWatchlist()
 
     print "HomeScreenView:OnGlobal_AddToWatchlist"
 
@@ -292,19 +274,18 @@ Sub OnGlobal_AddToWatchlist(event as object)
 
     end if
 
-    newBasicMedia = event.getData()
-    item = FindChildNode(section, newBasicMedia.id)
+    item = FindChildNode(section, m.global.currentMedia.id)
     if item <> invalid then return
 
     ' Add Item
-    section.appendChild(newBasicMedia)
+    section.appendChild(m.global.currentMedia)
     
 End Sub
 
 
 
 
-Sub OnGlobal_RemoveFromWatchlist(event as object)
+Sub OnGlobal_RemoveFromWatchlist()
 
     print "HomeScreenView:OnGlobal_RemoveFromWatchlist"
 
@@ -312,8 +293,7 @@ Sub OnGlobal_RemoveFromWatchlist(event as object)
     section = FindChildNode(m.homeScreenTask.data, "-400")
     if section = invalid then return
 
-    id = event.getData()
-    item = FindChildNode(section, id)
+    item = FindChildNode(section, m.global.currentMedia.id)
     if item = invalid then return
 
     section.removeChild(item)

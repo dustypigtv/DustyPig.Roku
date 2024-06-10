@@ -24,23 +24,23 @@
     m.global.addFields({theme:  GetTheme(), defaultTheme:  GetTheme()})
 
 
+    ' Only 1 media will ever be selected, so just store it here
+    m.global.addField("currentMedia", "node", true)
+
+
     ' Multiple views will need to communicate these with each other, 
     ' so it's just easiest to observe global fields.
-    ' When adding, send a BasicMediaNode
-    ' When removing, the id is sufficient
-    m.global.addField("addToContinueWatching", "node", true)
-    m.global.addField("removeFromContinueWatching", "string", true)
-    m.global.addField("addToWatchlist", "node", true)
-    m.global.addField("removeFromWatchlist", "string", true)
-    m.global.addField("addPlaylist", "node", true)
-    m.global.addField("removePlaylist", "string", true)
+    m.global.addField("addToContinueWatching", "boolean", true)
+    m.global.addField("removeFromContinueWatching", "boolean", true)
+    m.global.addField("addToWatchlist", "boolean", true)
+    m.global.addField("removeFromWatchlist", "boolean", true)
+    m.global.addField("addPlaylist", "boolean", true)
+    m.global.addField("removePlaylist", "boolean", true)
 
 
-    ' BasicMediaNode for details screens to use
-    m.global.addField("currentBasicMedia", "node", true)
-
+    
     ' Start Playback with this ContentNode
-    m.global.addField("startVideoPlayback", "node", true)
+    m.global.addField("startVideoPlayback", "boolean", true)
 
    
     ' BaseScene will monitor these, and when 

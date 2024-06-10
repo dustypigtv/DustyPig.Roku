@@ -73,7 +73,7 @@ Sub Init()
     m.top.observeField("visible", "OnThis_VisibleChanged")
 
     ' Global observers
-    m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
+    m.global.observeField("currentMedia", "OnGlobal_CurrentMediaChanged")
     m.global.observeField("addToContinueWatching", "OnGlobal_AddToContinueWatching")
     m.global.observeField("removeFromContinueWatching", "OnGlobal_RemoveFromContinueWatching")
 
@@ -176,14 +176,15 @@ End Sub
 
 
 ' Fires when the BaseScene sets the Content node
-Sub OnGlobal_CurrentBasicMediaChanged(event as object)
+Sub OnGlobal_CurrentMediaChanged()
 
-    print "MovieDetailsView:OnGlobal_CurrentBasicMediaChanged"
+    print "MovieDetailsView:OnGlobal_CurrentMediaChanged"
 
-    currentBasicMedia = event.getData()
-    if currentBasicMedia = invalid then return
-    if currentBasicMedia.data.mediaType <> 1 then return ' Movie
-
+    if m.global.currentMedia = invalid then return
+    if m.global.currentMedia.mediaType <> 1 then return ' Movie
+    if m.global.currentMedia.id = m.movieDetailsTask.id then
+        if m.global.currentMedia.detailed ?? false then return
+    end if
 
     m.movieDetailsTask.control = "stop"
     
@@ -207,10 +208,10 @@ Sub OnGlobal_CurrentBasicMediaChanged(event as object)
 
     m.lastOtherActionButtonFocused = m.watchlistButton
     
-    m.movieDetailsTask.id = currentBasicMedia.id
+    m.movieDetailsTask.id = m.global.currentMedia.id
     m.movieDetailsTask.control = "run"
 
-    m.backdropPoster.uri = currentBasicMedia.data.backdropUrl ?? ""
+    m.backdropPoster.uri = m.global.currentMedia.backdropUrl ?? ""
     
 End Sub
 
@@ -219,34 +220,32 @@ Sub OnMovieDetailsTask_DataAvailable()
 
     print "MovieDetailsView:OnMovieDetailsTask_DataAvailable"
 
-    if not m.top.visible then return
-
     m.busySpinner.visible = false
 
     if m.movieDetailsTask.success then
  
-        m.movieNode = m.movieDetailsTask.data
+        m.global.currentMedia = m.movieDetailsTask.data
 
-        m.titleLabel.text = m.movieNode.title
-        m.yearLabel.text = m.movieNode.secondaryTitle
-        m.ratedLabel.text = "Rated: " + m.movieNode.rating
+        m.titleLabel.text = m.global.currentMedia.title
+        m.yearLabel.text = m.global.currentMedia.secondaryTitle
+        m.ratedLabel.text = "Rated: " + m.global.currentMedia.rating
 
-        if m.movieNode.length <> invalid and m.movieNode.length > 0 then m.lengthLabel.text = GetDurationString(m.movieNode.length)
+        if m.global.currentMedia.length > 0 then m.lengthLabel.text = GetDurationString(m.global.currentMedia.length)
 
-        if m.movieNode.data.canPlay then
+        if m.global.currentMedia.canPlay then
            
             m.playButton.text = "Play"
 
-            if m.movieNode.length <> invalid and m.movieNode.length > 0 and m.movieNode.data.played <> invalid then 
-                m.remainingLabel.text = GetDurationString(m.movieNode.length - m.movieNode.data.played) + " remaining"
+            if m.global.currentMedia.length > 0 and m.global.currentMedia.played > 0 then 
+                m.remainingLabel.text = GetDurationString(m.global.currentMedia.length - m.global.currentMedia.played) + " remaining"
                 m.resumeButton.visible = true
-                m.resumeButton.setFocus(true)
+                if m.top.visible then m.resumeButton.setFocus(true) else m.lastFocusedControl = m.resumeButton
                 m.markWatchedButton.visible = true
             end if
 
             m.playButton.visible = true
 
-            m.watchlistButton.icon = m.movieNode.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
+            m.watchlistButton.icon = m.global.currentMedia.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
             m.watchlistButton.visible = true
             
             m.addToPlaylistButton.visible = true
@@ -259,16 +258,16 @@ Sub OnMovieDetailsTask_DataAvailable()
         
         if not m.resumeButton.visible then 
             if m.playButton.visible then 
-                m.playButton.setFocus(true)
+                if m.top.visible then m.playButton.setFocus(true) else m.lastFocusedControl = m.playButton
             else if m.requestButton.visible then 
-                m.requestButton.setFocus(true)
+                if m.top.visible then m.requestButton.setFocus(true) else m.lastFocusedControl = m.requestButton
             end if
         end if
 
 
-        m.descriptionLabel.text = m.movieNode.description
+        m.descriptionLabel.text = m.global.currentMedia.description
 
-        m.castCrewRowList.content = m.movieNode.castCrew
+        m.castCrewRowList.content = m.global.currentMedia.castCrew
         
     else
     
@@ -301,9 +300,9 @@ Sub StartPlayback(resume as boolean)
 
     print "MovieDetailsView:StartPlayback", resume
 
-    played = m.movieNode.data.played = invalid ? 0 : m.movieNode.data.played
-    m.movieNode.playStart = resume ? m.movieNode.played : played
-    m.global.startVideoPlayback = m.movieNode
+    played = m.global.currentMedia.data.played = invalid ? 0 : m.global.currentMedia.data.played
+    m.global.currentMedia.playStart = resume ? m.global.currentMedia.played : played
+    m.global.startVideoPlayback = true
     
 End Sub
 
@@ -326,9 +325,11 @@ Sub OnMarkWatchedButton_Selected()
 
     print "MovieDetailsView:OnMarkWatchedButton_Selected"
 
-    m.markMovieWatchedTask.id = m.movieNode.id
+    m.markMovieWatchedTask.id = m.global.currentMedia.id
     m.markMovieWatchedTask.control = "run"
-    m.global.removeFromContinueWatching = m.movieNode.id
+
+    m.global.currentMedia.data.played = 0
+    m.global.removeFromContinueWatching = true
 
 End Sub
 
@@ -341,18 +342,19 @@ Sub OnWatchlistButton_Selected()
 
     m.toggleWatchlistTask.control = "stop"
     
-    add = not m.movieNode.inWatchList
-    id = m.movieNode.id
+    add = not m.global.currentMedia.inWatchList ?? false
 
     m.toggleWatchlistTask.add = add
-    m.toggleWatchlistTask.id = id
+    m.toggleWatchlistTask.id = m.global.currentMedia.id
     m.toggleWatchlistTask.control = "run"
 
     m.watchlistButton.icon = add ? "pkg:/images/check.png" : "pkg:/images/add.png"
     if add then 
-        m.global.addToWatchlist = m.movieNode
+        m.global.currentMedia.inWatchList = true
+        m.global.addToWatchlist = true
     else 
-        m.global.removeFromWatchlist = id
+        m.global.currentMedia.inWatchList = false
+        m.global.removeFromWatchlist = true
     end if
     
 End Sub
@@ -364,41 +366,33 @@ Sub OnAddToPlaylistButton_Selected()
     print "MovieDetailsView:OnAddToPlaylistButton_Selected"
 
     ' m.top.relay_switchToAddToPlaylist = {
-    '     id:m.movieNode.id,
-    '     mediaType:m.movieNode.mediaType
+    '     id:m.global.currentMedia.id,
+    '     mediaType:m.global.currentMedia.mediaType
     ' }
 
 End Sub
 
 
 
-Sub OnGlobal_AddToContinueWatching(event as object)
+Sub OnGlobal_AddToContinueWatching()
 
     print "MovieDetailsView:OnGlobal_AddToContinueWatching"
 
-    data = event.getData()
-    if data.id = invalid then return
-    if data.id <> m.movieNode.id then return
-    if not m.movieNode.canPlay then return
+    if m.movieDetailsTask.id <> m.global.currentMedia.id then return
 
-    m.movieNode.played = data.played
-    m.remainingLabel.text = GetDurationString(m.movieNode.length - m.movieNode.played) + " remaining"
+    m.remainingLabel.text = GetDurationString(m.global.currentMedia.length - m.global.currentMedia.data.played) + " remaining"
     m.resumeButton.visible = true
     m.markWatchedButton.visible = true
 
 End sub
 
 
-Sub OnGlobal_RemoveFromContinueWatching(event as object)
+Sub OnGlobal_RemoveFromContinueWatching()
 
     print "MovieDetailsView:OnGlobal_RemoveFromContinueWatching"
 
-    id = event.getData()
-    if id = invalid then return
-    if id <> m.movieNode.id then return
+    if m.movieDetailsTask.id <> m.global.currentMedia.id then return
 
-    m.movieNode.data.played = 0
-    
     if m.playbackButtonLayoutGroup.isInFocusChain() then m.playButton.setFocus(true)
     m.markWatchedButton.visible = false
     m.resumeButton.visible = false

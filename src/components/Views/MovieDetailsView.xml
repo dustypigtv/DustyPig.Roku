@@ -6,6 +6,7 @@
    
     <interface>
         <field id="playVideo" type="assocarray" alwaysNotify="true" />
+        <field id="beforePushToStack" type="bool" alwaysNotify="true" />
     </interface>
 
     <children>

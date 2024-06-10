@@ -74,8 +74,17 @@ Sub ShowView(node)
     print "BaseScene:ShowView"
 
     prev = m.viewStack.peek()
-    if prev <> invalid then prev.visible = false    
+    if prev <> invalid then prev.visible = false
+
+    ' If a screen needs to reset before being shown, it can implement and monitor this interface
+    ' This is set when a new view is pushed to the stack, before it's shown
+    try
+        node.beforeShowAfterPush = true
+    catch e
+    end try
     node.visible = true
+    
+    
     node.setFocus(true)
     m.viewStack.push(node)    
 
@@ -85,7 +94,7 @@ Sub HideTopView()
 
     print "BaseScene:HideTopView"
 
-   HideView(invalid)
+    HideView(invalid)
 
 end Sub
 
@@ -95,9 +104,18 @@ Sub HideView(node as Object)
 
     if node = invalid OR (m.viewStack.peek() <> invalid AND m.viewStack.peek().isSameNode(node))     
         last = m.viewStack.pop()
-        last.visible = false        
+        last.visible = false
+        
         prev = m.viewStack.peek()
         if prev <> invalid then
+
+            ' If a screen needs to reset before being shown, it can implement and monitor this interface
+            ' This is set when a prvious view is popped from the stack, before the previous view is shown
+            try
+                node.beforeShowAfterPop = true
+            catch e
+            end try
+            
             prev.visible = true
             prev.setFocus(true)    
         end if    

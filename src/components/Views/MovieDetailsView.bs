@@ -71,6 +71,7 @@ Sub Init()
 
     ' Observers
     m.top.observeField("visible", "OnThis_VisibleChanged")
+    m.top.observeField("beforeShowAfterPush", "OnThis_BeforeShowAfterPush")
 
     ' Global observers
     m.global.observeField("currentMedia", "OnGlobal_CurrentMediaChanged")
@@ -80,15 +81,20 @@ Sub Init()
 end sub
 
 
+Sub OnThis_BeforeShowAfterPush(event as object)
+
+    print "MovieDetailsView:OnThis_BeforeShowAfterPush"
+
+    if event.getData() then m.lastFocusedControl = invalid
+
+End Sub
+
+
 Sub OnThis_VisibleChanged(event as object)
 
     print "MovieDetailsView:OnThis_VisibleChanged"
 
-    if event.getData() then 
-        RestoreFocus()
-    else
-        m.movieDetailsTask.control = "stop"
-    end if
+    if event.getData() then RestoreFocus()
 
 End Sub
 
@@ -98,23 +104,35 @@ Sub RestoreFocus()
 
     print "MovieDetailsView:RestoreFocus"
 
-    if m.lastFocusedControl <> invalid then
+    if not m.top.visible then return
 
+    if m.lastFocusedControl = invalid then
+        SetFocusFromRuleList()
+    else
         if m.lastFocusedControl.visible then
             m.lastFocusedControl.setFocus(true)
         else
-            if m.playButton.visible then
-                m.playButton.setFocus(true)
-            else if m.requestButton.visible then
-                m.requestButton.setFocus(true)
-            else if m.castCrewRowList.visible then
-                m.castCrewRowList.setFocus(true)
-            end if
+            SetFocusFromRuleList()
         end if
-
     end if
 
 End Sub
+
+Sub SetFocusFromRuleList()
+
+    if not m.top.visible then return
+
+    if m.playButton.visible then
+        m.playButton.setFocus(true)
+    else if m.requestButton.visible then
+        m.requestButton.setFocus(true)
+    else if m.castCrewRowList.visible then
+        m.castCrewRowList.setFocus(true)
+    end if
+
+End sub
+
+
 
 
 Sub OnPlaybackButtons_FocusChanged(event as object)
@@ -239,7 +257,7 @@ Sub OnMovieDetailsTask_DataAvailable()
             if m.global.currentMedia.length > 0 and m.global.currentMedia.played > 0 then 
                 m.remainingLabel.text = GetDurationString(m.global.currentMedia.length - m.global.currentMedia.played) + " remaining"
                 m.resumeButton.visible = true
-                if m.top.visible then m.resumeButton.setFocus(true) else m.lastFocusedControl = m.resumeButton
+                m.lastFocusedControl = m.resumeButton
                 m.markWatchedButton.visible = true
             end if
 
@@ -258,17 +276,17 @@ Sub OnMovieDetailsTask_DataAvailable()
         
         if not m.resumeButton.visible then 
             if m.playButton.visible then 
-                if m.top.visible then m.playButton.setFocus(true) else m.lastFocusedControl = m.playButton
+                m.lastFocusedControl = m.playButton
             else if m.requestButton.visible then 
-                if m.top.visible then m.requestButton.setFocus(true) else m.lastFocusedControl = m.requestButton
+                m.lastFocusedControl = m.requestButton
             end if
         end if
 
-
         m.descriptionLabel.text = m.global.currentMedia.description
-
         m.castCrewRowList.content = m.global.currentMedia.castCrew
         
+        RestoreFocus()
+
     else
     
         m.errorDialog.message = [m.movieDetailsTask.error]

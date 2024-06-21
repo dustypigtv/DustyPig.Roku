@@ -28,7 +28,7 @@
     </script>
 	
 	<interface>
-        <field id="id" type="string" />
+        <field id="id" type="int" />
     </interface>
 
 	

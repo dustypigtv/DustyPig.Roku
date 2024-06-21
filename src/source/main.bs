@@ -24,18 +24,21 @@
     m.global.addFields({theme:  GetTheme(), defaultTheme:  GetTheme()})
 
 
-    ' Only 1 media will ever be selected, so just store it here
-    m.global.addField("currentMedia", "node", true)
+    m.global.addField("currentBasicMedia", "node", true)
+    m.global.addField("currentDetailedMedia", "node", true)
 
+    ' Store playback position separtly from currentDetailedMedia (setting it in the node causes playback to restart)
+    m.global.addField("playbackPosition", "float", false)
+    
 
     ' Multiple views will need to communicate these with each other, 
     ' so it's just easiest to observe global fields.
-    m.global.addField("addToContinueWatching", "boolean", true)
-    m.global.addField("removeFromContinueWatching", "boolean", true)
-    m.global.addField("addToWatchlist", "boolean", true)
-    m.global.addField("removeFromWatchlist", "boolean", true)
+    m.global.addField("addToContinueWatching", "int", true)
+    m.global.addField("removeFromContinueWatching", "int", true)
+    m.global.addField("addToWatchlist", "int", true)
+    m.global.addField("removeFromWatchlist", "int", true)
     m.global.addField("addPlaylist", "boolean", true)
-    m.global.addField("removePlaylist", "boolean", true)
+    m.global.addField("removePlaylist", "int", true)
 
 
     

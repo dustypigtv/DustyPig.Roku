@@ -114,7 +114,7 @@ Sub SetMovieFields(src as object, dst as object)
 
             if item <> invalid then
 
-                item.id = bp.tmdbId.toStr()
+                item.id = bp.tmdbId
                 item.title = bp.Name
                 item.sdGridPosterUrl = bp.AvatarUrl
                 item.hdGridPosterUrl = bp.AvatarUrl
@@ -144,20 +144,20 @@ Sub SetMovieFields(src as object, dst as object)
         mediaType: 1,
         contentType: 1,
         backdropUrl: src.backdropUrl,
-        detailed: true,
         streamFormat: "mp4",
         url: src.videoUrl,
         sdBifUrl: src.bifUrl,
         hdBifUrl: src.bifUrl,
         fhdBifUrl: src.bifUrl,
         length: src.length,
-        played: src.played ?? 0,
         inWatchList: src.inWatchList ?? false,
         subtitleTracks: subtitleTracks,
         rating: rating,
         castCrew: castCrew,
         canPlay: src.canPlay
     })
+
+    m.top.playbackPosition = src.played ?? 0
    
 End Sub
 

@@ -90,12 +90,44 @@ End Function
 
 
 
-Sub SetCurrentMedia(media as object)
+Sub SetCurrentBasicMedia(media as object)
 
-    doIt = m.global.currentMedia = invalid
-    if not doIt then doIt = m.global.currentMedia.mediaType <> media.mediaType
-    if not doIt then doIt = m.global.currentMedia.id <> media.id
+    doIt = m.global.currentBasicMedia = invalid
+    if not doIt then doIt = m.global.currentBasicMedia.mediaType <> media.mediaType
+    if not doIt then doIt = m.global.currentBasicMedia.id <> media.id
     
-    if doIt then m.global.currentMedia = media
+    if doIt then m.global.currentBasicMedia = media
 
+End Sub
+
+
+
+
+Sub SetSectionFields(src as object, dst as object)
+
+    ' print "HomeScreenView:SetSectionFields"
+
+    dst.setFields({
+        id: src.listid,
+        title: src.title
+    })
+
+End Sub
+
+
+Sub SetBasicMediaFields(src as object, dst as object)
+
+    ' print "HomeScreenView:SetBasicMediaFields"
+
+    dst.setFields({
+        id: src.id,
+        title: src.title,
+        description: src.description,
+        sdGridPosterUrl: src.artworkUrl,
+        hdGridPosterUrl: src.artworkUrl,
+        fhdGridPosterUrl: src.artworkUrl,
+        mediaType: src.mediaType,
+        backdropUrl: src.backdropUrl
+    })
+   
 End Sub

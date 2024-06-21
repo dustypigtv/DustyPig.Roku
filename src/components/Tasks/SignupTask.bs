@@ -17,7 +17,7 @@ Sub RunTask()
         result = Login(m.top.email, m.top.password)
         if result.success then 
             if result.data.loginType = 1 then
-                m.global.profileId = result.data.profileId.toStr()
+                m.global.profileId = result.data.profileId
                 m.global.profileToken = result.data.profileToken
                 m.global.profileIsMain = true
     

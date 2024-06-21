@@ -33,7 +33,7 @@
     </script>
 	
 	<interface>
-        <field id="id" type="string" />
+        <field id="id" type="int" />
         <field id="seconds" type="float" />
     </interface>
 

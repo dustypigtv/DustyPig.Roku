@@ -4,7 +4,6 @@
     <interface>
         <field id="castCrew" type="node" />
         <field id="canPlay" type="bool" />
-        <field id="played" type="float" />
         <field id="inWatchList" type="bool" />
     </interface>
 

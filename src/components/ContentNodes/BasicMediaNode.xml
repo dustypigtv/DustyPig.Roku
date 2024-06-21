@@ -5,7 +5,6 @@
 
         <field id="mediaType" type="int" />
         <field id="backdropUrl" type="string" />
-        <field id="detailed" type="bool" value="false" />
 
     </interface>
 

@@ -2,27 +2,16 @@ Sub Init()
 
     print "VideoView:Init"
 
-    m.top.notificationInterval = 10
+    m.top.notificationInterval = 0.5 ' Shortest allowed
+    m.lastPosition = 0.0
 
     m.updatePlaybackProgressTask = CreateObject("roSGNode", "UpdatePlaybackProgressTask")
     m.markMovieWatchedTask = createObject("roSGNode", "MarkMovieWatchedTask")
 
-    m.top.observeField("content", "OnThis_ContentChanged")
     m.top.observeField("state", "OnThis_StateChanged")
     m.top.observeField("position", "OnThis_PositionChanged")
     m.top.observeField("errorStr", "OnThis_Error")
     
-End sub
-
-
-Sub OnThis_ContentChanged(event as object)
-
-    print "VideoView:OnThis_ContentChanged"
-
-    content = event.getData()
-    m.topLevelId = content.id
-    m.position = invalid
-
 End sub
 
 
@@ -68,20 +57,29 @@ Sub OnThis_PositionChanged(event as object)
 
     print "VideoView:OnThis_PositionChanged"
 
-    if not m.top.visible then return
-    if m.topLevelId = invalid then return
-    if m.top.state = "finished" then return
+    ' if not m.top.visible then return
+    ' if m.top.content = invalid then return
+    ' if m.global.currentMedia = invalid then return
+    ' if m.top.content.id <> m.global.currentMedia.id then return
+    ' if m.top.state = "finished" then return
 
     position = event.getData()
     print "VideoView:Postion = " + position.toStr()
     
-    ' To Do: This only works for movies, add playlists!
-    m.updatePlaybackProgressTask.control = "stop"
-    m.updatePlaybackProgressTask.id = m.top.content.id
-    m.updatePlaybackProgressTask.seconds = position
-    m.updatePlaybackProgressTask.control = "run"
-    m.top.content.data.addReplace("played", position)
-    m.global.addToContinueWatching = m.top.content
+    m.global.playbackPosition = position
+    
+    if m.lastPosition <= position - 10 or m.lastPosition > position then
+        
+        m.lastPosition = position
+
+        ' To Do: This only works for movies, add playlists!
+        m.updatePlaybackProgressTask.control = "stop"
+        m.updatePlaybackProgressTask.id = m.global.currentDetailedMedia.id
+        m.updatePlaybackProgressTask.seconds = position
+        m.updatePlaybackProgressTask.control = "run"
+        m.global.addToContinueWatching = true
+
+    end if
 
 End Sub
 

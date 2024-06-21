@@ -21,86 +21,22 @@ Sub RunTask()
 
     if result.success then
 
-        if m.top.data = invalid then
+        ' Create a root content node, with child nodes holding sections, and each section holding BasicMedia nodes
+        root = createObject("roSGNode", "ContentNode")
+        for each section in result.data.sections
 
-            ' Create a root content node, with child nodes holding sections, and each section holding BasicMedia nodes
-            root = createObject("roSGNode", "ContentNode")
-            for each section in result.data.sections
-
-                section.listId = section.listId.toStr()
-                
-                row = root.createChild("ContentNode")
-                SetSectionFields(section, row)
-                
-                for each bm in section.items
-
-                    bm.id = bm.id.toStr()
-                    SetBasicMediaFields(bm, row.createChild("BasicMediaNode"))
-                    
-                end for
-                
-            end for
-
-            m.top.data = root
-            m.top.success = true
-
-        else
-        
-            ' Updating nodes in place provides the least amount of flickering
-           
-            currentData = m.top.data
-            newData = result.data.sections
-
-            ' If there are more current sections than new ones, trim
-            while currentData.getChildCount() > newData.getChildCount()
-                currentData.removeChildIndex(currentData.getChildCount() - 1)
-            end while
-
-            for i = 0 to newData.getChildCount() - 1
-                
-                newSection = newData.getChild(i)
-                newSection.id = newSection.id.toStr()
-
-                if i < currentData.getChildCount() then
-
-                    ' Check if the section needs to update
-                    curSection = currentData.getChild(i)
-                    if newSection.id <> curSection.id then SetSectionFields(newSection, curSection)
-
-                else
-                    ' Need to append new section
-                    curSection = currentData.createChild("ContentNode")
-                    SetSectionFields(newSection, curSection)
-                end if
-
-
-                ' If there are more current items in the section than the new ones, trim
-                while curSection.getChildCount() > newSection.getChildCount()
-                    curSection.removeChildIndex(curSection.getChildCount() - 1)
-                end while
+            row = root.createChild("ContentNode")
+            SetSectionFields(section, row)
             
-                for j = 0 to newSection.getChildCount() - 1
-            
-                    newItem = newSection.getChild(j)
-                    newItem.id = newItem.id.toStr()
-
-                    if j < curSection.getChildCount() then
-                        ' Check if the item needs to update
-                        curItem = curSection.getChild(j)
-                        if newItem.id <> curItem.id then SetBasicMediaFields(newItem, curItem)
-                    else
-                        ' Need to append a new item to the section
-                        SetBasicMediaFields(newItem, curSection.createChild("BasicMediaNode"))
-                    end if
-            
-                end for
-
+            for each bm in section.items
+                SetBasicMediaFields(bm, row.createChild("BasicMediaNode"))
             end for
             
-        end if
+        end for
 
+        m.top.data = root
         m.top.success = true
-               
+
    else
 
         m.top.error = result.error
@@ -108,34 +44,4 @@ Sub RunTask()
         
     end if
 
-End Sub
-
-
-Sub SetSectionFields(src as object, dst as object)
-
-    print "HomeScreenTask:SetSectionFields"
-
-    dst.setFields({
-        id: src.listid,
-        title: src.title
-    })
-
-End Sub
-
-
-Sub SetBasicMediaFields(src as object, dst as object)
-
-    print "HomeScreenTask:SetBasicMediaFields"
-
-    dst.setFields({
-        id: src.id,
-        title: src.title,
-        description: src.description,
-        sdGridPosterUrl: src.artworkUrl,
-        hdGridPosterUrl: src.artworkUrl,
-        fhdGridPosterUrl: src.artworkUrl,
-        mediaType: src.mediaType,
-        backdropUrl: src.backdropUrl
-    })
-   
 End Sub

@@ -36,7 +36,7 @@ sub Init()
     ' Update timer
     m.updateTimer = CreateObject("roSGNode", "Timer")
     m.updateTimer.repeat = true
-    m.updateTimer.duration = 300
+    m.updateTimer.duration = m.global.isDev ? 1000 : 300
     m.updateTimer.ObserveField("fire", "OnUpdateDataTimer_Fired")
 
 
@@ -113,19 +113,85 @@ Sub OnHomeScreenTask_DataAvailable()
     if m.homeScreenTask.success then
     
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()
-        if m.rowList.content = invalid then m.rowList.content = m.homeScreenTask.data
-        OnRowList_ItemFocused()
+        if m.rowList.content = invalid then 
+            
+            m.rowList.content = m.homeScreenTask.data
+            OnRowList_ItemFocused()
+
+        else
+
+            currentData = m.rowList.content
+            newData =  m.homeScreenTask.data
+
+            dataChanged = false
+            if currentData.getChildCount() <> newData.getChildCount() then 
+                dataChanged = true
+            else
+                for i = 0 to currentData.getChildCount() - 1
+                    currentSection = currentData.getChild(i)
+                    newSection = newData.getChild(i)
+                    if currentSection.id <> newSection.id then 
+                        dataChanged = true
+                        exit for
+                    end if
+                    for j = 0 to currentSection.getChildCount() - 1
+                        currentItem = currentSection.getChild(j)
+                        newItem = newSection.getChild(j)
+                        if currentItem.id <> newItem.id then 
+                            dataChanged = true
+                            exit for
+                        end if
+                    end for
+                    if dataChanged then exit for
+                end for
+            end if
+
+            if dataChanged then
+
+                idx = m.rowList.rowItemFocused
+                currentSection = m.rowList.content.getChild(idx[0])
+                currentItem = currentSection.getChild(idx[1])
+
+                idx = [0, 0]
+                for i = 0 to newData.getChildCount() - 1
+                    newSection = newData.getChild(i)
+                    if newSection.id = currentSection.id then
+                        idx = [i, 0]
+                        for j = 0 to newSection.getChildCount() - 1
+                            newItem = newSection.getChild(j)
+                            if newItem.id = currentItem.id then 
+                                idx = [i, j]
+                                exit for
+                            end if
+                        end for
+                        exit for
+                    end if
+                end for
+                
+                m.rowList.content = m.homeScreenTask.data
+                m.rowList.jumpToRowItem = idx
+
+            end if
+
+        end if
 
     else
+
         if m.top.visible then 
             m.errorDialog.message = [m.homeScreenTask.error]
             m.top.getScene().dialog = m.errorDialog
         end if
+    
     end if
 
     if m.updateTimer.control <> "start" then m.updateTimer.control = "start"
 
 End Sub
+
+
+
+
+
 
 
 
@@ -144,7 +210,6 @@ Sub OnRowList_ItemFocused()
         if idx.count() < 2 then return
         rowContent = m.rowList.content.getChild(idx[0])
         focusedItem = rowContent.getChild(idx[1])
-        SetCurrentMedia(focusedItem)
 
         ' Check values before changing to prevent flickering
         backdropUrl = focusedItem.backdropUrl
@@ -182,13 +247,13 @@ Sub OnRowList_ItemSelected()
     if idx.count() < 2 then return
     rowContent = m.rowList.content.getChild(idx[0])
     selContent = rowContent.getChild(idx[1])
-    SetCurrentMedia(selContent)
+    SetCurrentBasicMedia(selContent)
 
 
     ' Movie = 1,
     ' Series = 2,
     ' Playlist = 4
-    if m.global.currentMedia.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
+    if m.global.currentBasicMedia.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
 
 End sub
 
@@ -198,37 +263,20 @@ Sub OnGlobal_AddToContinueWatching()
     print "HomeScreenView:OnGlobal_AddToContinueWatching"
 
     ' public const long ID_CONTINUE_WATCHING = -500
-    section = FindChildNode(m.homeScreenTask.data, "-500")
+    section = FindChildNode(m.rowList.content, "-500")
     if section = invalid then
-       
-        ' Add Section
-        section = createObject("roSGNode", "ContentNode")
-        section.setFields({
-            id:"-500",
-            title:"Watchlist"
-        })
-        m.homeScreenTask.data.insertChild(section, 0)
-
+        UpdateData()
+    else
+        found = false
+        for i = 0 to section.getChildCount() - 1
+            item = section.getChild(i)
+            if item.id = m.global.addToContinueWatching then
+                found = true
+                exit for
+            end if
+        end for
+        if not found then UpdateData()
     end if
-
-    newList = []
-    newList.push(m.global.currentMedia.data)
-    for i = 0 to section.getChildCount() - 1
-        curItem = section.getChild(i)
-        if curItem.id <> m.global.currentMedia.id then newList.push(curItem.data)
-    end for
-
-    i = 0
-    for each newItem in newList
-        if i < section.getChildCount() then
-            curItem = section.getChild(i)
-            if curItem.id <> newItem.id then curItem.data = newItem
-        else
-            curItem = section.createChild("BasicMediaNode")
-            curItem.data = newItem
-        end if
-        i++
-    end for
 
 End Sub
 
@@ -238,15 +286,17 @@ Sub OnGlobal_RemoveFromContinueWatching()
     print "HomeScreenView:OnGlobal_RemoveFromContinueWatching"
 
     ' public const long ID_CONTINUE_WATCHING = -500
-    section = FindChildNode(m.homeScreenTask.data, "-500")
-    if section = invalid then return
-
-    item = FindChildNode(section, m.global.currentMedia.id)
-    if item = invalid then return
-
-    section.removeChild(item)
-
-    if section.getChildCount() = 0 then m.homeScreenTask.data.removeChild(section)
+    section = FindChildNode(m.rowList.content, "-500")
+    if section <> invalid then
+        for i = 0 to section.getChildCount() - 1
+            item = section.getChild(i)
+            if item.id = m.global.removeFromContinueWatching then
+                section.removeChild(item)
+                if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
+                exit for
+            end if
+        end for        
+    end if
 
 End Sub
 
@@ -256,29 +306,21 @@ Sub OnGlobal_AddToWatchlist()
 
     print "HomeScreenView:OnGlobal_AddToWatchlist"
 
-    ' public const long ID_CONTINUE_WATCHING = -500
     ' public const long ID_WATCHLIST = -400
     section = FindChildNode(m.homeScreenTask.data, "-400")
     if section = invalid then
-       
-        ' Add Section
-        ' Section is second under Continue Watching 
-        continueWatching = FindChildNode(m.homeScreenTask.data, "-500")
-        if continueWatching = invalid then idx = 0 else idx = 1
-        section = createObject("roSGNode", "ContentNode")
-        section.setFields({
-            id:"-400",
-            title:"Watchlist"
-        })
-        m.homeScreenTask.data.insertChild(section, idx)
-
+        UpdateData()
+    else
+        found = false
+        for i = 0 to section.getChildCount() - 1
+            item = section.getChild(i)
+            if item.id = m.global.addToWatchlist then
+                found = true
+                exit for
+            end if
+        end for
+        if not found then UpdateData()
     end if
-
-    item = FindChildNode(section, m.global.currentMedia.id)
-    if item <> invalid then return
-
-    ' Add Item
-    section.appendChild(m.global.currentMedia)
     
 End Sub
 
@@ -290,14 +332,16 @@ Sub OnGlobal_RemoveFromWatchlist()
     print "HomeScreenView:OnGlobal_RemoveFromWatchlist"
 
     ' public const long ID_WATCHLIST = -400
-    section = FindChildNode(m.homeScreenTask.data, "-400")
-    if section = invalid then return
-
-    item = FindChildNode(section, m.global.currentMedia.id)
-    if item = invalid then return
-
-    section.removeChild(item)
-
-    if section.getChildCount() = 0 then m.homeScreenTask.data.removeChild(section)
+    section = FindChildNode(m.rowList.content, "-400")
+    if section <> invalid then
+        for i = 0 to section.getChildCount() - 1
+            item = section.getChild(i)
+            if item.id = m.global.removeFromContinueWatching then
+                section.removeChild(item)
+                if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
+                exit for
+            end if
+        end for        
+    end if
 
 End Sub

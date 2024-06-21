@@ -20,14 +20,14 @@ Sub RunTask()
             if profiles.data.count() = 1 then
 
                 ' Only 1 profile, login
-                di=createobject("roDeviceInfo")
-                deviceId=di.GetChannelClientId()
+                di = createobject("roDeviceInfo")
+                deviceId = di.GetChannelClientId()
                 creds = {"id": profiles.data[0].id, "deviceId":deviceId }
                 result = PostAndGetData("/Auth/ProfileLogin", creds, GetAccountToken())
 
                 if result.success then
 
-                    m.global.profileId = result.data.profileId.toStr()
+                    m.global.profileId = result.data.profileId
                     m.global.profileToken = result.data.profileToken
                     m.global.profileIsMain = true
 

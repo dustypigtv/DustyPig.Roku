@@ -74,7 +74,7 @@ Sub Init()
     m.top.observeField("beforeShowAfterPush", "OnThis_BeforeShowAfterPush")
 
     ' Global observers
-    m.global.observeField("currentMedia", "OnGlobal_CurrentMediaChanged")
+    m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
     m.global.observeField("addToContinueWatching", "OnGlobal_AddToContinueWatching")
     m.global.observeField("removeFromContinueWatching", "OnGlobal_RemoveFromContinueWatching")
 
@@ -194,16 +194,13 @@ End Sub
 
 
 ' Fires when the BaseScene sets the Content node
-Sub OnGlobal_CurrentMediaChanged()
+Sub OnGlobal_CurrentBasicMediaChanged()
 
     print "MovieDetailsView:OnGlobal_CurrentMediaChanged"
 
-    if m.global.currentMedia = invalid then return
-    if m.global.currentMedia.mediaType <> 1 then return ' Movie
-    if m.global.currentMedia.id = m.movieDetailsTask.id then
-        if m.global.currentMedia.detailed ?? false then return
-    end if
-
+    if m.global.currentBasicMedia = invalid then return
+    if m.global.currentBasicMedia.mediaType <> 1 then return ' Movie
+    
     m.movieDetailsTask.control = "stop"
     
     
@@ -226,10 +223,10 @@ Sub OnGlobal_CurrentMediaChanged()
 
     m.lastOtherActionButtonFocused = m.watchlistButton
     
-    m.movieDetailsTask.id = m.global.currentMedia.id
+    m.movieDetailsTask.id = m.global.currentBasicMedia.id
     m.movieDetailsTask.control = "run"
 
-    m.backdropPoster.uri = m.global.currentMedia.backdropUrl ?? ""
+    m.backdropPoster.uri = m.global.currentBasicMedia.backdropUrl ?? ""
     
 End Sub
 
@@ -242,20 +239,21 @@ Sub OnMovieDetailsTask_DataAvailable()
 
     if m.movieDetailsTask.success then
  
-        m.global.currentMedia = m.movieDetailsTask.data
+        m.global.currentDetailedMedia = m.movieDetailsTask.data
+        m.global.playbackPosition = m.movieDetailsTask.playbackPosition
+        
+        m.titleLabel.text = m.global.currentDetailedMedia.title
+        m.yearLabel.text = m.global.currentDetailedMedia.secondaryTitle
+        m.ratedLabel.text = "Rated: " + m.global.currentDetailedMedia.rating
 
-        m.titleLabel.text = m.global.currentMedia.title
-        m.yearLabel.text = m.global.currentMedia.secondaryTitle
-        m.ratedLabel.text = "Rated: " + m.global.currentMedia.rating
+        if m.global.currentDetailedMedia.length > 0 then m.lengthLabel.text = GetDurationString(m.global.currentDetailedMedia.length)
 
-        if m.global.currentMedia.length > 0 then m.lengthLabel.text = GetDurationString(m.global.currentMedia.length)
-
-        if m.global.currentMedia.canPlay then
+        if m.global.currentDetailedMedia.canPlay then
            
             m.playButton.text = "Play"
 
-            if m.global.currentMedia.length > 0 and m.global.currentMedia.played > 0 then 
-                m.remainingLabel.text = GetDurationString(m.global.currentMedia.length - m.global.currentMedia.played) + " remaining"
+            if m.global.currentDetailedMedia.length > 0 and m.global.playbackPosition > 0 then 
+                m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
                 m.resumeButton.visible = true
                 m.lastFocusedControl = m.resumeButton
                 m.markWatchedButton.visible = true
@@ -263,7 +261,7 @@ Sub OnMovieDetailsTask_DataAvailable()
 
             m.playButton.visible = true
 
-            m.watchlistButton.icon = m.global.currentMedia.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
+            m.watchlistButton.icon = m.global.currentDetailedMedia.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
             m.watchlistButton.visible = true
             
             m.addToPlaylistButton.visible = true
@@ -282,8 +280,8 @@ Sub OnMovieDetailsTask_DataAvailable()
             end if
         end if
 
-        m.descriptionLabel.text = m.global.currentMedia.description
-        m.castCrewRowList.content = m.global.currentMedia.castCrew
+        m.descriptionLabel.text = m.global.currentDetailedMedia.description
+        m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
         
         RestoreFocus()
 
@@ -318,8 +316,7 @@ Sub StartPlayback(resume as boolean)
 
     print "MovieDetailsView:StartPlayback", resume
 
-    played = m.global.currentMedia.data.played = invalid ? 0 : m.global.currentMedia.data.played
-    m.global.currentMedia.playStart = resume ? m.global.currentMedia.played : played
+    m.global.currentDetailedMedia.playStart = resume ? m.global.playbackPostion : 0
     m.global.startVideoPlayback = true
     
 End Sub
@@ -343,11 +340,11 @@ Sub OnMarkWatchedButton_Selected()
 
     print "MovieDetailsView:OnMarkWatchedButton_Selected"
 
-    m.markMovieWatchedTask.id = m.global.currentMedia.id
+    m.markMovieWatchedTask.id = m.global.currentDetailedMedia.id
     m.markMovieWatchedTask.control = "run"
 
-    m.global.currentMedia.data.played = 0
-    m.global.removeFromContinueWatching = true
+    m.global.playbackPosition = 0
+    m.global.removeFromContinueWatching = m.global.currentDetailedMedia.id
 
 End Sub
 
@@ -360,18 +357,18 @@ Sub OnWatchlistButton_Selected()
 
     m.toggleWatchlistTask.control = "stop"
     
-    add = not m.global.currentMedia.inWatchList ?? false
+    add = not m.global.currentDetailedMedia.inWatchList ?? false
 
     m.toggleWatchlistTask.add = add
-    m.toggleWatchlistTask.id = m.global.currentMedia.id
+    m.toggleWatchlistTask.id = m.global.currentDetailedMedia.id
     m.toggleWatchlistTask.control = "run"
 
     m.watchlistButton.icon = add ? "pkg:/images/check.png" : "pkg:/images/add.png"
     if add then 
-        m.global.currentMedia.inWatchList = true
+        m.global.currentDetailedMedia.inWatchList = true
         m.global.addToWatchlist = true
     else 
-        m.global.currentMedia.inWatchList = false
+        m.global.currentDetailedMedia.inWatchList = false
         m.global.removeFromWatchlist = true
     end if
     
@@ -396,9 +393,9 @@ Sub OnGlobal_AddToContinueWatching()
 
     print "MovieDetailsView:OnGlobal_AddToContinueWatching"
 
-    if m.movieDetailsTask.id <> m.global.currentMedia.id then return
+    if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
-    m.remainingLabel.text = GetDurationString(m.global.currentMedia.length - m.global.currentMedia.data.played) + " remaining"
+    m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
     m.resumeButton.visible = true
     m.markWatchedButton.visible = true
 
@@ -409,7 +406,7 @@ Sub OnGlobal_RemoveFromContinueWatching()
 
     print "MovieDetailsView:OnGlobal_RemoveFromContinueWatching"
 
-    if m.movieDetailsTask.id <> m.global.currentMedia.id then return
+    if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
     if m.playbackButtonLayoutGroup.isInFocusChain() then m.playButton.setFocus(true)
     m.markWatchedButton.visible = false

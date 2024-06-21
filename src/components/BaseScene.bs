@@ -185,10 +185,9 @@ Sub OnGlobal_StartVideoPlayback(event as object)
 
     print "BaseScene:OnPlayVideo"
 
-    data = event.getData()
-    if data = invalid then return
+    if not event.getData() then return
     
-    m.videoView.content = data
+    m.videoView.content = m.global.currentDetailedMedia
     m.videoView.control = "play"
 
     ShowView(m.videoView)

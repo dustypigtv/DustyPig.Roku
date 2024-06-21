@@ -8,11 +8,12 @@
 	<interface>
 
 		<!-- Input to task -->
-        <field id="id" type="string" />
+        <field id="id" type="int" />
 
 		<!-- Output from task -->
 		<field id="success" type="boolean" alwaysNotify="true" />
 		<field id="data" type="node" />
+		<field id="playbackPosition" type="float" />
 		<field id="error" type="string" />
     </interface>
 </component>

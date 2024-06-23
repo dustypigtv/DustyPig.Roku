@@ -11,6 +11,7 @@ sub Init()
      ' Observe this.visible
      m.top.observeField("visible", "OnThis_VisibleChanged")
 
+     
 end sub
 
 Sub OnThis_VisibleChanged(event as object)

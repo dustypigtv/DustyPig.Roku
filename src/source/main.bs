@@ -52,13 +52,15 @@
 
     
     'Create Base Scene
-    screen.CreateScene("BaseScene") 
+    baseScene = screen.CreateScene("BaseScene") 
 
     ' Handle deep link
     ' m.global.addField("deeplink", "assocarray", false)
     ' m.global.deeplink = GetDeepLinks(args)
 
     screen.show()
+    ' SafeZone(baseScene)
+
     ' vscode_rdb_on_device_component_entry
 
     

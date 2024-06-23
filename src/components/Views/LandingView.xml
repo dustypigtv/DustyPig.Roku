@@ -9,14 +9,13 @@
             id="backdropPoster"
             loadWidth="1920"
             loadHeight="1080"
-            loadDisplayMode="scaleToZoom"
-            uri="pkg:/images/pig_2.png" />
+            loadDisplayMode="scaleToZoom" />
 
 		<!-- Dimmer -->
         <Rectangle
             width="1920"
             height="1080"
-            color="#000000AA" />
+            color="#00000080" />
 	
 		<!-- 
 			Spinner images are 200x200

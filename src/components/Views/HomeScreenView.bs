@@ -54,7 +54,6 @@ end sub
 
 
 
-
 Sub OnThis_VisibleChanged(event as object)
     
     if event.getData() 
@@ -97,7 +96,7 @@ Sub OnHomeScreenTask_DataAvailable()
 
     m.busySpinner.visible = false
     m.busyLabel.visible = false
-    
+
     if m.homeScreenTask.success then
     
         m.rowList.numRows = m.homeScreenTask.data.getChildCount()

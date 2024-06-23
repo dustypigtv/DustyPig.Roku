@@ -119,30 +119,31 @@
 
 
         <!-- 
-			Spinner images are 200x200
-			Screen is 1920x1024
+            Spinner images are 200x200
+            Screen is 1920x1024
             Sidebar is 150px, so adjust centerx
-			centerx = ((1920 - 200) / 2) - 150 = 710
-			centery = (1080 - 200) / 2 = 440
-		-->
-		<ThemedBusySpinner
-			id="busySpinner"
-			translation="[710,440]" />
-		
-		<!-- 
-			Since the spinner above is centered and is 200 px high,
-			Translate this 100 px down the y axis.
-			Add another 50 for spacing
-		-->
-		<ThemedLabel
-			id="busyLabel"
+            centerx = ((1920 - 200) / 2) - 150 = 710
+            centery = (1080 - 200) / 2 = 440
+        -->
+        <ThemedBusySpinner
+            id="busySpinner"
+            translation="[710,440]" />
+        
+        <!-- 
+            Since the spinner above is centered and is 200 px high,
+            Translate this 100 px down the y axis.
+            Add another 50 for spacing
+        -->
+        <ThemedLabel
+            id="busyLabel"
             themeColor="textOnBackground"
-			text="The Pig is gettin' Dusty"
-			width="1920"
-			height="1080"
-			horizAlign="center"
-			vertAlign="center"
-			translation="[-150,150]" />
+            text="The Pig is gettin' Dusty"
+            width="1920"
+            height="1080"
+            horizAlign="center"
+            vertAlign="center"
+            translation="[-150,150]" />
+
 
 	</children>
 

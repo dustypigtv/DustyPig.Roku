@@ -71,60 +71,88 @@
             </LayoutGroup>
 
 
-            <!-- Playback/Request Buttons -->
-            <LayoutGroup
-                id="playbackButtonLayoutGroup"
-                layoutDirection="horiz"
-                itemSpacings="[25]">
+            <Group>
 
-                <Group>
+                <!-- Request Only-->
+                <ThemedButton
+                    id="requestButton"
+                    width="250"
+                    height="75"
+                    text="Request" />
+
+
+
+                <!-- Play + Actions -->
+                <LayoutGroup
+                    id="playbackButtonLayoutGroup"
+                    layoutDirection="horiz"
+                    itemSpacings="[25]">
+
                     <ThemedButton
-                        id="playButton"
+                        id="playButton1"
+                        width="250"
+                        height="75"
+                        text="Play" />
+                    
+                    <ThemedIconButton
+                        id="watchlistButton1"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/add.png" />
+
+                    <ThemedIconButton
+                        id="addToPlaylistButton1"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/playlist.png" />
+
+                </LayoutGroup>
+
+
+
+                <!-- Play + Resume + Actions -->
+                 <LayoutGroup
+                    id="resumeButtonLayoutGroup"
+                    layoutDirection="horiz"
+                    itemSpacings="[25]">
+
+                    <ThemedButton
+                        id="playButton2"
                         width="250"
                         height="75"
                         text="Play" />
                     
                     <ThemedButton
-                        id="requestButton"
+                        id="resumeButton"
                         width="250"
                         height="75"
-                        text="Request" />
-                </Group>
+                        text="Resume" />
 
-                <ThemedButton
-                    id="resumeButton"
-                    width="250"
-                    height="75"
-                    text="Resume" />
+                    <ThemedButton
+                        id="markWatchedButton"
+                        width="250"
+                        height="75"
+                        text="Watched" />
 
-                <ThemedButton
-                    id="markWatchedButton"
-                    width="250"
-                    height="75"
-                    text="Watched" />
+                    <ThemedIconButton
+                        id="watchlistButton2"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/add.png" />
 
-            </LayoutGroup>
+                    <ThemedIconButton
+                        id="addToPlaylistButton2"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/playlist.png" />
 
 
-            <!-- Watchlist/Playlist buttons -->
-            <LayoutGroup
-                id="otherActionButtonLayoutGroup"
-                layoutDirection="horiz"
-                itemSpacings="[50]">
-            
-                <ThemedIconButton
-                    id="watchlistButton"
-                    width="50"
-                    height="50"
-                    icon="pkg:/images/add.png" />
+                </LayoutGroup>
 
-                <ThemedIconButton
-                    id="addToPlaylistButton"
-                    width="50"
-                    height="50"
-                    icon="pkg:/images/playlist.png" />
+            </Group>
 
-            </LayoutGroup>
+
+          
 
 
             <!-- 
@@ -146,13 +174,9 @@
                 play buttons.height = 75
 
                 25 spacing
-
-                action buttons.height = 50
-
-                25 spacing
                 ****
 
-                Description.top = 46 + 25 + 36 + 25 + 75 + 25 + 50 + 25 = 307
+                Description.top = 46 + 25 + 36 + 25 + 75 + 25 = 232
 
                 Bottom of cast & crew (first row) will be at 866
                     rowSize.h = 200
@@ -164,13 +188,13 @@
 
                 the lahel heights being rounded make this to high by 1 pix
 
-                So max height = 606 - 307 - 25 - 1 = 273
+                So max height = 606 - 232 - 25 - 1 = 348
             -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
-                height="273"
+                height="348"
                 vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />
@@ -234,9 +258,6 @@
 			id="busySpinner"
 			visible="false"
 			translation="[860,440]" />
-		
-		
-		
 
 	</children>
 

@@ -129,13 +129,44 @@
 
             <!-- 
                 Description Label 
-                I set the height on this by just looking and adusting the scenegraph inspector
+
+                ****
+                titleLabel uses LargeBoldSystemFont, which is 34pts
+                font px = pts * 1.3333(3)
+                titleLabel.height will be 34 * 1.3333(3) = 45.3333(3) = 46
+                
+                25 spacing
+
+                yearLabel uses SmallestSystemFont, which is 27pts
+                font px = pts * 1.3333(3)
+                yearLabel.height = 27 * 1.3333(3) = 35.9999(9) = 36
+
+                25 spacing
+
+                play buttons.height = 75
+
+                25 spacing
+
+                action buttons.height = 50
+
+                25 spacing
+                ****
+
+                Description.top = 46 + 25 + 36 + 25 + 75 + 25 + 50 + 25 = 307
+
+                Bottom of cast & crew (first row) will be at 866
+                    rowSize.h = 300
+                    Top = 566
+
+                25 spacing
+
+                So max height = 566 - 307 - 25 = 234
             -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
-                height="250"
+                height="234"
                 vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />

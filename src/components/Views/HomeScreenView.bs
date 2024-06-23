@@ -1,7 +1,5 @@
 sub Init()
 
-    print "HomeScreenView:Init"
-
     m.firstLoad = true
 
     ' Find controls    
@@ -59,8 +57,6 @@ end sub
 
 Sub OnThis_VisibleChanged(event as object)
     
-    print "HomeScreenView:OnThis_VisibleChanged"
-
     if event.getData() 
         if m.firstLoad then
             m.firstLoad = false
@@ -74,8 +70,6 @@ End Sub
 
 Sub OnThis_FocusChanged()
 
-    print "HomeScreenView:OnThis_FocusChanged"
-
     if m.top.isInFocusChain() then m.rowList.setFocus(true)
 
 End Sub
@@ -84,16 +78,12 @@ End Sub
 
 Sub OnUpdateDataTimer_Fired()
 
-    print "HomeScreenView:OnUpdateDataTimer_Fired"
-
     UpdateData()
 
 End sub
 
 
 Sub UpdateData()
-
-    print "HomeScreenView:UpdateData"
 
     m.homeScreenTask.control = "stop"
     m.homeScreenTask.control = "run"
@@ -104,8 +94,6 @@ End Sub
 
 
 Sub OnHomeScreenTask_DataAvailable()
-
-    print "HomeScreenView:OnHomeScreenTask_DataAvailable"
 
     m.busySpinner.visible = false
     m.busyLabel.visible = false
@@ -200,8 +188,6 @@ End Sub
 ' Fires when an item in the rowList gets focus
 Sub OnRowList_ItemFocused()
 
-    print "HomeScreenView:OnRowList_ItemFocused"
-
     try
     
         if not m.top.visible then return
@@ -241,8 +227,6 @@ End Sub
 ' Fires when an item in the rowList is selected (ok button pressed)
 Sub OnRowList_ItemSelected()
 
-    print "HomeScreenView:OnRowList_ItemSelected"
-
     idx = m.rowList.rowItemFocused
     if idx.count() < 2 then return
     rowContent = m.rowList.content.getChild(idx[0])
@@ -260,67 +244,72 @@ End sub
 
 Sub OnGlobal_AddToContinueWatching()
 
-    print "HomeScreenView:OnGlobal_AddToContinueWatching"
-
     ' public const long ID_CONTINUE_WATCHING = -500
-    section = FindChildNode(m.rowList.content, "-500")
-    if section = invalid then
-        UpdateData()
-    else
-        found = false
-        for i = 0 to section.getChildCount() - 1
-            item = section.getChild(i)
-            if item.id = m.global.addToContinueWatching then
-                found = true
-                exit for
-            end if
-        end for
-        if not found then UpdateData()
+    continueWatchingSection = FindChildNode(m.rowList.content, "-500")
+    if continueWatchingSection = invalid then
+        continueWatchingSection = createObject("roSGNode", "ContentNode")
+        continueWatchingSection.setFields({
+            id: "-500",
+            title: "Continue Watching"
+        })
+        m.rowList.content.insertChild(continueWatchingSection, 0)
     end if
+    
+    ' Make sure it's at index 0
+    found = false
+    for i = 0 to continueWatchingSection.getChildCount() - 1
+        item = continueWatchingSection.getChild(i)
+        if item.id = m.global.addToContinueWatching.id then
+            if i > 0 then
+                continueWatchingSection.removeChild(item)
+                continueWatchingSection.insertChild(item, 0)
+            end if
+            found = true
+            exit for
+        end if
+    end for
+    if not found then continueWatchingSection.insertChild(m.global.addToContinueWatching, 0)
 
 End Sub
 
 
 Sub OnGlobal_RemoveFromContinueWatching()
 
-    print "HomeScreenView:OnGlobal_RemoveFromContinueWatching"
-
     ' public const long ID_CONTINUE_WATCHING = -500
     section = FindChildNode(m.rowList.content, "-500")
     if section <> invalid then
-        for i = 0 to section.getChildCount() - 1
-            item = section.getChild(i)
-            if item.id = m.global.removeFromContinueWatching then
-                section.removeChild(item)
-                if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
-                exit for
-            end if
-        end for        
+        item = FindChildNode(section, m.global.removeFromContinueWatching)
+        if item <> invalid then
+            section.removeChild(item)
+            if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
+        end if
     end if
 
 End Sub
 
 
-' This needs a content node with the following fields set:
 Sub OnGlobal_AddToWatchlist()
 
-    print "HomeScreenView:OnGlobal_AddToWatchlist"
-
+    ' public const long ID_CONTINUE_WATCHING = -500
     ' public const long ID_WATCHLIST = -400
-    section = FindChildNode(m.homeScreenTask.data, "-400")
-    if section = invalid then
-        UpdateData()
-    else
-        found = false
-        for i = 0 to section.getChildCount() - 1
-            item = section.getChild(i)
-            if item.id = m.global.addToWatchlist then
-                found = true
-                exit for
-            end if
-        end for
-        if not found then UpdateData()
+
+    watchlistSection = FindChildNode(m.rowList.content, "-400")
+    if watchlistSection = invalid then
+        watchlistSection = createObject("roSGNode", "ContentNode")
+        watchlistSection.setFields({
+            id: "-400",
+            title: "Watchlist"
+        })
+        continueWatchingSection = FindChildNode(m.rowList.content, "-500")
+        if continueWatchingSection = invalid then
+            m.rowList.content.insertChild(watchlistSection, 0)
+        else
+            m.rowList.content.insertChild(watchlistSection, 1)
+        end if
     end if
+    
+    item = FindChildNode(watchlistSection, m.global.addToWatchlist.id)
+    if item = invalid then watchlistSection.appendChild(m.global.addToWatchlist)
     
 End Sub
 
@@ -329,19 +318,14 @@ End Sub
 
 Sub OnGlobal_RemoveFromWatchlist()
 
-    print "HomeScreenView:OnGlobal_RemoveFromWatchlist"
-
     ' public const long ID_WATCHLIST = -400
     section = FindChildNode(m.rowList.content, "-400")
     if section <> invalid then
-        for i = 0 to section.getChildCount() - 1
-            item = section.getChild(i)
-            if item.id = m.global.removeFromContinueWatching then
-                section.removeChild(item)
-                if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
-                exit for
-            end if
-        end for        
+        item = FindChildNode(section, m.global.removeFromWatchlist)
+        if item <> invalid then
+            section.removeChild(item)
+            if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
+        endif        
     end if
 
 End Sub

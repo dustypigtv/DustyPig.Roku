@@ -6,7 +6,7 @@
 	<script type="text/brightscript" uri="pkg:/components/Tasks/SeriesDetailsTask.bs" />
 	
 	<interface>
-        <field id="id" type="int" />
+        <field id="id" type="string" />
         <field id="data" type="assocarray" alwaysNotify="true" />
     </interface>
 </component>

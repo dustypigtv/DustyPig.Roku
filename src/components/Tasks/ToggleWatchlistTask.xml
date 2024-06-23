@@ -9,15 +9,11 @@
 
             Sub Init()
 
-                print "ToggleWatchlistTask:Init"
-
 				m.top.functionName = "RunTask"
 
 			End Sub
 
 			Sub RunTask()
-
-                print "ToggleWatchlistTask:RunTask"
 
                 if m.top.add then
     				result = GetData("/Media/AddToWatchlist/" + m.top.id, m.global.profileToken)
@@ -33,7 +29,7 @@
     </script>
 	
 	<interface>
-        <field id="id" type="int" />
+        <field id="id" type="string" />
         <field id="add" type="bool" />
     </interface>
 

@@ -1,14 +1,10 @@
 Sub Init()
 
-    print "SeriesDetailsTask:Init"
-
     m.top.functionName = "RunTask"
 
     End Sub
 
 Sub RunTask()
-
-    print "SeriesDetailsTask:RunTask"
 
     id = m.top.id
     url = `/Series/Details/${id}`

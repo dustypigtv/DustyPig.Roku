@@ -9,16 +9,12 @@
 
             Sub Init()
 
-				print "MarkMovieWatchedTask:Init"
-
 				m.top.functionName = "RunTask"
 			
 			End Sub
 
 			Sub RunTask()
 			
-				print "MarkMovieWatchedTask:RunTask"
-				
 				result = GetData("/Movies/MarkWatched/" + m.top.id, m.global.profileToken)
 			    if result.statusCode = 401 then m.global.loggedOut = true
   
@@ -28,7 +24,7 @@
     </script>
 	
 	<interface>
-        <field id="id" type="int" />
+        <field id="id" type="string" />
     </interface>
 
 	

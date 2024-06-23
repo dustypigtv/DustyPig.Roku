@@ -6,16 +6,12 @@
 
             Sub Init()
 
-                print "ThemedLabel:Init"
-
                 m.global.observeFieldScoped("theme", "OnThemeChanged")  
 
             End Sub
 
             Sub OnThemeChanged()
 
-                print "ThemedLabel:OnThemeChanged"
-                
                 m.top.color = m.global.theme[m.top.themeColor]
 
             End Sub

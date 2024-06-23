@@ -1,14 +1,10 @@
 Sub Init()
 
-    print "MovieDetailsTask:Init"
-
     m.top.functionName = "RunTask"
 
-    End Sub
+End Sub
 
 Sub RunTask()
-
-    print "MovieDetailsTask:RunTask"
 
     id = m.top.id
     url = `/Movies/Details/${id}`
@@ -42,8 +38,6 @@ End Sub
 
 
 Sub SetMovieFields(src as object, dst as object)
-
-    print "MovieDetailsTask:SetMovieFields"
 
     try
         secondaryTitle = left(src.date, 4)
@@ -114,7 +108,7 @@ Sub SetMovieFields(src as object, dst as object)
 
             if item <> invalid then
 
-                item.id = bp.tmdbId
+                item.id = bp.tmdbId.toStr()
                 item.title = bp.Name
                 item.sdGridPosterUrl = bp.AvatarUrl
                 item.hdGridPosterUrl = bp.AvatarUrl
@@ -134,7 +128,7 @@ Sub SetMovieFields(src as object, dst as object)
 
 
     dst.setFields({
-        id: src.id,
+        id: src.id.toStr(),
         title: src.title,
         secondaryTitle: secondaryTitle,
         description: src.description,
@@ -164,8 +158,6 @@ End Sub
 
 Sub AddSectionIfHasPeople(castCrew, role as object, singularName as string, addPlural as boolean)
 
-    print "MovieDetailsTask:AddSectionIfHasPeople"
-    
     cnt = role.getChildCount()
     if cnt > 0 then
 

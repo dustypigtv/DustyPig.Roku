@@ -1,7 +1,5 @@
 function GetTheme() as object
 
-    print "Theme:GetTheme"
-
     ' Try to get from the registry based on profile id
     themeId = "theme_0"
     if m.global.profileId > 0 then
@@ -23,8 +21,6 @@ function GetTheme() as object
 end function
 
 sub SetTheme(theme as object)
-
-    print "Theme:SetTheme"
 
     if m.global.profileId < 1 then return
 

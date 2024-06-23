@@ -1,7 +1,5 @@
 sub Init()
 
-    print "LoginProfileView:Init"
-
     ' Find controls
     m.busyLabel = m.top.findNode("busyLabel")
     m.busySpinner = m.top.findNode("busySpinner")
@@ -57,8 +55,6 @@ end sub
 ' Fires when this view's visibility changes
 Sub OnThis_VisibleChanged(event as object)
 
-    print "LoginProfileView:OnThis_VisibleChanged"
-    
     if not event.getData() then return
 
     SetBusy(false)
@@ -79,8 +75,6 @@ End Sub
 
 sub SetBusy(busy as boolean)
 
-    print "LoginProfileView:SetBusy"
-
     m.profileGrid.visible = not busy
     m.profileGrid.setFocus(not busy)
     m.busyLabel.visible = busy
@@ -92,15 +86,11 @@ end sub
 
 sub OnLoadErrorDialog_Closed()
 
-    print "LoginProfileView:OnLoadErrorDialog_Closed"
-
     m.top.getScene().dialog = invalid
 
 end sub
 
 sub OnProfileGrid_ItemSelected()
-
-    print "LoginProfileView:OnProfileGrid_ItemSelected"
 
     idx = m.profileGrid.itemSelected
     profile = m.global.allProfiles.getChild(idx)    
@@ -121,8 +111,6 @@ end sub
 
 sub OnPinDialog_PinEntered()
 
-    print "LoginProfileView:OnPinDialog_PinEntered"
-
     m.top.getScene().dialog = invalid
     
     idx = m.profileGrid.itemSelected
@@ -141,8 +129,6 @@ end sub
 
 Sub OnLoginProfileTask_DataAvailable()
 
-    print "LoginProfileView:OnLoginProfileTask_DataAvailable"
-
     SetBusy(false)
     
     result = m.loginProfileTask.data
@@ -156,8 +142,6 @@ End Sub
 
 
 sub OnLoginErrorDialog_Closed()
-
-    print "LoginProfileView:OnLoginErrorDialog_Closed"
 
     m.top.getScene().dialog = invalid
     m.profileGrid.setFocus(true)

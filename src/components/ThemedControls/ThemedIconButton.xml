@@ -6,8 +6,6 @@
 
             Sub Init()
 
-                print "ThemedIconButton:Init"
-
                 m.top.showFocusFootprint = true
                 m.top.iconUri=""
                 m.top.focusedIconUri=""
@@ -24,8 +22,6 @@
 
             Sub OnSizeChanged()
 
-                print "ThemedIconButton:OnSizeChanged"
-
                 m.top.minWidth = m.top.width
                 m.top.maxWidth = m.top.width
 
@@ -33,8 +29,6 @@
 
 
             Sub IconChanged()
-
-                print "ThemedIconButton:IconChanged"
 
                 m.top.focusBitmapUri = m.top.icon
                 m.top.focusFootprintBitmapUri =  m.top.icon
@@ -44,8 +38,6 @@
 
 
             Sub OnThemeChanged()
-
-                print "ThemedIconButton:OnThemeChanged"
 
                 m.top.getChild(0).blendColor = m.global.theme.primary
 

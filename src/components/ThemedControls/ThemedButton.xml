@@ -6,8 +6,6 @@
 
             Sub Init()
 
-                print "ThemedButton:Init"
-
                 m.top.showFocusFootprint = true
                 m.top.iconUri=""
                 m.top.focusedIconUri=""
@@ -36,8 +34,6 @@
 
             Sub OnSizeChanged()
 
-                print "ThemedButton:OnSizeChanged"
-
                 m.top.minWidth = m.top.width
                 m.top.maxWidth = m.top.width
 
@@ -46,16 +42,12 @@
 
             Sub SetLabelAlignment()
 
-                print "ThemedButton:SetLabelAlignment"
-
                 if m.label.horizAlign <> "center" then m.label.horizAlign = "center"
 
             End Sub
 
 
             Sub OnThemeChanged()
-
-                print "ThemedButton:OnThemeChanged"
 
                 m.top.focusedTextColor = m.global.theme.textOnPrimary
                 m.focusedPoster.blendColor = m.global.theme.primary

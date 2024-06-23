@@ -6,16 +6,12 @@
 
             Sub Init()
 
-                print "ThemedRowList:Init"
-
                 m.global.observeFieldScoped("theme", "OnThemeChanged")      
 
             End Sub
 
             Sub OnThemeChanged()
 
-                print "ThemedRowList:OnThemeChanged"
-                
                 m.top.rowLabelColor = m.global.theme.textOnBackground
                 m.top.focusBitmapBlendColor = m.global.theme.primary
 

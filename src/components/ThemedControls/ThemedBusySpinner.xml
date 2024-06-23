@@ -6,8 +6,6 @@
 
             Sub Init()
 
-                print "ThemedBusySpinner:Init"
-
                 m.top.poster.uri = "pkg:/images/spinner.png"
                 m.global.observeFieldScoped("theme", "OnThemeChanged")                
 
@@ -15,8 +13,6 @@
 
             Sub OnThemeChanged()
 
-                print "ThemedBusySpinner:OnThemeChanged"
-                
                 m.top.poster.blendColor = m.global.theme.primary
             
             End Sub

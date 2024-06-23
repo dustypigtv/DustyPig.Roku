@@ -1,7 +1,5 @@
 Sub Init()
 
-    print "MovieDetailsView:Init"
-
     ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
@@ -77,13 +75,12 @@ Sub Init()
     m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
     m.global.observeField("addToContinueWatching", "OnGlobal_AddToContinueWatching")
     m.global.observeField("removeFromContinueWatching", "OnGlobal_RemoveFromContinueWatching")
+    m.global.observeField("playbackPosition", "OnGlobal_PlaybackPositionChanged")
 
 end sub
 
 
 Sub OnThis_BeforeShowAfterPush(event as object)
-
-    print "MovieDetailsView:OnThis_BeforeShowAfterPush"
 
     if event.getData() then m.lastFocusedControl = invalid
 
@@ -92,8 +89,6 @@ End Sub
 
 Sub OnThis_VisibleChanged(event as object)
 
-    print "MovieDetailsView:OnThis_VisibleChanged"
-
     if event.getData() then RestoreFocus()
 
 End Sub
@@ -101,8 +96,6 @@ End Sub
 
 
 Sub RestoreFocus()
-
-    print "MovieDetailsView:RestoreFocus"
 
     if not m.top.visible then return
 
@@ -137,8 +130,6 @@ End sub
 
 Sub OnPlaybackButtons_FocusChanged(event as object)
 
-    print "MovieDetailsView:OnPlaybackButtons_FocusChanged"
-
     if m.playbackButtonLayoutGroup.isInFocusChain() then
         m.lastPlaybackButtonFocused = event.getRoSGNode()
         m.lastFocusedControl = m.lastPlaybackButtonFocused
@@ -147,8 +138,6 @@ Sub OnPlaybackButtons_FocusChanged(event as object)
 End Sub
 
 Sub OnOtherActionButtons_FocusChanged(event as object)
-
-    print "MovieDetailsView:OnOtherActionButtons_FocusChanged"
 
     if m.otherActionButtonLayoutGroup.isInFocusChain() then
         m.lastOtherActionButtonFocused = event.getRoSGNode()
@@ -160,8 +149,6 @@ End Sub
 
 Sub OnErrorDialog_Closed()
 
-    print "MovieDetailsView:OnErrorDialog_Closed"
-
     m.top.getScene().dialog = invalid
     RestoreFocus()
 
@@ -169,8 +156,6 @@ End Sub
 
 
 Sub OnCastCrewList_ItemFocused()
-
-    print "MovieDetailsView:OnCastCrewList_ItemFocused"
 
     idx = m.castCrewRowList.rowItemFocused
     rowContent = m.castCrewRowList.content.getChild(idx[0])
@@ -181,8 +166,6 @@ End sub
 
 
 Sub OnCastCrewList_FocusChanged()
-
-    print "MovieDetailsView:OnCastCrewList_FocusChanged"
 
     if m.castCrewRowList.hasFocus() then 
         m.lastFocusedControl = m.castCrewRowList    
@@ -195,8 +178,6 @@ End Sub
 
 ' Fires when the BaseScene sets the Content node
 Sub OnGlobal_CurrentBasicMediaChanged()
-
-    print "MovieDetailsView:OnGlobal_CurrentMediaChanged"
 
     if m.global.currentBasicMedia = invalid then return
     if m.global.currentBasicMedia.mediaType <> 1 then return ' Movie
@@ -232,8 +213,6 @@ End Sub
 
 
 Sub OnMovieDetailsTask_DataAvailable()
-
-    print "MovieDetailsView:OnMovieDetailsTask_DataAvailable"
 
     m.busySpinner.visible = false
 
@@ -297,15 +276,11 @@ End Sub
 
 Sub OnPlayButton_Selected()
 
-    print "MovieDetailsView:OnPlayButton_Selected"
-
     StartPlayback(false)
 
 End Sub
 
 Sub OnResumeButton_Selected()
-
-    print "MovieDetailsView:OnResumeButton_Selected"
 
     StartPlayback(true)
 
@@ -313,8 +288,6 @@ End Sub
 
 
 Sub StartPlayback(resume as boolean)
-
-    print "MovieDetailsView:StartPlayback", resume
 
     m.global.currentDetailedMedia.playStart = resume ? m.global.playbackPostion : 0
     m.global.startVideoPlayback = true
@@ -326,8 +299,6 @@ End Sub
 
 Sub OnRequestButton_Selected()
 
-    print "MovieDetailsView:OnRequestButton_Selected"
-
 End Sub
 
 
@@ -337,8 +308,6 @@ End Sub
 
 
 Sub OnMarkWatchedButton_Selected()
-
-    print "MovieDetailsView:OnMarkWatchedButton_Selected"
 
     m.markMovieWatchedTask.id = m.global.currentDetailedMedia.id
     m.markMovieWatchedTask.control = "run"
@@ -353,8 +322,6 @@ End Sub
 
 Sub OnWatchlistButton_Selected()
 
-    print "MovieDetailsView:OnWatchlistButton_Selected"
-
     m.toggleWatchlistTask.control = "stop"
     
     add = not m.global.currentDetailedMedia.inWatchList ?? false
@@ -366,10 +333,10 @@ Sub OnWatchlistButton_Selected()
     m.watchlistButton.icon = add ? "pkg:/images/check.png" : "pkg:/images/add.png"
     if add then 
         m.global.currentDetailedMedia.inWatchList = true
-        m.global.addToWatchlist = true
+        m.global.addToWatchlist = BuildBasicMediaFromDetailed(m.global.currentDetailedMedia)
     else 
         m.global.currentDetailedMedia.inWatchList = false
-        m.global.removeFromWatchlist = true
+        m.global.removeFromWatchlist = m.global.currentDetailedMedia.id
     end if
     
 End Sub
@@ -377,8 +344,6 @@ End Sub
 
 
 Sub OnAddToPlaylistButton_Selected()
-
-    print "MovieDetailsView:OnAddToPlaylistButton_Selected"
 
     ' m.top.relay_switchToAddToPlaylist = {
     '     id:m.global.currentMedia.id,
@@ -391,8 +356,6 @@ End Sub
 
 Sub OnGlobal_AddToContinueWatching()
 
-    print "MovieDetailsView:OnGlobal_AddToContinueWatching"
-
     if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
     m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
@@ -404,8 +367,6 @@ End sub
 
 Sub OnGlobal_RemoveFromContinueWatching()
 
-    print "MovieDetailsView:OnGlobal_RemoveFromContinueWatching"
-
     if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
     if m.playbackButtonLayoutGroup.isInFocusChain() then m.playButton.setFocus(true)
@@ -415,13 +376,19 @@ Sub OnGlobal_RemoveFromContinueWatching()
 
 End sub
 
+Sub OnGlobal_PlaybackPositionChanged()
 
+    if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
+
+    m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
+    m.resumeButton.visible = true
+    m.markWatchedButton.visible = true
+
+End Sub
 
 
 Function onKeyEvent(key as String, press as Boolean) as Boolean
 
-    print "MovieDetailsView:OnKeyEvent", key, press
-    
     if not press then return false
 
     if key = "right" then

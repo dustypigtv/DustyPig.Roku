@@ -9,16 +9,12 @@
 
             Sub Init()
 
-				print "UpdatePlaybackProgressTask:Init"
-
 				m.top.functionName = "RunTask"
 			
 			End Sub
 
 			Sub RunTask()
 			
-				print "UpdatePlaybackProgressTask:RunTask"
-				
                 data = {
                     id : m.top.id,
                     seconds : m.top.seconds
@@ -33,7 +29,7 @@
     </script>
 	
 	<interface>
-        <field id="id" type="int" />
+        <field id="id" type="string" />
         <field id="seconds" type="float" />
     </interface>
 

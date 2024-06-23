@@ -1,7 +1,5 @@
 Sub Init()
 
-    print "BaseScene:Init"
-
     m.top.backgroundURI = ""
     m.top.backgroundColor ="0x000000FF"
 
@@ -71,8 +69,6 @@ End Sub
 
 Sub ShowView(node)
 
-    print "BaseScene:ShowView"
-
     prev = m.viewStack.peek()
     if prev <> invalid then prev.visible = false
 
@@ -92,15 +88,11 @@ End Sub
 
 Sub HideTopView()
 
-    print "BaseScene:HideTopView"
-
     HideView(invalid)
 
 end Sub
 
 Sub HideView(node as Object)
-
-    print "BaseScene:HideView"
 
     if node = invalid OR (m.viewStack.peek() <> invalid AND m.viewStack.peek().isSameNode(node))     
         last = m.viewStack.pop()
@@ -149,8 +141,6 @@ Sub OnGlobal_ShowViewWithId(event as object)
 
     id = event.getData()
 
-    print "BaseScene:OnGlobal_ShowViewWithid", id
-
     if id = "loginAccountView" then
    
         HideAllViews()
@@ -183,8 +173,6 @@ End Sub
 
 Sub OnGlobal_StartVideoPlayback(event as object)
 
-    print "BaseScene:OnPlayVideo"
-
     if not event.getData() then return
     
     m.videoView.content = m.global.currentDetailedMedia
@@ -210,8 +198,6 @@ End Sub
 
 Function onKeyEvent(key as String, press as Boolean) as Boolean
 
-    print "BaseScene:OnKeyEvent", key, press
-    
     if not press then return false
 
     if key = "back" then

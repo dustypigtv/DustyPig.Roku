@@ -1,15 +1,11 @@
 Sub Init()
 
-    print "LoginAccountTask:Init"
-
     m.top.functionName = "RunTask"
 
 End Sub
 
 
 Sub RunTask()
-
-    print "LoginAccountTask:RunTask"
 
     result = Login(m.top.email, m.top.password)
     if result.success then 

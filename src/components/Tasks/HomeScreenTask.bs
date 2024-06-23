@@ -1,15 +1,11 @@
 Sub Init()
 
-    print "HomeScreenTask:Init"
-
     m.top.functionName = "RunTask"
 
 End Sub
 
 
 Sub RunTask()
-
-    print "HomeScreenTask:RunTask"
 
     result = GetData("/Media/HomeScreen?itemsPerSection=100", m.global.profileToken)
         
@@ -26,7 +22,10 @@ Sub RunTask()
         for each section in result.data.sections
 
             row = root.createChild("ContentNode")
-            SetSectionFields(section, row)
+            row.setFields({
+                id: section.listid.ToStr(),
+                title: section.title
+            })
             
             for each bm in section.items
                 SetBasicMediaFields(bm, row.createChild("BasicMediaNode"))

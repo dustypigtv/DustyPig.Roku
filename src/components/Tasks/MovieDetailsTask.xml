@@ -8,7 +8,7 @@
 	<interface>
 
 		<!-- Input to task -->
-        <field id="id" type="int" />
+        <field id="id" type="string" />
 
 		<!-- Output from task -->
 		<field id="success" type="boolean" alwaysNotify="true" />

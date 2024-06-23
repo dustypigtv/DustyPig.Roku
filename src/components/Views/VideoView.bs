@@ -1,7 +1,5 @@
 Sub Init()
 
-    print "VideoView:Init"
-
     m.top.notificationInterval = 0.5 ' Shortest allowed
     m.lastPosition = 0.0
 
@@ -16,8 +14,6 @@ End sub
 
 
 Sub OnThis_StateChanged(event as object)
-
-    print "VideoView:OnThis_StateChanged"
 
     ' none	        No current play state
     ' buffering     Video stream is currently buffering
@@ -45,8 +41,6 @@ Sub OnThis_StateChanged(event as object)
             m.global.removeFromContinueWatching = m.top.content.id
         end if
 
-        playbackFinished = true
-
     end if
 
 
@@ -55,8 +49,6 @@ End Sub
 
 Sub OnThis_PositionChanged(event as object)
 
-    print "VideoView:OnThis_PositionChanged"
-
     ' if not m.top.visible then return
     ' if m.top.content = invalid then return
     ' if m.global.currentMedia = invalid then return
@@ -64,7 +56,7 @@ Sub OnThis_PositionChanged(event as object)
     ' if m.top.state = "finished" then return
 
     position = event.getData()
-    print "VideoView:Postion = " + position.toStr()
+    print "VideoView:Postion", position
     
     m.global.playbackPosition = position
     
@@ -72,12 +64,11 @@ Sub OnThis_PositionChanged(event as object)
         
         m.lastPosition = position
 
-        ' To Do: This only works for movies, add playlists!
         m.updatePlaybackProgressTask.control = "stop"
-        m.updatePlaybackProgressTask.id = m.global.currentDetailedMedia.id
+        m.updatePlaybackProgressTask.id = m.top.content.id
         m.updatePlaybackProgressTask.seconds = position
         m.updatePlaybackProgressTask.control = "run"
-        m.global.addToContinueWatching = true
+        m.global.addToContinueWatching = BuildBasicMediaFromDetailed(m.top.content)
 
     end if
 
@@ -86,8 +77,6 @@ End Sub
 
 
 Sub OnThis_Error(event as object)
-
-    print "VideoView:OnThis_Error"
 
     m.top.control = "stop"
     print event.getData()

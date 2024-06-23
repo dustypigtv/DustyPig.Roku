@@ -1,22 +1,18 @@
 sub Init()
 
-    print "LoginProfileTask:Init"
-    
     m.top.functionName = "RunTask"
 
 end sub
 
 sub RunTask()
 
-    print "LoginProfileTask:RunTask"
-    
-    di=createobject("roDeviceInfo")
-    deviceId=di.GetChannelClientId()
+    di = createobject("roDeviceInfo")
+    deviceId = di.GetChannelClientId()
 
     if m.top.pin = invalid or m.top.pin = "" then 
-        creds = {"id": m.top.id, "deviceId":deviceId }
+        creds = {id: m.top.id, deviceId: deviceId }
     else
-        creds = {"id": m.top.id, "pin": m.top.pin, "deviceId":deviceId}
+        creds = {id: m.top.id, pin: m.top.pin, deviceId: deviceId}
     end if
 
     result = PostAndGetData("/Auth/ProfileLogin", creds, GetAccountToken())

@@ -1,16 +1,12 @@
 Sub Init()
 
-    print "SignUpTask:Init"
-
     m.top.functionName = "RunTask"
 
-    End Sub
+End Sub
 
 
 Sub RunTask()
 
-    print "SignUpTask:RunTask"
-    
     result = SignUp(m.top.displayName, m.top.email, m.top.password)
     
     if result.success then 

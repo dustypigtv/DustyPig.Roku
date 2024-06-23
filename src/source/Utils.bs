@@ -1,13 +1,11 @@
 function ProfilesToNode(data as object) as object
 
-    print "Utils:ProfilesToNode"
-
     ' Create a root content node, with child nodes holding info
     ret = createObject("roSGNode", "ContentNode")
     for each item in data
         
         bp = ret.createChild("ContentNode")
-        bp.id = item.id
+        bp.id = item.id.ToStr()
         bp.HDGRIDPOSTERURL = item.avatarUrl
         bp.SHORTDESCRIPTIONLINE1 = item.name
         bp.addFields({initials: item.initials, isMain: item.isMain, hasPin: item.hasPin})
@@ -21,8 +19,6 @@ end function
 
 
 Function GetDurationString(totalSeconds As float) As String
-
-    print "Utils:GetDurationString"
 
     remaining = Int(totalSeconds)
     hours = Int(remaining / 3600).ToStr()
@@ -43,8 +39,6 @@ End Function
 
 Function PadLeft(value As String, padChar As String, totalLength As Integer) As String
     
-    print "Utils:PadLeft"
-
     While value.Len() < totalLength
         value = padChar + value
     End While
@@ -55,8 +49,6 @@ End Function
 
 
 Function StringHasValue(s as object) as boolean
-
-    print "Utils:StringHasValue", s
 
     if s = invalid then return false
     if getInterface(s, "ifString") = invalid then return false
@@ -69,19 +61,20 @@ End Function
 
 Function FindChildNode(node as roSGNode, id as string) as roSGNode
 
-    print "Utils:FindChildNode:", id
-
     ' Sometimes, node.findNode(id) fails. Not sure why. So this is a backup
     if node = invalid then return invalid
     if not StringHasValue(id) then return invalid
+    
+    try
+        ret = node.findNode(Id)
+        if ret <> invalid then return ret
+    catch e
+    end try
 
-    ret = node.findNode(id)
-    if ret = invalid then
-        for i = 0 to node.getChildCount() - 1
-            child = node.getChild(i)
-            if child.id = id then return child
-        end for
-    end if
+    for i = 0 to node.getChildCount() - 1
+        child = node.getChild(i)
+        if child.id = id then return child
+    end for
 
     return invalid
 
@@ -102,25 +95,31 @@ End Sub
 
 
 
+Function BuildBasicMediaFromDetailed(src as object) as object
 
-Sub SetSectionFields(src as object, dst as object)
+    ' For movies, the year is in the secondary title
+    title = src.title
+    if src.mediaType = 1 then title = title + " (" + src.secondaryTitle + ")"
 
-    ' print "HomeScreenView:SetSectionFields"
-
-    dst.setFields({
-        id: src.listid,
-        title: src.title
+    node = createObject("roSGNode", "BasicMediaNode")
+    node.setFields({
+        id: src.id,
+        title: title,
+        description: src.description,
+        sdGridPosterUrl: src.sdGridPosterUrl,
+        hdGridPosterUrl: src.hdGridPosterUrl,
+        fhdGridPosterUrl: src.fhdGridPosterUrl,
+        mediaType: src.mediaType,
+        backdropUrl: src.backdropUrl
     })
 
-End Sub
+End function
 
 
 Sub SetBasicMediaFields(src as object, dst as object)
 
-    ' print "HomeScreenView:SetBasicMediaFields"
-
     dst.setFields({
-        id: src.id,
+        id: src.id.ToStr(),
         title: src.title,
         description: src.description,
         sdGridPosterUrl: src.artworkUrl,

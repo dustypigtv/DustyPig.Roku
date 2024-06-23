@@ -113,6 +113,8 @@ Function BuildBasicMediaFromDetailed(src as object) as object
         backdropUrl: src.backdropUrl
     })
 
+    return node
+
 End function
 
 

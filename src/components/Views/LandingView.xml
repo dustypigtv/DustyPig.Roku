@@ -4,6 +4,19 @@
     <script type = "text/brightscript" uri = "pkg:/components/Views/LandingView.bs" />
    
     <children>
+
+		<Poster
+            id="backdropPoster"
+            loadWidth="1920"
+            loadHeight="1080"
+            loadDisplayMode="scaleToZoom"
+            uri="pkg:/images/pig_2.png" />
+
+		<!-- Dimmer -->
+        <Rectangle
+            width="1920"
+            height="1080"
+            color="#000000AA" />
 	
 		<!-- 
 			Spinner images are 200x200
@@ -21,7 +34,7 @@
 			Translate this 100 px down the y axis.
 			Add another 50 for spacing
 		-->
-		<Label
+		<!-- <Label
 			id="busyLabel" 
 			text="The Pig is gettin' Dusty"
 			width="1920"
@@ -29,7 +42,7 @@
 			horizAlign="center"
 			vertAlign="center"
 			translation="[0,150]"
-			visible="false" />
+			visible="false" /> -->
 		
 
 	</children>

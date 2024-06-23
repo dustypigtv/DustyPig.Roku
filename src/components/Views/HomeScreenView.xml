@@ -56,12 +56,12 @@
             itemSpacings="[25]"
             translation="[0,75]">
 
-            <!-- Max Width = 1770 / 2 = 885 -->
+            <!-- Max Width = 1770 * (1/3) = 1108 -->
             <ThemedLabel
                 id="titleLabel"
                 themeColor="primary"
                 font="font:LargeBoldSystemFont"
-                width="885"
+                width="1180"
                 wrap="false"
                 maxLines="1"
                 ellipsizeOnBoundary="true" />
@@ -82,7 +82,7 @@
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
-                width="885"
+                width="1180"
                 height="369"
                 wrap="true"
                 ellipsizeOnBoundary="true" />

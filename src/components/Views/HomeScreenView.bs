@@ -231,8 +231,7 @@ Sub OnRowList_ItemSelected()
     if idx.count() < 2 then return
     rowContent = m.rowList.content.getChild(idx[0])
     selContent = rowContent.getChild(idx[1])
-    SetCurrentBasicMedia(selContent)
-
+    m.global.currentBasicMedia = selContent
 
     ' Movie = 1,
     ' Series = 2,

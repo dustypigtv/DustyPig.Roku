@@ -155,23 +155,30 @@
                 Description.top = 46 + 25 + 36 + 25 + 75 + 25 + 50 + 25 = 307
 
                 Bottom of cast & crew (first row) will be at 866
-                    rowSize.h = 300
-                    Top = 566
+                    rowSize.h = 200
+                    title.h = 34 * 1.3333(3) = 45.3333(3) = 46
+                    spacing = 10
+                    Top = 866 - (200 + 46 + 10) = 606
 
                 25 spacing
 
-                So max height = 566 - 307 - 25 = 234
+                the lahel heights being rounded make this to high by 1 pix
+
+                So max height = 606 - 307 - 25 - 1 = 273
             -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
-                height="234"
+                height="273"
                 vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />
 
             
+            <!--
+                This seems to be pushed 
+            -->
             <Group>
 
                 <!-- 
@@ -179,16 +186,18 @@
                     Set rowItemSize to 133x200
                     100px spacing between rows for labels padding
 
-                    itemSize = 1534x300
+                    itemSize = 1534x281
+                    BUT there is 22px padding on the left for no reason, 
+                    so drop down to 1512x281
 
-                    label on right is 200
-                    itemSize = 1534 - 200 = 1334
+                    label on right is 1000
+                    itemSize = 1512 - 1000 = 512
                 -->
                 <ThemedRowList
                     id="castCrewRowList"
                     rowitemSize="[[133,200]]"
                     rowItemSpacing= "[[20,0]]"
-                    itemSize= "[1534,300]"
+                    itemSize= "[1512,281]"
                     numRows="2"
                     rowLabelOffset= "[[0,10]]"
                     showRowLabel= "[true]"
@@ -207,14 +216,13 @@
                     wrap="true"
                     horizAlign="right"
                     ellipsizeOnBoundary="true"
-                    translation="[534,0]" />
+                    translation="[512,0]" />
 
             </Group>
 
         </LayoutGroup>
 
-       
-
+      
 	
 		<!-- 
 			Spinner images are 200x200

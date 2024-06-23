@@ -83,17 +83,6 @@ End Function
 
 
 
-Sub SetCurrentBasicMedia(media as object)
-
-    doIt = m.global.currentBasicMedia = invalid
-    if not doIt then doIt = m.global.currentBasicMedia.mediaType <> media.mediaType
-    if not doIt then doIt = m.global.currentBasicMedia.id <> media.id
-    
-    if doIt then m.global.currentBasicMedia = media
-
-End Sub
-
-
 
 Function BuildBasicMediaFromDetailed(src as object) as object
 

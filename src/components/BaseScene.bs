@@ -75,7 +75,7 @@ Sub ShowView(node)
     ' If a screen needs to reset before being shown, it can implement and monitor this interface
     ' This is set when a new view is pushed to the stack, before it's shown
     try
-        node.beforeShowAfterPush = true
+        node.beforePushToStack = true
     catch e
     end try
     node.visible = true

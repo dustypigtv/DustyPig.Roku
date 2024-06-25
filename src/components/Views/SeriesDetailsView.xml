@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="SeriesDetailsView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
+    <script type = "text/brightscript" uri = "pkg:/components/Views/SeriesDetailsView.bs" />
+   
+    <children>
+
+		<Poster
+            id="backdropPoster"
+            loadWidth="1920"
+            loadHeight="1080"
+            loadDisplayMode="scaleToZoom"
+            failedBitmapUri="pkg:/images/failed_poster.jpg" />
+
+        
+        <!-- Dimmer -->
+        <Rectangle
+            width="1920"
+            height="1080"
+            color="#000000DD" />
+
+
+
+        <!--
+            Safe zone: 
+                x,y = 192,106
+                w,h = 1534,866
+        -->
+        <LayoutGroup
+            itemSpacings="[25]"
+            translation="[192,106]">
+
+            <ThemedLabel
+                id="titleLabel"
+                themeColor="primary"
+                font="font:LargeBoldSystemFont"
+                width="1534"
+                wrap="false"
+                maxLines="1"
+                ellipsizeOnBoundary="true" />
+
+            <!-- Rated-->
+            <ThemedLabel
+                id="ratedLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+
+
+            <Group>
+
+                <!-- Request Only-->
+                <ThemedButton
+                    id="requestButton"
+                    width="250"
+                    height="75"
+                    text="Request" />
+
+
+                <!-- Play + Actions -->
+                <LayoutGroup
+                    id="playbackButtonLayoutGroup"
+                    layoutDirection="horiz"
+                    itemSpacings="[25]">
+
+                    <ThemedButton
+                        id="playButton1"
+                        width="250"
+                        height="75"
+                        text="Play" />
+                    
+                    <ThemedIconButton
+                        id="watchlistButton1"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/add.png" />
+
+                    <ThemedIconButton
+                        id="addToPlaylistButton1"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/playlist.png" />
+
+                </LayoutGroup>
+
+
+
+                <!-- Play + Resume + Actions -->
+                 <LayoutGroup
+                    id="resumeButtonLayoutGroup"
+                    layoutDirection="horiz"
+                    itemSpacings="[25]">
+
+                    <ThemedButton
+                        id="playButton2"
+                        width="250"
+                        height="75"
+                        text="Play" />
+                    
+                    <ThemedButton
+                        id="resumeButton"
+                        width="250"
+                        height="75"
+                        text="Resume" />
+
+                    <ThemedButton
+                        id="markWatchedButton"
+                        width="250"
+                        height="75"
+                        text="Watched" />
+
+                    <ThemedIconButton
+                        id="watchlistButton2"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/add.png" />
+
+                    <ThemedIconButton
+                        id="addToPlaylistButton2"
+                        width="75"
+                        height="75"
+                        icon="pkg:/images/playlist.png" />
+
+
+                </LayoutGroup>
+
+            </Group>
+
+
+          
+
+
+            <!-- 
+                Description Label 
+
+                ****
+                titleLabel uses LargeBoldSystemFont, which is 34pts
+                font px = pts * 1.3333(3)
+                titleLabel.height will be 34 * 1.3333(3) = 45.3333(3) = 46
+                
+                25 spacing
+
+                yearLabel uses SmallestSystemFont, which is 27pts
+                font px = pts * 1.3333(3)
+                yearLabel.height = 27 * 1.3333(3) = 35.9999(9) = 36
+
+                25 spacing
+
+                play buttons.height = 75
+
+                25 spacing
+                ****
+
+                Description.top = 46 + 25 + 36 + 25 + 75 + 25 = 232
+
+                Bottom of cast & crew (first row) will be at 866
+                    rowSize.h = 200
+                    title.h = 34 * 1.3333(3) = 45.3333(3) = 46
+                    spacing = 10
+                    Top = 866 - (200 + 46 + 10) = 606
+
+                25 spacing
+
+                the lahel heights being rounded make this to high by 1 pix
+
+                So max height = 606 - 232 - 25 - 1 = 348
+            -->
+            <ThemedLabel
+                id="descriptionLabel"
+                themeColor="textOnBackground"
+                width="1534"
+                height="348"
+                vertAlign="center"
+                wrap="true"
+                ellipsizeOnBoundary="true" />
+
+            
+           
+
+        </LayoutGroup>
+
+
+        <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<ThemedBusySpinner
+			id="busySpinner"
+			visible="false"
+			translation="[860,440]" />
+		
+	</children>
+
+</component>

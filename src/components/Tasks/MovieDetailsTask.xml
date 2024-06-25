@@ -3,6 +3,7 @@
 
 	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
 	<script type="text/brightscript" uri="pkg:/components/Tasks/MovieDetailsTask.bs" />
 	
 	<interface>

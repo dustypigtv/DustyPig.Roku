@@ -16,6 +16,168 @@ Sub RunTask()
         return
     end if
 
-    m.top.data = result
+    if result.success then
+
+        seriesData = createObject("roSGNode", "SeriesNode")
+        SetSeriesFields(result.data, seriesData)
+        
+        m.top.data = seriesData
+        m.top.success = true
+
+    else
+
+        m.top.data = invalid
+        m.top.error = result.error
+        m.top.success = false
+
+    end if
+
+End Sub
+
+Sub SetSeriesFields(src as object, dst as object)
+
+    ' None = 0,
+    ' TV_Y = 1,
+    ' TV_Y7 = 2,
+    ' TV_G = 3,
+    ' TV_PG = 4,
+    ' TV_14 = 5,
+    ' TV_MA = 6,
+    ' NotRated = 7
+
+    if src.rated = 1 then 
+        rating = "TV-Y"
+    else if src.rated = 2 then 
+        rating = "TV-Y7"
+    else if src.rated = 3 then 
+        rating = "TV-G"
+    else if src.rated = 4 then 
+        rating = "TV-PG"
+    else if src.rated = 5 then 
+        rating = "TV-14"
+    else if src.rated = 6 then 
+        rating = "TV-MA"
+    else  
+        rating = "Not Rated"
+    end if
+
+
+
+    castCrew = createObject("roSGNode", "ContentNode")
+
+    cast = createObject("roSGNode", "ContentNode")
+    directors = createObject("roSGNode", "ContentNode")
+    producers = createObject("roSGNode", "ContentNode")
+    writers = createObject("roSGNode", "ContentNode")
+    executiveProducers = createObject("roSGNode", "ContentNode")
+
+    if src.credits <> invalid then 
+
+        for each bp in src.credits
+
+            item = invalid
+            if bp.role = 1 then item = cast.createChild("BasicPersonNode")
+            if bp.role = 2 then item = directors.createChild("BasicPersonNode")
+            if bp.role = 3 then item = producers.createChild("BasicPersonNode")
+            if bp.role = 4 then item = writers.createChild("BasicPersonNode")
+            if bp.role = 5 then item = executiveProducers.createChild("BasicPersonNode")
+
+            if item <> invalid then
+
+                item.id = bp.tmdbId.toStr()
+                item.title = bp.Name
+                item.sdGridPosterUrl = bp.AvatarUrl
+                item.hdGridPosterUrl = bp.AvatarUrl
+                item.fhdGridPosterUrl = bp.AvatarUrl
+            
+            end if
+
+        end for
+            
+        AddSectionIfHasPeople(castCrew, cast, "Cast", false)
+        AddSectionIfHasPeople(castCrew, directors, "Director", true)
+        AddSectionIfHasPeople(castCrew, executiveProducers, "Executive Producer", true)
+        AddSectionIfHasPeople(castCrew, producers, "Producer", true)
+        AddSectionIfHasPeople(castCrew, writers, "Writer", true)
+
+    end if
+
+    dst.setFields({
+        id: src.id.toStr(),
+        title: src.title,
+        description: src.description,
+        sdGridPosterUrl: src.artworkUrl,
+        hdGridPosterUrl: src.artworkUrl,
+        fhdGridPosterUrl: src.artworkUrl,
+        contentType: "series",
+        backdropUrl: src.backdropUrl,
+        inWatchList: src.inWatchList ?? false
+        rating: rating,
+        castCrew: castCrew,
+        canPlay: src.canPlay
+    })
+
+
+    if src.episodes <> invalid then
+
+        for each srcEp in src.episodes
+
+            streamFormat = GetStreamFormat(srcEp.videoUrl)
+
+            subtitleTracks = []
+            if srcEp.srtSubtitles <> invalid then
+                for each st in srcEp.srtSubtitles
+                    subtitleTracks.push({
+                        Language: "eng",
+                        Description: st.name,
+                        TrackName: st.url
+                    })
+                end for
+            end if
+
+            epNode = dst.createChild("EpisodeNode")
+            epNode.setFields({
+                id: srcEp.id.toStr(),
+                title: srcEp.title,
+                secondaryTitle: src.title + " - s" + PadLeft(srcEp.seasonNumber.toStr(), "0", 2) + ":e" + PadLeft(srcEp.episodeNumber.toStr(), "0", 2),
+                sdGridPosterUrl: srcEp.artworkUrl,
+                hdGridPosterUrl: srcEp.artworkUrl,
+                fhdGridPosterUrl: srcEp.artworkUrl,
+                backdropUrl: srcEp.artworkUrl,
+                contentType: "episode",
+                description: srcEp.description,
+                upNext: srcEp.upNext ?? false,
+                sdBifUrl: srcEp.bifUrl,
+                hdBifUrl: srcEp.bifUrl,
+                fhdBifUrl: srcEp.bifUrl,
+                url: srcEp.videoUrl,
+                length: srcEp.length,
+                playStart: srcEp.played ?? 0.0,
+                titleSeason: srcEp.seasonNumber.toStr(),
+                episodeNumber: srcEp.episodeNumber.toStr(),
+                streamFormat: streamFormat,
+                subtitleTracks: subtitleTracks,
+                introStartTime: srcEp.introStartTime,
+                introEndTime: srcEp.introEndTime,
+                creditsStartTime: srcEp.creditsStartTime
+            })
+            
+        end for
+
+    end if
+
+End Sub
+
+
+Sub AddSectionIfHasPeople(castCrew, role as object, singularName as string, addPlural as boolean)
+
+    cnt = role.getChildCount()
+    if cnt > 0 then
+
+        role.title = singularName
+        if addPlural and cnt > 1 then role.title += "s"
+        castCrew.appendChild(role)
+
+    end if
 
 End Sub

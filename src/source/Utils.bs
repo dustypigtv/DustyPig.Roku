@@ -88,7 +88,7 @@ Function BuildBasicMediaFromDetailed(src as object) as object
 
     ' For movies, the year is in the secondary title
     title = src.title
-    if src.mediaType = 1 then title = title + " (" + src.secondaryTitle + ")"
+    if src.contentType = 1 then title = title + " (" + src.secondaryTitle + ")"
 
     node = createObject("roSGNode", "BasicMediaNode")
     node.setFields({
@@ -98,7 +98,7 @@ Function BuildBasicMediaFromDetailed(src as object) as object
         sdGridPosterUrl: src.sdGridPosterUrl,
         hdGridPosterUrl: src.hdGridPosterUrl,
         fhdGridPosterUrl: src.fhdGridPosterUrl,
-        mediaType: src.mediaType,
+        contentType: ContentTypeToString(src.contentType),
         backdropUrl: src.backdropUrl
     })
 
@@ -106,6 +106,26 @@ Function BuildBasicMediaFromDetailed(src as object) as object
 
 End function
 
+
+Function MediaTypeToContentType(mediaType as integer) as string
+
+    if mediaType = 1 then return "movie"
+    if mediaType = 2 then return "series"
+    if mediaType = 3 then return "episode"
+
+    return ""
+
+End Function
+
+Function ContentTypeToString(contentType as integer) as string
+
+    if contentType = 1 then return "movie"
+    if contentType = 2 then return "series"
+    if contentType = 4 then return "episode"
+
+    return ""
+
+End Function
 
 Sub SetBasicMediaFields(src as object, dst as object)
 
@@ -116,8 +136,26 @@ Sub SetBasicMediaFields(src as object, dst as object)
         sdGridPosterUrl: src.artworkUrl,
         hdGridPosterUrl: src.artworkUrl,
         fhdGridPosterUrl: src.artworkUrl,
-        mediaType: src.mediaType,
+        contentType: MediaTypeToContentType(src.mediaType),
         backdropUrl: src.backdropUrl
     })
    
 End Sub
+
+
+Function GetStreamFormat(uri as string) as string
+
+    if uri = invalid then return invalid
+    if len(uri) < 4 then return invalid
+
+    if lcase(right(uri, 4)) = ".mp4" then return "mp4"
+    if lcase(right(uri, 4)) = ".mov" then return "mp4"
+    if lcase(right(uri, 4)) = ".m4v" then return "mp4"
+    if lcase(right(uri, 4)) = ".mkv" then return "mkv"
+    if lcase(right(uri, 4)) = ".mpd" then return "dash"
+
+    if len(uri) > 4 and lcase(right(uri, 5)) = ".m3u8" then return "hls"
+
+    return invalid
+
+End Function

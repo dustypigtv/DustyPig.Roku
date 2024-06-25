@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="SeriesNode" extends="BasicMediaNode">
+    
+    <interface>
+        <field id="castCrew" type="node" />
+        <field id="canPlay" type="bool" />
+        <field id="inWatchList" type="bool" />
+    </interface>
+
+</component>

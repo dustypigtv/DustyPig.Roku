@@ -126,6 +126,7 @@ Sub SetMovieFields(src as object, dst as object)
 
     end if
 
+    streamFormat = GetStreamFormat(src.videoUrl)
 
     dst.setFields({
         id: src.id.toStr(),
@@ -135,10 +136,9 @@ Sub SetMovieFields(src as object, dst as object)
         sdGridPosterUrl: src.artworkUrl,
         hdGridPosterUrl: src.artworkUrl,
         fhdGridPosterUrl: src.artworkUrl,
-        mediaType: 1,
-        contentType: 1,
+        contentType: "movie",
         backdropUrl: src.backdropUrl,
-        streamFormat: "mp4",
+        streamFormat: streamFormat,
         url: src.videoUrl,
         sdBifUrl: src.bifUrl,
         hdBifUrl: src.bifUrl,

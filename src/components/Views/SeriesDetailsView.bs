@@ -1,13 +1,9 @@
 Sub Init()
 
-    ' Find controls    
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
     m.titleLabel = m.top.findNode("titleLabel")
-    m.yearLabel = m.top.findNode("yearLabel")
     m.ratedLabel = m.top.findNode("ratedLabel")
-    m.lengthLabel = m.top.findNode("lengthLabel")
-    m.remainingLabel = m.top.findNode("remainingLabel")
     m.playButton1 = m.top.findNode("playButton1")
     m.playButton2 = m.top.findNode("playButton2")
     m.requestButton = m.top.findNode("requestButton")
@@ -18,8 +14,6 @@ Sub Init()
     m.addToPlaylistButton1 = m.top.findNode("addToPlaylistButton1")
     m.addToPlaylistButton2 = m.top.findNode("addToPlaylistButton2")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
-    m.castCrewRowList = m.top.findNode("castCrewRowList")
-    m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
     m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
@@ -37,10 +31,6 @@ Sub Init()
     m.watchlistButton2.observeField("focusedChild", "OnButton_FocusChanged")
     m.addToPlaylistButton1.observeField("focusedChild", "OnButton_FocusChanged")
     m.addToPlaylistButton2.observeField("focusedChild", "OnButton_FocusChanged")
-
-    m.castCrewRowList.observeField("focusedChild", "OnCastCrewList_FocusChanged")
-    m.castCrewRowList.observeField("rowItemFocused", "OnCastCrewList_ItemFocused")
-
 
     ' Button clicks
     m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
@@ -61,44 +51,36 @@ Sub Init()
     m.errorDialog.title = "Error"
     m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
 
+     ' Series Details task
+     m.seriesDetailsTask = CreateObject("roSGNode", "SeriesDetailsTask")
+     m.seriesDetailsTask.observeField("success", "OnSeriesDetailsTask_DataAvailable")
+ 
+ 
+     ' Mark Watched task
+    '  m.markSeriesWatchedTask = CreateObject("roSGNode", "MarkSeriesWatchedTask")
+ 
+     ' Toggle Watchlist task
+     m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
+ 
+ 
+     ' Observers
+     m.top.observeField("visible", "OnThis_VisibleChanged")
 
-    ' Movie Details task
-    m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
-    m.movieDetailsTask.observeField("success", "OnMovieDetailsTask_DataAvailable")
+End sub
 
-
-    ' Mark Watched task
-    m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
-
-    ' Toggle Watchlist task
-    m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
-
-
-    ' Observers
-    m.top.observeField("visible", "OnThis_VisibleChanged")
-
-end sub
 
 
 Sub OnThis_VisibleChanged(event as object)
 
-    m.movieDetailsTask.control = "stop"
+    m.seriesDetailsTask.control = "stop"
 
     m.titleLabel.text = invalid
-    m.yearLabel.text = invalid
     m.ratedLabel.text = invalid
-    m.lengthLabel.text = invalid
-    m.remainingLabel.text = invalid
     m.descriptionLabel.text = invalid
-    m.castCrewRowList.content = invalid
-    m.selectedPersonLabel.text = invalid
-    m.castCrewRowList.visible = false
 
     m.playbackButtonLayoutGroup.visible = false
     m.resumeButtonLayoutGroup.visible = false
     m.requestButton.visible = false
-    
-    
     
     if event.getData() then
 
@@ -106,8 +88,8 @@ Sub OnThis_VisibleChanged(event as object)
 
         m.busySpinner.visible = true
         
-        m.movieDetailsTask.id = m.global.currentBasicMedia.id
-        m.movieDetailsTask.control = "run"
+        m.seriesDetailsTask.id = m.global.currentBasicMedia.id
+        m.seriesDetailsTask.control = "run"
     
     end if
 
@@ -132,13 +114,6 @@ Sub OnButton_FocusChanged(event as object)
 
 End Sub
 
-Sub OnCastCrewList_FocusChanged()
-
-    if m.castCrewRowList.hasFocus() then m.lastFocusedControl = m.castCrewRowList    
-
-End Sub
-
-
 
 Sub OnErrorDialog_Closed()
 
@@ -148,52 +123,25 @@ Sub OnErrorDialog_Closed()
 End Sub
 
 
-Sub OnCastCrewList_ItemFocused()
-
-    idx = m.castCrewRowList.rowItemFocused
-    rowContent = m.castCrewRowList.content.getChild(idx[0])
-    selItem = rowContent.getChild(idx[1])
-    m.selectedPersonLabel.text = selItem.title
-
-End sub
 
 
 
+Sub OnSeriesDetailsTask_DataAvailable()
+       
 
-' Fires when the BaseScene sets the Content node
-Sub OnGlobal_CurrentBasicMediaChanged()
-
-    if m.global.currentBasicMedia = invalid then return
-    if m.global.currentBasicMedia.contentType <> 1 then return ' Movie
+    if m.seriesDetailsTask.success then
     
-   
-    
-End Sub
-
-
-Sub OnMovieDetailsTask_DataAvailable()
-    
-    
-
-    if m.movieDetailsTask.success then
-
-    
-        m.global.currentDetailedMedia = m.movieDetailsTask.data
-        m.global.playbackPosition = m.movieDetailsTask.playbackPosition
+        m.global.currentDetailedMedia = m.seriesDetailsTask.data
         
         m.titleLabel.text = m.global.currentDetailedMedia.title
-        m.yearLabel.text = m.global.currentDetailedMedia.secondaryTitle
 
         rated = m.global.currentDetailedMedia.rating
-        if not (rated = "Not Rated" or rated = "Unrated") then rated = "Rated: " + rated
+        if rated <> "Not Rated" then rated = "Rated: " + rated
         m.ratedLabel.text = rated
-
-        if m.global.currentDetailedMedia.length > 0 then m.lengthLabel.text = GetDurationString(m.global.currentDetailedMedia.length)
 
         if m.global.currentDetailedMedia.canPlay then
            
             if m.global.currentDetailedMedia.length > 0 and m.global.playbackPosition > 0 then 
-                m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
                 m.requestButton.visible = false
                 m.playbackButtonLayoutGroup.visible = false
                 m.resumeButtonLayoutGroup.visible = true
@@ -216,8 +164,6 @@ Sub OnMovieDetailsTask_DataAvailable()
         end if
         
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
-        m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
-        m.castCrewRowList.visible = m.global.currentDetailedMedia.castCrew.getChildCount() > 0
 
         RestoreFocus()
 
@@ -225,7 +171,7 @@ Sub OnMovieDetailsTask_DataAvailable()
 
     else
     
-        m.errorDialog.message = [m.movieDetailsTask.error]
+        m.errorDialog.message = [m.seriesDetailsTask.error]
         m.top.getScene().dialog = m.errorDialog
     
     end if
@@ -248,8 +194,8 @@ End Sub
 
 Sub StartPlayback(resume as boolean)
 
-    m.global.currentDetailedMedia.playStart = resume ? m.global.playbackPosition : 0.0
-    m.global.startVideoPlayback = true
+    ' m.global.currentDetailedMedia.playStart = resume ? m.global.playbackPosition : 0.0
+    ' m.global.startVideoPlayback = true
     
 End Sub
 
@@ -268,8 +214,8 @@ End Sub
 
 Sub OnMarkWatchedButton_Selected()
 
-    m.markMovieWatchedTask.id = m.global.currentDetailedMedia.id
-    m.markMovieWatchedTask.control = "run"
+    ' m.markSeriesWatchedTask.id = m.global.currentDetailedMedia.id
+    ' m.markSeriesWatchedTask.control = "run"
 
     m.global.playbackPosition = 0
     m.global.removeFromContinueWatching = m.global.currentDetailedMedia.id
@@ -318,10 +264,8 @@ End Sub
 
 Sub OnGlobal_AddToContinueWatching()
 
-    if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
+    if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
-    m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
-    
     prevFocusId = m.lastFocusedControl = invalid ? "" : m.lastFocusedControl.id
     if prevFocusId = m.playButton1.id then
         m.lastFocusedControl = m.playButton2
@@ -343,7 +287,7 @@ End sub
 
 Sub OnGlobal_RemoveFromContinueWatching()
 
-    if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
+    if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
     prevFocusId = m.lastFocusedControl = invalid ? "" : m.lastFocusedControl.id
 
@@ -373,7 +317,7 @@ End sub
 
 Sub OnGlobal_PlaybackPositionChanged()
 
-    ' if m.movieDetailsTask.id <> m.global.currentDetailedMedia.id then return
+    ' if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
 
     ' m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
     ' m.resumeButton.visible = true
@@ -442,25 +386,25 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     end if
 
 
-    if key = "up" then
+    ' if key = "up" then
 
-        if m.castCrewRowList.isInFocusChain() then
-            m.lastFocusedButton.setFocus(true)
-            return true
-        end if
+    '     if m.castCrewRowList.isInFocusChain() then
+    '         m.lastFocusedButton.setFocus(true)
+    '         return true
+    '     end if
 
-    end if
+    ' end if
 
 
 
-    if key = "down" then
+    ' if key = "down" then
 
-        if m.castCrewRowList.visible and not m.castCrewRowList.hasFocus() then
-            m.castCrewRowList.setFocus(true)
-            return true
-        end if
+    '     if m.castCrewRowList.visible and not m.castCrewRowList.hasFocus() then
+    '         m.castCrewRowList.setFocus(true)
+    '         return true
+    '     end if
 
-    end if
+    ' end if
 
     
     return false

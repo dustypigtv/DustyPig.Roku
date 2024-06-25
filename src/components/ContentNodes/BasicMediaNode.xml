@@ -3,7 +3,6 @@
     
     <interface>
 
-        <field id="mediaType" type="int" />
         <field id="backdropUrl" type="string" />
 
     </interface>

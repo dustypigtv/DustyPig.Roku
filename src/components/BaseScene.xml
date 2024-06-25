@@ -33,6 +33,10 @@
 		<MovieDetailsView
 			id="movieDetailsView"
 			visible="false" />
+
+		<SeriesDetailsView
+			id="seriesDetailsView"
+			visible="false" />
 	
 		<VideoView
         	id = "videoView"

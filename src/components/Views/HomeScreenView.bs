@@ -234,8 +234,9 @@ Sub OnRowList_ItemSelected()
 
     ' Movie = 1,
     ' Series = 2,
-    ' Playlist = 4
-    if m.global.currentBasicMedia.mediaType = 1 then m.global.showViewWithId = "movieDetailsView"
+    ' Episode = 4
+    if selContent.contentType = 1 then m.global.showViewWithId = "movieDetailsView"
+    if selContent.contentType = 2 then m.global.showViewWithId = "seriesDetailsView"
 
 End sub
 

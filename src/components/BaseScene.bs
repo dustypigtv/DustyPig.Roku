@@ -34,6 +34,10 @@ Sub Init()
     m.movieDetailsView = m.top.findNode("movieDetailsView")
     m.allViews.movieDetailsView = m.movieDetailsView
 
+    ' Series Details View
+    m.seriesDetailsView = m.top.findNode("seriesDetailsView")
+    m.allViews.seriesDetailsView = m.seriesDetailsView
+
     
     ' Video View
     m.videoView = m.top.findNode("videoView")

@@ -203,7 +203,7 @@
                                 "Cast & Crew".width = 202
                                 Give 5px extra on each side
                             -->
-                            <LabelNode title="Episodes" fhdItemWidth="157" isSelected="true" />
+                            <LabelNode title="Episodes" fhdItemWidth="157" />
                             <LabelNode title="Cast &amp; Crew"  fhdItemWidth="212" />
                         </ContentNode>
                     </ContentNode>

@@ -14,9 +14,19 @@ Sub Init()
     m.addToPlaylistButton1 = m.top.findNode("addToPlaylistButton1")
     m.addToPlaylistButton2 = m.top.findNode("addToPlaylistButton2")
     m.descriptionLabel = m.top.findNode("descriptionLabel")
+    m.castCrewGroup = m.top.findNode("castCrewGroup")
+    m.castCrewRowList = m.top.findNode("castCrewRowList")
+    m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
     m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
+
+    m.episodesOrCastCrewRowList = m.top.findNode("episodesOrCastCrewRowList")
+
+    m.slideUpAnimation = m.top.findNode("slideUpAnimation")
+    m.slideDownAnimation = m.top.findNode("slideDownAnimation")
+
+
 
     ' Tracking focus
     m.lastFocusedControl = invalid
@@ -31,6 +41,10 @@ Sub Init()
     m.watchlistButton2.observeField("focusedChild", "OnButton_FocusChanged")
     m.addToPlaylistButton1.observeField("focusedChild", "OnButton_FocusChanged")
     m.addToPlaylistButton2.observeField("focusedChild", "OnButton_FocusChanged")
+
+    m.episodesOrCastCrewRowList.observeField("rowItemFocused", "OnEpisodesOrCastCrewList_ItemFocused")
+    m.episodesOrCastCrewRowList.observeField("focusedChild", "OnEpisodesOrCastCrewList_ItemFocused")
+
 
     ' Button clicks
     m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
@@ -77,6 +91,8 @@ Sub OnThis_VisibleChanged(event as object)
     m.titleLabel.text = invalid
     m.ratedLabel.text = invalid
     m.descriptionLabel.text = invalid
+    m.selectedPersonLabel.text = invalid
+    m.castCrewGroup.visible = false
 
     m.playbackButtonLayoutGroup.visible = false
     m.resumeButtonLayoutGroup.visible = false
@@ -100,6 +116,30 @@ End Sub
 Sub RestoreFocus()
 
     if m.lastFocusedControl <> invalid then m.lastFocusedControl.setFocus(true)
+
+End Sub
+
+
+Function GetEpisodeOrCastCrewListSelectedIndex() as integer
+
+    idx = m.episodesOrCastCrewRowList.rowItemFocused
+    if idx = invalid then return 0
+    if idx.count() < 2 then return 0
+    if not m.castCrewRowList.visible then return 0
+
+    return idx[1]
+
+End Function
+
+Sub OnEpisodesOrCastCrewList_ItemFocused()
+
+    idx = GetEpisodeOrCastCrewListSelectedIndex()
+
+    if idx = 0 then
+        m.castCrewGroup.visible = false
+    else
+        m.castCrewGroup.visible = true
+    end if
 
 End Sub
 
@@ -164,6 +204,8 @@ Sub OnSeriesDetailsTask_DataAvailable()
         end if
         
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
+        m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
+        m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
 
         RestoreFocus()
 
@@ -386,25 +428,47 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     end if
 
 
-    ' if key = "up" then
+    if key = "up" then
 
-    '     if m.castCrewRowList.isInFocusChain() then
-    '         m.lastFocusedButton.setFocus(true)
-    '         return true
-    '     end if
+        if m.castCrewRowList.hasFocus() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
 
-    ' end if
+        if m.episodesOrCastCrewRowList.isInFocusChain() then
+            m.slideUpAnimation.control = "stop"
+            m.slideDownAnimation.control = "stop"
+            m.slideDownAnimation.control = "start"
+            m.lastFocusedButton.setFocus(true)
+            return true
+        end if
+
+    end if
 
 
 
-    ' if key = "down" then
+    if key = "down" then
 
-    '     if m.castCrewRowList.visible and not m.castCrewRowList.hasFocus() then
-    '         m.castCrewRowList.setFocus(true)
-    '         return true
-    '     end if
+        if m.playbackButtonLayoutGroup.isInFocusChain() or m.resumeButtonLayoutGroup.isInFocusChain() then
+            m.slideDownAnimation.control = "stop"
+            m.slideUpAnimation.control = "stop"
+            m.slideUpAnimation.control = "start"
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
 
-    ' end if
+        if m.episodesOrCastCrewRowList.hasFocus() then
+
+            if GetEpisodeOrCastCrewListSelectedIndex() = 0 then
+            
+            else
+                m.castCrewRowList.setFocus(true)
+                return true
+            end if       
+
+        end if
+
+    end if
 
     
     return false

@@ -159,9 +159,9 @@
                 Description Label 
 
                 ****
-                titleLabel uses LargeBoldSystemFont, which is 34pts
+                titleLabel uses LargeBoldSystemFont, which is 45pts
                 font px = pts * 1.3333(3)
-                titleLabel.height will be 34 * 1.3333(3) = 45.3333(3) = 46
+                titleLabel.height will be 45 * 1.3333(3) = 59.9999(9) = 60
                 
                 25 spacing
 
@@ -176,7 +176,7 @@
                 25 spacing
                 ****
 
-                Description.top = 46 + 25 + 36 + 25 + 75 + 25 = 232
+                Description.top = 60 + 25 + 36 + 25 + 75 + 25 = 246
 
                 Bottom of cast & crew (first row) will be at 866
                     rowSize.h = 200
@@ -186,22 +186,21 @@
 
                 25 spacing
 
-                the lahel heights being rounded make this to high by 1 pix
-
-                So max height = 606 - 232 - 25 - 1 = 348
+                So max height = 606 - 246 - 25 = 335
             -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
-                height="348"
+                height="335"
                 vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />
 
             
             <!--
-                This seems to be pushed 
+                This is pushed over by 11px on each side, because of the focusedButmap.
+                So drop width from 1534 to 1512
             -->
             <Group>
 
@@ -211,7 +210,7 @@
                     100px spacing between rows for labels padding
 
                     itemSize = 1534x281
-                    BUT there is 22px padding on the left for no reason, 
+                    BUT there is 22px padding on each side from the focusedBitmap, 
                     so drop down to 1512x281
 
                     label on right is 1000
@@ -247,6 +246,7 @@
         </LayoutGroup>
 
     
+        
 	
 		<!-- 
 			Spinner images are 200x200

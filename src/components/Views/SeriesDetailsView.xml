@@ -28,6 +28,7 @@
                 w,h = 1534,866
         -->
         <LayoutGroup
+            id="mainLayout"
             itemSpacings="[25]"
             translation="[192,106]">
 
@@ -130,13 +131,13 @@
           
 
 
-            <!-- 
+           <!-- 
                 Description Label 
 
                 ****
-                titleLabel uses LargeBoldSystemFont, which is 34pts
+                titleLabel uses LargeBoldSystemFont, which is 45pts
                 font px = pts * 1.3333(3)
-                titleLabel.height will be 34 * 1.3333(3) = 45.3333(3) = 46
+                titleLabel.height will be 45 * 1.3333(3) = 59.9999(9) = 60
                 
                 25 spacing
 
@@ -151,7 +152,7 @@
                 25 spacing
                 ****
 
-                Description.top = 46 + 25 + 36 + 25 + 75 + 25 = 232
+                Description.top = 60 + 25 + 36 + 25 + 75 + 25 = 246
 
                 Bottom of cast & crew (first row) will be at 866
                     rowSize.h = 200
@@ -161,24 +162,110 @@
 
                 25 spacing
 
-                the lahel heights being rounded make this to high by 1 pix
-
-                So max height = 606 - 232 - 25 - 1 = 348
+                So max height = 606 - 246 - 25 = 335
             -->
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"
                 width="1534"
-                height="348"
+                height="335"
                 vertAlign="center"
                 wrap="true"
                 ellipsizeOnBoundary="true" />
 
+
+
             
-           
+            <!-- Create a tab bar with 2 tabs -->
+            <LayoutGroup>
+
+                <ThemedRowList
+                    id="episodesOrCastCrewRowList"
+                    itemComponentName = "EpisodesOrCastCrewView" 
+                    rowitemSize="[[0,46]]"
+                    itemSize= "[1512,46]"
+                    rowItemSpacing="[[50,0]]"
+                    numRows="1"
+                    variableWidthItems="true"
+                    focusFootprintBlendColor="#BBBBBB"
+                    focusBitmapUri="pkg:/images/underline.9.png"
+                    focusFootprintBitmapUri="pkg:/images/underline.9.png"
+                    rowFocusAnimationStyle= "fixedFocusWrap"
+                    vertFocusAnimationStyle="fixedFocus">
+
+                    <ContentNode role="content">
+                        <!-- Row -->
+                        <ContentNode>
+                            <!-- 
+                                Items
+                                - - - - -
+                                "Episodes".width = 147
+                                "Cast & Crew".width = 202
+                                Give 5px extra on each side
+                            -->
+                            <LabelNode title="Episodes" fhdItemWidth="157" isSelected="true" />
+                            <LabelNode title="Cast &amp; Crew"  fhdItemWidth="212" />
+                        </ContentNode>
+                    </ContentNode>
+
+                </ThemedRowList>
+
+                <Rectangle
+                    width="1534"
+                    height="5"
+                    color="#3C3C3C" />
+
+            </LayoutGroup>
+
+            <!-- Episode List -->
+
+
+            <!-- Cast & Crew List -->
+            <Group
+                id="castCrewGroup"
+                visible="false">
+
+                <!-- 
+                    Cast & Crew 
+                    Set rowItemSize to 133x200
+                    100px spacing between rows for labels padding
+
+                    itemSize = 1534x281
+                    BUT there is 22px padding on each side from the focusedBitmap, 
+                    so drop down to 1512x281
+
+                    label on right is 1000
+                    itemSize = 1512 - 1000 = 512
+                -->
+                <ThemedRowList
+                    id="castCrewRowList"
+                    rowitemSize="[[133,200]]"
+                    rowItemSpacing= "[[20,0]]"
+                    itemSize= "[1512,281]"
+                    numRows="5"
+                    rowLabelOffset= "[[0,10]]"
+                    showRowLabel= "[true]"
+                    rowFocusAnimationStyle= "floatingFocus"
+                    vertFocusAnimationStyle="fixedFocus"
+                    loadingBitmapUri="pkg:/images/grey_profile.png"
+                    failedBitmapUri="pkg:/images/grey_profile.png"/>
+
+
+                <ThemedLabel 
+                    id="selectedPersonLabel"
+                    themeColor="textOnBackground"
+                    font="font:SmallestSystemFont"
+                    width="1000"
+                    numLines="1"
+                    wrap="true"
+                    horizAlign="right"
+                    ellipsizeOnBoundary="true"
+                    translation="[512,0]" />
+
+            </Group>
+
 
         </LayoutGroup>
-
 
         <!-- 
 			Spinner images are 200x200
@@ -190,6 +277,26 @@
 			id="busySpinner"
 			visible="false"
 			translation="[860,440]" />
+
+
+        <Animation 
+            id="slideUpAnimation"
+            duration="0.25">
+            <Vector2DFieldInterpolator 
+                key="[0.0, 1.0]"
+                keyValue="[[192.0, 106.0], [192.0, -500.0]]"
+                fieldToInterp="mainLayout.translation" />
+        </Animation>
+
+        <Animation 
+            id="slideDownAnimation"
+            duration="0.25">
+            <Vector2DFieldInterpolator 
+                key="[0.0, 1.0]"
+                keyValue="[[192.0, -500.0], [192.0, 106.0]]"
+                fieldToInterp="mainLayout.translation" />
+        </Animation>
+        
 		
 	</children>
 

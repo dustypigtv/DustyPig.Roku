@@ -222,7 +222,7 @@
                     rowitemSize="[[133,200]]"
                     rowItemSpacing= "[[20,0]]"
                     itemSize= "[1512,281]"
-                    numRows="2"
+                    numRows="5"
                     rowLabelOffset= "[[0,10]]"
                     showRowLabel= "[true]"
                     rowFocusAnimationStyle= "floatingFocus"
@@ -246,7 +246,7 @@
 
         </LayoutGroup>
 
-      
+    
 	
 		<!-- 
 			Spinner images are 200x200

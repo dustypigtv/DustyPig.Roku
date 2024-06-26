@@ -1,6 +1,6 @@
 Sub Init()
 
-    ' Find controls    
+    ' Find controls
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
     m.titleLabel = m.top.findNode("titleLabel")
@@ -23,6 +23,8 @@ Sub Init()
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
     m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
+
+
 
     ' Tracking focus
     m.lastFocusedControl = invalid
@@ -99,7 +101,6 @@ Sub OnThis_VisibleChanged(event as object)
     m.requestButton.visible = false
     
     
-    
     if event.getData() then
 
         m.backdropPoster.uri = m.global.currentBasicMedia.backdropUrl ?? ""
@@ -134,7 +135,12 @@ End Sub
 
 Sub OnCastCrewList_FocusChanged()
 
-    if m.castCrewRowList.hasFocus() then m.lastFocusedControl = m.castCrewRowList    
+    if m.castCrewRowList.hasFocus() then 
+        m.lastFocusedControl = m.castCrewRowList    
+        OnCastCrewList_ItemFocused()
+    else
+        m.selectedPersonLabel.text = invalid
+    end if
 
 End Sub
 
@@ -151,6 +157,8 @@ End Sub
 Sub OnCastCrewList_ItemFocused()
 
     idx = m.castCrewRowList.rowItemFocused
+    if idx = invalid then return
+    if idx.count() < 2 then return
     rowContent = m.castCrewRowList.content.getChild(idx[0])
     selItem = rowContent.getChild(idx[1])
     m.selectedPersonLabel.text = selItem.title
@@ -218,6 +226,7 @@ Sub OnMovieDetailsTask_DataAvailable()
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
         m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
         m.castCrewRowList.visible = m.global.currentDetailedMedia.castCrew.getChildCount() > 0
+        if m.castCrewRowList.visible then m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
 
         RestoreFocus()
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedRowListLabel" extends="Label">
+    
+    <interface > 
+        <field id="itemContent" type="node" alwaysNotify="true"/>
+    </interface>
+     
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+                m.top.vertAlign="center"
+                m.top.horizAlign="center"
+                m.top.observeField("itemContent", "OnItemContent_Changed")
+                m.global.observeFieldScoped("theme", "OnGlobal_ThemeChanged")  
+
+            End Sub
+
+            Sub OnItemContent_Changed()
+
+                itemContent = m.top.itemContent
+                if itemContent <> invalid then
+                    m.top.text = itemContent.title
+                    m.top.width = itemContent.fhdItemWidth
+                    OnGlobal_ThemeChanged()
+                end if
+
+            End Sub
+
+            Sub OnGlobal_ThemeChanged()
+
+                m.top.color = m.global.theme.textOnBackground
+
+            End Sub
+
+        ]]>
+    </script>  
+
+
+</component>

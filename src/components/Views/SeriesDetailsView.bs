@@ -1,5 +1,6 @@
 Sub Init()
 
+    m.mainLayout = m.top.findNode("mainLayout")
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
     m.titleLabel = m.top.findNode("titleLabel")
@@ -88,6 +89,7 @@ Sub OnThis_VisibleChanged(event as object)
 
     m.seriesDetailsTask.control = "stop"
 
+    m.mainLayout.translation = [192,106]
     m.titleLabel.text = invalid
     m.ratedLabel.text = invalid
     m.descriptionLabel.text = invalid
@@ -97,6 +99,9 @@ Sub OnThis_VisibleChanged(event as object)
     m.playbackButtonLayoutGroup.visible = false
     m.resumeButtonLayoutGroup.visible = false
     m.requestButton.visible = false
+
+
+    BuildEpisodesOrCastCrewNode(false)
     
     if event.getData() then
 
@@ -204,9 +209,12 @@ Sub OnSeriesDetailsTask_DataAvailable()
         end if
         
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
+        
+        
         m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
         m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
-
+        BuildEpisodesOrCastCrewNode(m.castCrewRowList.numRows > 0)
+        
         RestoreFocus()
 
         m.busySpinner.visible = false
@@ -372,6 +380,46 @@ Sub SetWatchlistIcon(inWatchList as boolean)
 
     m.watchlistButton1.icon = inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
     m.watchlistButton2.icon = m.watchlistButton1.icon
+
+End Sub
+
+
+Sub BuildEpisodesOrCastCrewNode(includeCastCrew as boolean) 
+
+    ' <ContentNode role="content">
+    ' <!-- Row -->
+    ' <ContentNode>
+    '     <!-- 
+    '         Items
+    '         - - - - -
+    '         "Episodes".width = 147
+    '         "Cast & Crew".width = 202
+    '         Give 5px extra on each side
+    '     -->
+    '     <LabelNode title="Episodes" fhdItemWidth="157" />
+    '     <LabelNode title="Cast &amp; Crew"  fhdItemWidth="212" />
+    ' </ContentNode>
+    ' </ContentNode>
+
+    root = createObject("roSGNode", "ContentNode")
+    row = root.createChild("ContentNode")
+    episodes = row.createChild("ContentNode")
+    episodes.addField("FHDItemWidth", "float", false)
+    episodes.setFields({
+        title: "Episodes",
+        fhdItemWidth: 147
+    })
+
+    if includeCastCrew then
+        castCrew = row.createChild("ContentNode")
+        castCrew.addField("FHDItemWidth", "float", false)
+        castCrew.setFields({
+            title: "Cast & Crew",
+            fhdItemWidth: 212
+        })
+    end if
+
+    m.episodesOrCastCrewRowList.content = root
 
 End Sub
 

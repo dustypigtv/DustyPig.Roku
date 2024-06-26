@@ -181,7 +181,7 @@
 
                 <ThemedRowList
                     id="episodesOrCastCrewRowList"
-                    itemComponentName = "EpisodesOrCastCrewView" 
+                    itemComponentName = "ThemedRowListLabel" 
                     rowitemSize="[[0,46]]"
                     itemSize= "[1512,46]"
                     rowItemSpacing="[[50,0]]"
@@ -191,24 +191,7 @@
                     focusBitmapUri="pkg:/images/underline.9.png"
                     focusFootprintBitmapUri="pkg:/images/underline.9.png"
                     rowFocusAnimationStyle= "fixedFocusWrap"
-                    vertFocusAnimationStyle="fixedFocus">
-
-                    <ContentNode role="content">
-                        <!-- Row -->
-                        <ContentNode>
-                            <!-- 
-                                Items
-                                - - - - -
-                                "Episodes".width = 147
-                                "Cast & Crew".width = 202
-                                Give 5px extra on each side
-                            -->
-                            <LabelNode title="Episodes" fhdItemWidth="157" />
-                            <LabelNode title="Cast &amp; Crew"  fhdItemWidth="212" />
-                        </ContentNode>
-                    </ContentNode>
-
-                </ThemedRowList>
+                    vertFocusAnimationStyle="fixedFocus" />
 
                 <Rectangle
                     width="1534"

@@ -179,6 +179,7 @@ Sub OnGlobal_StartVideoPlayback(event as object)
 
     if not event.getData() then return
     
+    m.videoView.control = "stop"
     m.videoView.content = m.global.currentDetailedMedia
     m.videoView.control = "play"
 

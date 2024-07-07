@@ -1,53 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="ThemedIconButton" extends="Button">
+<component name="ThemedIconButton" extends="Group">
     
     <script type="text/brightscript" >
         <![CDATA[
 
             Sub Init()
 
-                m.top.showFocusFootprint = true
-                m.top.iconUri=""
-                m.top.focusedIconUri=""
+                m.background = m.top.findNode("background")
+                m.button = m.top.findNode("button")
+                m.origBlendColor = m.button.getChild(0).blendColor
 
-                m.top.observeFieldScoped("width", "OnSizeChanged")
-                m.top.observeFieldScoped("height", "OnSizeChanged")
+                m.button.showFocusFootprint = true
+                m.button.iconUri=""
+                m.button.focusedIconUri=""
+
+                m.top.observeFieldScoped("size", "OnMetricsChanged")
+                m.top.observeFieldScoped("showBackground", "OnMetricsChanged")
+                m.top.observeFieldScoped("focusedChild", "FocusChanged")
                 
+                m.global.observeFieldScoped("theme", "OnMetricsChanged")
+
                 m.top.observeFieldScoped("icon", "IconChanged")
-
-                m.global.observeFieldScoped("theme", "OnThemeChanged")  
-
+                
             End Sub
 
 
-            Sub OnSizeChanged()
+            Sub OnMetricsChanged()
 
-                m.top.minWidth = m.top.width
-                m.top.maxWidth = m.top.width
+                m.background.visible = m.top.showBackground
+                m.background.width = m.top.size
+                m.background.height = m.top.size
+
+                if m.top.showBackground then
+                    m.button.minWidth = m.top.size - 20
+                    m.button.maxWidth = m.top.size - 20
+                    m.button.height = m.top.size - 20
+                    m.button.translation = [10, 10]
+
+                    if m.button.hasFocus() then 
+                        m.background.blendColor = m.global.theme.primary
+                    else
+                        m.background.blendColor = "0x3C3C3CFF"
+                    end if
+
+                    m.button.getChild(0).blendColor = m.origBlendColor
+
+                else
+                    m.button.getChild(0).blendColor = m.global.theme.primary
+                    m.button.minWidth = m.top.size
+                    m.button.maxWidth = m.top.size
+                    m.button.height = m.top.size
+                    m.button.translation = [0, 0]
+                end if
 
             End Sub
 
 
             Sub IconChanged()
 
-                m.top.focusBitmapUri = m.top.icon
-                m.top.focusFootprintBitmapUri =  m.top.icon
-                OnThemeChanged()
+                m.button.focusBitmapUri = m.top.icon
+                m.button.focusFootprintBitmapUri =  m.top.icon
+                OnMetricsChanged()
+
+            End Sub
+
+            Sub FocusChanged()
+
+                if m.top.hasFocus() then m.button.setFocus(true)
+                OnMetricsChanged()
 
             End Sub
 
 
-            Sub OnThemeChanged()
-
-                m.top.getChild(0).blendColor = m.global.theme.primary
-
-            End Sub
         ]]>
     </script>
 
      <interface>
-        <field id="width" type="float" value="250" alwaysNotify="true" />
+        <field id="size" type="float" value="75" alwaysNotify="true" />
         <field id="icon" type="string" alwaysNotify="true" />
+        <field id="showBackground" type="bool" value="true" alwaysNotify="true" />
+        <field id="buttonSelected" alias="button.buttonSelected" />
     </interface>
+
+    <children>
+
+        <Poster
+            id="background"
+            uri="pkg:/images/circle_white.png" />
+
+        <Button 
+            id="button" />
+    </children>
 
 </component>

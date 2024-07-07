@@ -18,6 +18,8 @@ Sub Init()
     m.castCrewGroup = m.top.findNode("castCrewGroup")
     m.castCrewRowList = m.top.findNode("castCrewRowList")
     m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
+    m.episodesGroup = m.top.findNode("episodesGroup")
+    m.seasonList = m.top.findNode("seasonList")
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
     m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
@@ -95,6 +97,7 @@ Sub OnThis_VisibleChanged(event as object)
     m.descriptionLabel.text = invalid
     m.selectedPersonLabel.text = invalid
     m.castCrewGroup.visible = false
+    m.episodesGroup.visible = false
 
     m.playbackButtonLayoutGroup.visible = false
     m.resumeButtonLayoutGroup.visible = false
@@ -142,7 +145,9 @@ Sub OnEpisodesOrCastCrewList_ItemFocused()
 
     if idx = 0 then
         m.castCrewGroup.visible = false
+        m.episodesGroup.visible = true
     else
+        m.episodesGroup.visible = false
         m.castCrewGroup.visible = true
     end if
 
@@ -210,7 +215,9 @@ Sub OnSeriesDetailsTask_DataAvailable()
         
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
         
-        
+        m.episodesGroup.visible = true
+        m.seasonList.content = m.global.currentDetailedMedia.seasons
+
         m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
         m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
         BuildEpisodesOrCastCrewNode(m.castCrewRowList.numRows > 0)
@@ -432,7 +439,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         if m.playbackButtonLayoutGroup.isInFocusChain() then
             for i = 0 to m.playbackButtonLayoutGroup.getChildCount() - 2
-                if m.playbackButtonLayoutGroup.getChild(i).hasFocus() then
+                if m.playbackButtonLayoutGroup.getChild(i).isInFocusChain() then
                     m.playbackButtonLayoutGroup.getChild(i + 1).setFocus(true)
                     return true
                 end if
@@ -441,7 +448,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         if m.resumeButtonLayoutGroup.isInFocusChain() then
             for i = 0 to m.resumeButtonLayoutGroup.getChildCount() - 2
-                if m.resumeButtonLayoutGroup.getChild(i).hasFocus() then
+                if m.resumeButtonLayoutGroup.getChild(i).isInFocusChain() then
                     m.resumeButtonLayoutGroup.getChild(i + 1).setFocus(true)
                     return true
                 end if
@@ -457,7 +464,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         if m.playbackButtonLayoutGroup.isInFocusChain() then
             for i = m.playbackButtonLayoutGroup.getChildCount() - 1 to 1 step -1
-                if m.playbackButtonLayoutGroup.getChild(i).hasFocus() then
+                if m.playbackButtonLayoutGroup.getChild(i).isInFocusChain() then
                     m.playbackButtonLayoutGroup.getChild(i - 1).setFocus(true)
                     return true
                 end if
@@ -466,7 +473,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
         if m.resumeButtonLayoutGroup.isInFocusChain() then
             for i = m.resumeButtonLayoutGroup.getChildCount() - 1 to 1 step -1
-                if m.resumeButtonLayoutGroup.getChild(i).hasFocus() then
+                if m.resumeButtonLayoutGroup.getChild(i).isInFocusChain() then
                     m.resumeButtonLayoutGroup.getChild(i - 1).setFocus(true)
                     return true
                 end if
@@ -479,6 +486,11 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     if key = "up" then
 
         if m.castCrewRowList.hasFocus() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+        if m.seasonList.hasFocus() then
             m.episodesOrCastCrewRowList.setFocus(true)
             return true
         end if
@@ -508,6 +520,9 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         if m.episodesOrCastCrewRowList.hasFocus() then
 
             if GetEpisodeOrCastCrewListSelectedIndex() = 0 then
+
+                m.seasonList.setFocus(true)
+                return true
             
             else
                 m.castCrewRowList.setFocus(true)

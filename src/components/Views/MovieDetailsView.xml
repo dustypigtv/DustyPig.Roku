@@ -96,14 +96,12 @@
                     
                     <ThemedIconButton
                         id="watchlistButton1"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/add.png" />
 
                     <ThemedIconButton
                         id="addToPlaylistButton1"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/playlist.png" />
 
                 </LayoutGroup>
@@ -136,14 +134,12 @@
 
                     <ThemedIconButton
                         id="watchlistButton2"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/add.png" />
 
                     <ThemedIconButton
                         id="addToPlaylistButton2"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/playlist.png" />
 
 

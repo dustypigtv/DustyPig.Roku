@@ -120,7 +120,22 @@ Sub SetSeriesFields(src as object, dst as object)
 
     if src.episodes <> invalid then
 
+        seasonsNode = createObject("roSGNode", "ContentNode")
+        dst.seasons = seasonsNode
+        lastSeason = -1
+
         for each srcEp in src.episodes
+
+            if srcEp.seasonNumber <> lastSeason then
+                lastSeason = srcEp.seasonNumber
+                sn = seasonsNode.createChild("ContentNode")
+                sn.id = srcEp.seasonNumber.toStr()
+                if srcEp.seasonNumber = 0 then
+                    sn.title = "Specials"
+                else
+                    sn.title = "Season " + srcEp.seasonNumber.toStr()
+                end if
+            end if
 
             streamFormat = GetStreamFormat(srcEp.videoUrl)
 

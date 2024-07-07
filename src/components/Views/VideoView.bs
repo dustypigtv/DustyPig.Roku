@@ -34,12 +34,12 @@ Sub OnThis_StateChanged(event as object)
         
         ' Set contentType with a string, read as a number. Strange.
         ' movie = 1
-        if m.top.content.contentType = 1 then
-            m.updatePlaybackProgressTask.control = "stop"
-            m.markMovieWatchedTask.id = m.top.content.id
-            m.markMovieWatchedTask.control = "run"
-            m.global.removeFromContinueWatching = m.top.content.id
-        end if
+        ' if m.top.content.contentType = 1 then
+        '     m.updatePlaybackProgressTask.control = "stop"
+        '     m.markMovieWatchedTask.id = m.top.content.id
+        '     m.markMovieWatchedTask.control = "run"
+        '     m.global.removeFromContinueWatching = m.top.content.id
+        ' end if
 
     end if
 

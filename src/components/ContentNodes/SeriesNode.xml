@@ -5,6 +5,7 @@
         <field id="castCrew" type="node" />
         <field id="canPlay" type="bool" />
         <field id="inWatchList" type="bool" />
+        <field id="seasons" type="node" />
     </interface>
 
 </component>

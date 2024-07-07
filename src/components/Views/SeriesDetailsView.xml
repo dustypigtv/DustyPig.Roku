@@ -72,15 +72,14 @@
                     
                     <ThemedIconButton
                         id="watchlistButton1"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/add.png" />
 
                     <ThemedIconButton
                         id="addToPlaylistButton1"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/playlist.png" />
+
 
                 </LayoutGroup>
 
@@ -112,14 +111,12 @@
 
                     <ThemedIconButton
                         id="watchlistButton2"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/add.png" />
 
                     <ThemedIconButton
                         id="addToPlaylistButton2"
-                        width="75"
-                        height="75"
+                        size="75"
                         icon="pkg:/images/playlist.png" />
 
 
@@ -193,6 +190,7 @@
                     rowFocusAnimationStyle= "fixedFocusWrap"
                     vertFocusAnimationStyle="fixedFocus" />
 
+                <!-- Divider -->
                 <Rectangle
                     width="1534"
                     height="5"
@@ -200,53 +198,69 @@
 
             </LayoutGroup>
 
-            <!-- Episode List -->
+            <Group>
+
+                <!-- Episodes -->
+                <LayoutGroup
+                    id="episodesGroup"
+                    visible="false">
+
+                    <ThemedLabelList
+                        id="seasonList"
+                        itemSize="[260,60]"
+                        itemSpacing="[0,20]"
+                        numRows="10"
+                        vertFocusAnimationStyle="floatingFocus" />                
+
+                </LayoutGroup>
 
 
-            <!-- Cast & Crew List -->
-            <Group
-                id="castCrewGroup"
-                visible="false">
 
-                <!-- 
-                    Cast & Crew 
-                    Set rowItemSize to 133x200
-                    100px spacing between rows for labels padding
+                <!-- Cast & Crew List -->
+                <Group
+                    id="castCrewGroup"
+                    visible="false">
 
-                    itemSize = 1534x281
-                    BUT there is 22px padding on each side from the focusedBitmap, 
-                    so drop down to 1512x281
+                    <!-- 
+                        Cast & Crew 
+                        Set rowItemSize to 133x200
+                        100px spacing between rows for labels padding
 
-                    label on right is 1000
-                    itemSize = 1512 - 1000 = 512
-                -->
-                <ThemedRowList
-                    id="castCrewRowList"
-                    rowitemSize="[[133,200]]"
-                    rowItemSpacing= "[[20,0]]"
-                    itemSize= "[1512,281]"
-                    numRows="5"
-                    rowLabelOffset= "[[0,10]]"
-                    showRowLabel= "[true]"
-                    rowFocusAnimationStyle= "floatingFocus"
-                    vertFocusAnimationStyle="fixedFocus"
-                    loadingBitmapUri="pkg:/images/grey_profile.png"
-                    failedBitmapUri="pkg:/images/grey_profile.png"/>
+                        itemSize = 1534x281
+                        BUT there is 22px padding on each side from the focusedBitmap, 
+                        so drop down to 1512x281
+
+                        label on right is 1000
+                        itemSize = 1512 - 1000 = 512
+                    -->
+                    <ThemedRowList
+                        id="castCrewRowList"
+                        rowitemSize="[[133,200]]"
+                        rowItemSpacing= "[[20,0]]"
+                        itemSize= "[1512,281]"
+                        numRows="5"
+                        rowLabelOffset= "[[0,10]]"
+                        showRowLabel= "[true]"
+                        rowFocusAnimationStyle= "floatingFocus"
+                        vertFocusAnimationStyle="fixedFocus"
+                        loadingBitmapUri="pkg:/images/grey_profile.png"
+                        failedBitmapUri="pkg:/images/grey_profile.png"/>
 
 
-                <ThemedLabel 
-                    id="selectedPersonLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont"
-                    width="1000"
-                    numLines="1"
-                    wrap="true"
-                    horizAlign="right"
-                    ellipsizeOnBoundary="true"
-                    translation="[512,0]" />
+                    <ThemedLabel 
+                        id="selectedPersonLabel"
+                        themeColor="textOnBackground"
+                        font="font:SmallestSystemFont"
+                        width="1000"
+                        numLines="1"
+                        wrap="true"
+                        horizAlign="right"
+                        ellipsizeOnBoundary="true"
+                        translation="[512,0]" />
+
+                </Group>
 
             </Group>
-
 
         </LayoutGroup>
 

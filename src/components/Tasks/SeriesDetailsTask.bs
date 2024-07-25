@@ -124,6 +124,9 @@ Sub SetSeriesFields(src as object, dst as object)
         dst.seasons = seasonsNode
         lastSeason = -1
 
+        episodesNode = createObject("roSGNode", "ContentNode")
+        dst.episodes = episodesNode
+
         for each srcEp in src.episodes
 
             if srcEp.seasonNumber <> lastSeason then
@@ -135,6 +138,13 @@ Sub SetSeriesFields(src as object, dst as object)
                 else
                     sn.title = "Season " + srcEp.seasonNumber.toStr()
                 end if
+            end if
+
+            if srcEp.upNext ?? false then
+                dst.setFields({
+                    upNextSeason: srcEp.seasonNumber.toStr(),
+                    upNextEpisode: srcEp.episodeNumber.toStr()
+                })
             end if
 
             streamFormat = GetStreamFormat(srcEp.videoUrl)
@@ -150,7 +160,7 @@ Sub SetSeriesFields(src as object, dst as object)
                 end for
             end if
 
-            epNode = dst.createChild("EpisodeNode")
+            epNode = episodesNode.createChild("EpisodeNode")
             epNode.setFields({
                 id: srcEp.id.toStr(),
                 title: srcEp.title,

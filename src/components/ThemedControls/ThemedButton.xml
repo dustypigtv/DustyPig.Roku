@@ -13,6 +13,7 @@
                 
                 m.top.observeFieldScoped("width", "OnSizeChanged")
                 m.top.observeFieldScoped("height", "OnSizeChanged")
+                m.top.observeFieldScoped("unfocusedBlendColor", "OnThemeChanged")
 
                 m.focusedPoster = m.top.getChild(0)
                 m.unfocusedPoster = m.top.getChild(1)
@@ -21,6 +22,7 @@
                 ' then change the blend color
                 m.unfocusedPoster.bitmap = m.focusedPoster.bitmap 
                 m.unfocusedPoster.blendColor = "0x3C3C3CFF"
+
 
                 ' Keep the label centered
                 m.label = m.top.getChild(2)
@@ -51,6 +53,7 @@
 
                 m.top.focusedTextColor = m.global.theme.textOnPrimary
                 m.focusedPoster.blendColor = m.global.theme.primary
+                m.unfocusedPoster.blendColor = m.top.unfocusedBlendColor
 
             End Sub
         ]]>
@@ -58,6 +61,7 @@
 
      <interface>
         <field id="width" type="float" value="250" alwaysNotify="true" />
+        <field id="unfocusedBlendColor" type="string" value="#3C3C3CFF" alwaysNotify="true" />
     </interface>
 
 </component>

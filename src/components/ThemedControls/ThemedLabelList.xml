@@ -13,9 +13,11 @@
 
             Sub OnThemeChanged()
 
+                m.top.focusBitmapUri = "pkg:/images/button.9.png"
                 m.top.focusBitmapBlendColor = m.global.theme.primary
-                'm.top.focusFootprintBlendColor = "0x3C3C3CFF"
                 m.top.focusedColor = m.global.theme.textOnPrimary
+                m.top.focusFootprintBitmapUri = "pkg:/images/button.9.png"
+                m.top.focusFootprintBlendColor = "0x3C3C3CFF"
 
             End Sub
 

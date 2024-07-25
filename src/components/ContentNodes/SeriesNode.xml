@@ -6,6 +6,9 @@
         <field id="canPlay" type="bool" />
         <field id="inWatchList" type="bool" />
         <field id="seasons" type="node" />
+        <field id="episodes" type="node" />
+        <field id="upNextSeason" type="string" />
+        <field id="upNextEpisode" type="string" />
     </interface>
 
 </component>

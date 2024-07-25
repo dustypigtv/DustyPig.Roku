@@ -27,6 +27,22 @@
 			id="busySpinner"
 			uri="pkg:/images/spinner.png"
 			translation="[860,440]" />
+
+
+		<!-- 
+            Since the spinner above is centered and is 200 px high,
+            Translate this 100 px down the y axis.
+            Add another 50 for spacing
+        -->
+        <ThemedLabel
+            id="busyLabel"
+            themeColor="textOnBackground"
+            text="The Pig is gettin' Dusty"
+            width="1920"
+            height="1080"
+            horizAlign="center"
+            vertAlign="center"
+            translation="[0,150]" />
 		
 	</children>
 

@@ -192,6 +192,7 @@
 
                 <!-- Divider -->
                 <Rectangle
+                    id="divider"
                     width="1534"
                     height="5"
                     color="#3C3C3C" />
@@ -211,8 +212,20 @@
                         id="seasonList"
                         itemSize="[260,60]"
                         itemSpacing="[0,20]"
-                        numRows="10"
-                        vertFocusAnimationStyle="floatingFocus" />                
+                        numRows="10" />
+
+                    <!-- 
+                        w = 1534
+                        seasons.w = 260
+                        spacing = 50
+                        maxW = 1534 - 260 - 50 = 1224
+                    -->
+                    <MarkupList
+                        id="episodesList"
+                        itemComponentName="ThemedEpisodeListItem"
+                        itemSize="[1224,220]"
+                        itemSpacing="[0,0]"
+                        numRows="4" />
 
                 </LayoutGroup>
 

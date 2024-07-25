@@ -5,7 +5,7 @@ sub Init()
     
     m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
 
-    r = rnd(12)
-    m.backdropPoster.uri = `pkg:/images/pig_${r}.png`
+    ' r = rnd(12)
+    ' m.backdropPoster.uri = `pkg:/images/pig_${r}.png`
 
 end sub

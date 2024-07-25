@@ -20,6 +20,8 @@ Sub Init()
     m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
     m.episodesGroup = m.top.findNode("episodesGroup")
     m.seasonList = m.top.findNode("seasonList")
+    m.episodesList = m.top.findNode("episodesList")
+    m.divider = m.top.findNode("divider")
 
     m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
     m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
@@ -102,6 +104,10 @@ Sub OnThis_VisibleChanged(event as object)
     m.playbackButtonLayoutGroup.visible = false
     m.resumeButtonLayoutGroup.visible = false
     m.requestButton.visible = false
+
+    m.divider.visible = false
+    m.episodesOrCastCrewRowList.visible = false
+    m.castCrewRowList.visible = false
 
 
     BuildEpisodesOrCastCrewNode(false)
@@ -215,8 +221,34 @@ Sub OnSeriesDetailsTask_DataAvailable()
         
         m.descriptionLabel.text = m.global.currentDetailedMedia.description
         
+
+        m.episodesOrCastCrewRowList.visible = true
+        m.castCrewRowList.visible = true
         m.episodesGroup.visible = true
+        m.divider.visible = true 
+       
+
         m.seasonList.content = m.global.currentDetailedMedia.seasons
+        m.episodesList.content = m.global.currentDetailedMedia.episodes
+
+        try
+            found = false
+            for seasonIdx = 0 to m.global.currentDetailedMedia.seasons.getChildCount() - 1
+                season = m.global.currentDetailedMedia.seasons.getChild(seasonIdx)
+                for episodeIdx = 0 to season.getChildCount() - 1
+                    episode = season.getChild(episodeIdx)
+                    if episode.upNext then
+                        m.seasonList.jumpToItem = seasonIdx
+                        found = true
+                        exit for
+                    end if
+                end for
+                if found then exit for
+            end for
+        catch ex
+        end try
+       
+        
 
         m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
         m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
@@ -435,6 +467,35 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
     if not press then return false
 
+
+    if key = "back" or key = "up" then
+
+        if m.castCrewRowList.hasFocus() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+        if m.seasonList.hasFocus() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+        if m.episodesList.hasFocus() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+        if m.episodesOrCastCrewRowList.isInFocusChain() then
+            m.slideUpAnimation.control = "stop"
+            m.slideDownAnimation.control = "stop"
+            m.slideDownAnimation.control = "start"
+            m.lastFocusedButton.setFocus(true)
+            return true
+        end if
+
+    end if
+
+
     if key = "right" then
 
         if m.playbackButtonLayoutGroup.isInFocusChain() then
@@ -453,6 +514,11 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
                     return true
                 end if
             next
+        end if
+
+        if m.seasonList.hasFocus() then
+            m.episodesList.setFocus(true)
+            return true
         end if
 
     end if
@@ -480,33 +546,15 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
             next
         end if
 
-    end if
-
-
-    if key = "up" then
-
-        if m.castCrewRowList.hasFocus() then
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.seasonList.hasFocus() then
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.episodesOrCastCrewRowList.isInFocusChain() then
-            m.slideUpAnimation.control = "stop"
-            m.slideDownAnimation.control = "stop"
-            m.slideDownAnimation.control = "start"
-            m.lastFocusedButton.setFocus(true)
+        if m.episodesList.hasFocus() then
+            m.seasonList.setFocus(true)
             return true
         end if
 
     end if
 
 
-
+    
     if key = "down" then
 
         if m.playbackButtonLayoutGroup.isInFocusChain() or m.resumeButtonLayoutGroup.isInFocusChain() then

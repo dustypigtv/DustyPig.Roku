@@ -78,7 +78,7 @@ Sub SetMovieFields(src as object, dst as object)
     if src.srtSubtitles <> invalid then
         for each st in src.srtSubtitles
             subtitleTracks.push({
-                Language: "eng",
+                Language: st.language,
                 Description: st.name,
                 TrackName: st.url
             })

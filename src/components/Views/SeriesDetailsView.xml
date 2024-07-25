@@ -203,6 +203,8 @@
                 <!-- Episodes -->
                 <LayoutGroup
                     id="episodesGroup"
+                    layoutDirection="horiz"
+                    itemSpacings="[50]"
                     visible="false">
 
                     <ThemedLabelList

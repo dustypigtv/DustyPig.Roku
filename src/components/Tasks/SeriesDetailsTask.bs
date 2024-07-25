@@ -143,7 +143,7 @@ Sub SetSeriesFields(src as object, dst as object)
             if srcEp.srtSubtitles <> invalid then
                 for each st in srcEp.srtSubtitles
                     subtitleTracks.push({
-                        Language: "eng",
+                        Language: st.language,
                         Description: st.name,
                         TrackName: st.url
                     })

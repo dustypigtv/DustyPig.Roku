@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="ThemedLabelList" extends="LabelList">
+<component name="ThemedMarkupList" extends="MarkupList">
     
     <script type="text/brightscript" >
         <![CDATA[
 
             Sub Init()
 
-                m.top.showFocusFootprint = true
                 m.global.observeFieldScoped("theme", "OnThemeChanged")  
                 OnThemeChanged()
 
@@ -14,10 +13,7 @@
 
             Sub OnThemeChanged()
 
-                m.top.focusBitmapUri = "pkg:/images/button.9.png"
                 m.top.focusBitmapBlendColor = m.global.theme.primary
-                m.top.focusedColor = m.global.theme.textOnPrimary
-                m.top.focusFootprintBitmapUri = "pkg:/images/button.9.png"
                 m.top.focusFootprintBlendColor = "0x3C3C3CFF"
 
             End Sub
@@ -25,5 +21,4 @@
         ]]>
     </script>
 
-    
 </component>

@@ -21,6 +21,8 @@
                 m.global.observeFieldScoped("theme", "OnMetricsChanged")
 
                 m.top.observeFieldScoped("icon", "IconChanged")
+
+                OnMetricsChanged()
                 
             End Sub
 

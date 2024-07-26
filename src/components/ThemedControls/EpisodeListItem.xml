@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="EpisodeListItem" extends="Group">
+
+	<!--
+
+		For some reason ThemedLabel doesn't work here.
+		Probably something to do with how it's initialized.
+
+		So manually set label text colors
+	-->
+
+	<script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+				m.screenshot = m.top.findNode("screenshot")
+				m.title = m.top.findNode("title")
+				m.overview = m.top.findNode("overview")
+
+				m.top.observeField("itemContent", "OnItemContent_Changed")
+
+				m.global.observeFieldScoped("theme", "OnThemeChanged")  
+                OnThemeChanged()
+                            
+            End Sub
+
+			Sub OnItemContent_Changed()
+
+				m.screenshot.uri = m.top.itemContent.fhdGridPosterUrl
+				m.title.text = m.top.itemContent.header
+				m.overview.text = m.top.itemContent.description
+
+			End Sub
+
+			 Sub OnThemeChanged()
+
+                m.title.color = m.global.theme.textOnBackground
+				m.overview.color = m.global.theme.textOnBackground
+				
+            End Sub
+
+			            
+        ]]>
+    </script>
+
+	<interface>
+    	<field id="itemContent" type="node" alwaysNotify="true" />
+  	</interface>
+  	
+	<children>
+
+		<!-- 
+			This size is [1124,220]
+		-->
+
+		<Rectangle
+			width="1124"
+			height="220"
+			color="#000000" />
+
+		<LayoutGroup
+			layoutDirection="horiz"
+			itemSpacings="[24]">
+
+			<Poster 
+				id="screenshot"
+				Width="345"
+				Height="220"
+				loadDisplayMode="scaleToZoom" />		
+					
+			<LayoutGroup 
+				itemSpacings="[16]" >
+
+				<!-- Spacer -->				
+				<Rectangle
+					width="0"
+					height="0" />
+
+				<!-- 
+					Width is required.
+					This item will be 1124 wide,
+					the poster is 345 wide, 
+					and item spacing is 24
+
+					So label.width will be 1124 - 345 - 24 = 755
+				-->
+				
+				<Label 
+					id="title"
+					width="755"
+					font="font:SmallestBoldSystemFont" />
+					
+
+				<Label 
+					id="overview"
+					width="755"
+					maxLines="4"
+					wrap="true"
+					font="font:SmallestSystemFont" 	/>
+					
+			</LayoutGroup>
+
+		</LayoutGroup>
+
+	</children>
+	
+</component>

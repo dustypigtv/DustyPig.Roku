@@ -13,7 +13,8 @@
                 m.top.vertAlign="center"
                 m.top.horizAlign="center"
                 m.top.observeField("itemContent", "OnItemContent_Changed")
-                m.global.observeFieldScoped("theme", "OnGlobal_ThemeChanged")  
+                m.global.observeFieldScoped("theme", "OnGlobal_ThemeChanged")
+                OnGlobal_ThemeChanged()
 
             End Sub
 

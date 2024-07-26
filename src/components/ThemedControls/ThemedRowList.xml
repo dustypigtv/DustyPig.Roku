@@ -6,7 +6,8 @@
 
             Sub Init()
 
-                m.global.observeFieldScoped("theme", "OnThemeChanged")      
+                m.global.observeFieldScoped("theme", "OnThemeChanged")
+                OnThemeChanged()
 
             End Sub
 

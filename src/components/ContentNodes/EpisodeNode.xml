@@ -6,6 +6,7 @@
         <field id="introStartTime" type="float" />
         <field id="introEndTime" type="float" />
         <field id="creditsStartTime" type="float" />
+        <field id="header" type="string" />
     </interface>
 
 </component>

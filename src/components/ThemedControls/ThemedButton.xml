@@ -30,6 +30,7 @@
 
                 ' Watch for theme updates
                 m.global.observeFieldScoped("theme", "OnThemeChanged")
+                OnThemeChanged()
 
             End Sub
 

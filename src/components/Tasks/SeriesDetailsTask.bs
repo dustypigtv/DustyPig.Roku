@@ -164,7 +164,8 @@ Sub SetSeriesFields(src as object, dst as object)
             epNode.setFields({
                 id: srcEp.id.toStr(),
                 title: srcEp.title,
-                secondaryTitle: src.title + " - s" + PadLeft(srcEp.seasonNumber.toStr(), "0", 2) + ":e" + PadLeft(srcEp.episodeNumber.toStr(), "0", 2),
+                secondaryTitle: src.title + " - S" + srcEp.seasonNumber.toStr() + ":E" + srcEp.episodeNumber.toStr(),
+                header: "S" + srcEp.seasonNumber.toStr() + ":E" + srcEp.episodeNumber.toStr() + " " + srcEp.title,
                 sdGridPosterUrl: srcEp.artworkUrl,
                 hdGridPosterUrl: srcEp.artworkUrl,
                 fhdGridPosterUrl: srcEp.artworkUrl,

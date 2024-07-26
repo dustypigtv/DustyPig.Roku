@@ -220,7 +220,7 @@
                     numRows="5"
                     rowLabelOffset= "[[0,10]]"
                     showRowLabel= "[true]"
-                    rowFocusAnimationStyle= "floatingFocus"
+                    rowFocusAnimationStyle= "fixedFocus"
                     vertFocusAnimationStyle="fixedFocus"
                     loadingBitmapUri="pkg:/images/grey_profile.png"
                     failedBitmapUri="pkg:/images/grey_profile.png"/>

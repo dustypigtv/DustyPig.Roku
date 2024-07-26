@@ -50,6 +50,10 @@ Sub Init()
     m.episodesOrCastCrewRowList.observeField("rowItemFocused", "OnEpisodesOrCastCrewList_ItemFocused")
     m.episodesOrCastCrewRowList.observeField("focusedChild", "OnEpisodesOrCastCrewList_ItemFocused")
 
+    m.dontJump = false
+    m.seasonList.observeField("itemFocused", "OnSeasonList_ItemFocused")
+    m.episodesList.observeField("itemFocused", "OnEpisodesList_ItemFocused")
+
 
     ' Button clicks
     m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
@@ -62,6 +66,10 @@ Sub Init()
     m.addToPlaylistButton1.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
     m.addToPlaylistButton2.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
 
+
+    ' Selection
+    m.castCrewRowList.observeField("focusedChild", "OnCastCrewList_FocusChanged")
+    m.castCrewRowList.observeField("rowItemFocused", "OnCastCrewList_ItemFocused")
 
 
     ' Error dialog
@@ -178,6 +186,74 @@ Sub OnErrorDialog_Closed()
 
 End Sub
 
+
+
+Sub OnCastCrewList_FocusChanged()
+
+    if m.castCrewRowList.hasFocus() then 
+        m.lastFocusedControl = m.castCrewRowList    
+        OnCastCrewList_ItemFocused()
+    else
+        m.selectedPersonLabel.text = invalid
+    end if
+
+End Sub
+
+
+Sub OnCastCrewList_ItemFocused()
+
+    idx = m.castCrewRowList.rowItemFocused
+    if idx = invalid then return
+    if idx.count() < 2 then return
+    rowContent = m.castCrewRowList.content.getChild(idx[0])
+    selItem = rowContent.getChild(idx[1])
+    m.selectedPersonLabel.text = selItem.title
+
+End sub
+
+
+Sub OnSeasonList_ItemFocused(event as Object)
+
+    if not m.seasonList.hasFocus() then return
+    if m.seasonList.content = invalid then return
+    if m.episodesList.content = invalid then return
+    
+    if m.dontJump then 
+        m.dontJump = false
+        return
+    end if
+    
+    seasonIdx = event.getData()
+    seasonId = m.global.currentDetailedMedia.seasons.getChild(seasonIdx).id
+    for episodeIdx = 0 to m.global.currentDetailedMedia.episodes.getChildCount() - 1
+        episode = m.global.currentDetailedMedia.episodes.getChild(episodeIdx)
+        if episode.titleSeason = seasonId then
+            m.episodesList.jumpToItem = episodeIdx
+            exit for
+        end if
+    next
+    
+
+End Sub
+
+
+Sub OnEpisodesList_ItemFocused(event as Object)
+
+    if not m.episodesList.hasFocus() then return
+    if m.episodesList.content = invalid then return
+    if m.seasonList.content = invalid then return
+    
+    episodeIdx = event.getData()
+    episodeSeasonId = m.global.currentDetailedMedia.episodes.getChild(episodeIdx).titleSeason
+    for seasonIdx = 0 to m.global.currentDetailedMedia.seasons.getChildCount() - 1
+        seasonId = m.global.currentDetailedMedia.seasons.getChild(seasonIdx).id
+        if seasonId = episodeSeasonId then
+            m.seasonList.jumpToItem = seasonIdx
+            exit for
+        end if
+    next
+        
+End Sub
 
 
 
@@ -547,6 +623,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         end if
 
         if m.episodesList.hasFocus() then
+            m.dontJump = true
             m.seasonList.setFocus(true)
             return true
         end if

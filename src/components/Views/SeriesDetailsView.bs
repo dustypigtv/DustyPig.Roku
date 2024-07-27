@@ -3,73 +3,29 @@ Sub Init()
     m.mainLayout = m.top.findNode("mainLayout")
     m.busySpinner = m.top.findNode("busySpinner")
     m.backdropPoster = m.top.findNode("backdropPoster")
-    m.titleLabel = m.top.findNode("titleLabel")
-    m.ratedLabel = m.top.findNode("ratedLabel")
-    m.playButton1 = m.top.findNode("playButton1")
-    m.playButton2 = m.top.findNode("playButton2")
-    m.requestButton = m.top.findNode("requestButton")
-    m.resumeButton = m.top.findNode("resumeButton")
-    m.markWatchedButton = m.top.findNode("markWatchedButton")
-    m.watchlistButton1 = m.top.findNode("watchlistButton1")
-    m.watchlistButton2 = m.top.findNode("watchlistButton2")
-    m.addToPlaylistButton1 = m.top.findNode("addToPlaylistButton1")
-    m.addToPlaylistButton2 = m.top.findNode("addToPlaylistButton2")
-    m.descriptionLabel = m.top.findNode("descriptionLabel")
-    m.castCrewGroup = m.top.findNode("castCrewGroup")
-    m.castCrewRowList = m.top.findNode("castCrewRowList")
-    m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
+    m.mediaInfoView = m.top.findNode("mediaInfoView")
+    m.episodesOrCastCrewRowList = m.top.findNode("episodesOrCastCrewRowList")
+    m.divider = m.top.findNode("divider")
     m.episodesGroup = m.top.findNode("episodesGroup")
     m.seasonList = m.top.findNode("seasonList")
     m.episodesList = m.top.findNode("episodesList")
-    m.divider = m.top.findNode("divider")
+    m.castAndCrewView = m.top.findNode("castAndCrewView")
 
-    m.playbackButtonLayoutGroup = m.top.findNode("playbackButtonLayoutGroup")
-    m.resumeButtonLayoutGroup = m.top.findNode("resumeButtonLayoutGroup")
-
-    m.episodesOrCastCrewRowList = m.top.findNode("episodesOrCastCrewRowList")
 
     m.slideUpAnimation = m.top.findNode("slideUpAnimation")
     m.slideDownAnimation = m.top.findNode("slideDownAnimation")
 
-
-
     ' Tracking focus
     m.lastFocusedControl = invalid
-    m.lastFocusedButton = invalid
-
-    m.requestButton.observeField("focusedChild", "OnButton_FocusChanged")
-    m.playButton1.observeField("focusedChild", "OnButton_FocusChanged")
-    m.playButton2.observeField("focusedChild", "OnButton_FocusChanged")
-    m.resumeButton.observeField("focusedChild", "OnButton_FocusChanged")
-    m.markWatchedButton.observeField("focusedChild", "OnButton_FocusChanged")
-    m.watchlistButton1.observeField("focusedChild", "OnButton_FocusChanged")
-    m.watchlistButton2.observeField("focusedChild", "OnButton_FocusChanged")
-    m.addToPlaylistButton1.observeField("focusedChild", "OnButton_FocusChanged")
-    m.addToPlaylistButton2.observeField("focusedChild", "OnButton_FocusChanged")
+    m.top.observeField("reset", "OnResetFocus")
+    m.episodesOrCastCrewRowList.observeField("focusedChild", "OnFocusChanged")
 
     m.episodesOrCastCrewRowList.observeField("rowItemFocused", "OnEpisodesOrCastCrewList_ItemFocused")
-    m.episodesOrCastCrewRowList.observeField("focusedChild", "OnEpisodesOrCastCrewList_ItemFocused")
 
     m.dontJump = false
     m.seasonList.observeField("itemFocused", "OnSeasonList_ItemFocused")
     m.episodesList.observeField("itemFocused", "OnEpisodesList_ItemFocused")
 
-
-    ' Button clicks
-    m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
-    m.playButton1.observeField("buttonSelected", "OnPlayButton_Selected")
-    m.playButton2.observeField("buttonSelected", "OnPlayButton_Selected")
-    m.resumeButton.observeField("buttonSelected", "OnResumeButton_Selected")
-    m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchedButton_Selected")
-    m.watchlistButton1.observeField("buttonSelected", "OnWatchlistButton_Selected")
-    m.watchlistButton2.observeField("buttonSelected", "OnWatchlistButton_Selected")
-    m.addToPlaylistButton1.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
-    m.addToPlaylistButton2.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
-
-
-    ' Selection
-    m.castCrewRowList.observeField("focusedChild", "OnCastCrewList_FocusChanged")
-    m.castCrewRowList.observeField("rowItemFocused", "OnCastCrewList_ItemFocused")
 
 
     ' Error dialog
@@ -78,141 +34,58 @@ Sub Init()
     m.errorDialog.title = "Error"
     m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
 
+
      ' Series Details task
      m.seriesDetailsTask = CreateObject("roSGNode", "SeriesDetailsTask")
-     m.seriesDetailsTask.observeField("success", "OnSeriesDetailsTask_DataAvailable")
- 
- 
-     ' Mark Watched task
-    '  m.markSeriesWatchedTask = CreateObject("roSGNode", "MarkSeriesWatchedTask")
- 
-     ' Toggle Watchlist task
-     m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
- 
+     m.seriesDetailsTask.observeField("state", "SetupView")
  
      ' Observers
-     m.top.observeField("visible", "OnThis_VisibleChanged")
+     m.top.observeField("visible", "SetupView")
+
+     m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
+
 
 End sub
 
 
 
-Sub OnThis_VisibleChanged(event as object)
 
-    m.seriesDetailsTask.control = "stop"
+' ********** FOCUS TRACKING **********
 
-    m.mainLayout.translation = [192,106]
-    m.titleLabel.text = invalid
-    m.ratedLabel.text = invalid
-    m.descriptionLabel.text = invalid
-    m.selectedPersonLabel.text = invalid
-    m.castCrewGroup.visible = false
-    m.episodesGroup.visible = false
+Sub OnResetFocus()
 
-    m.playbackButtonLayoutGroup.visible = false
-    m.resumeButtonLayoutGroup.visible = false
-    m.requestButton.visible = false
-
-    m.divider.visible = false
-    m.episodesOrCastCrewRowList.visible = false
-    m.castCrewRowList.visible = false
-
-
-    BuildEpisodesOrCastCrewNode(false)
-    
-    if event.getData() then
-
-        m.backdropPoster.uri = m.global.currentBasicMedia.backdropUrl ?? ""
-
-        m.busySpinner.visible = true
-        
-        m.seriesDetailsTask.id = m.global.currentBasicMedia.id
-        m.seriesDetailsTask.control = "run"
-    
-    end if
+    m.lastFocusedControl = invalid
+    m.mediaInfoView.resetFocusTracking = true
+    m.episodesOrCastCrewRowList.jumpToItem = 0
 
 End Sub
 
 
+Sub OnFocusChanged(event as Object)
 
-Sub RestoreFocus()
-
-    if m.lastFocusedControl <> invalid then m.lastFocusedControl.setFocus(true)
+    node = event.getRoSGNode()
+    if node <> invalid then m.lastFocusedControl = node
 
 End Sub
 
 
-Function GetEpisodeOrCastCrewListSelectedIndex() as integer
-
-    idx = m.episodesOrCastCrewRowList.rowItemFocused
-    if idx = invalid then return 0
-    if idx.count() < 2 then return 0
-    if not m.castCrewRowList.visible then return 0
-
-    return idx[1]
-
-End Function
 
 Sub OnEpisodesOrCastCrewList_ItemFocused()
 
     idx = GetEpisodeOrCastCrewListSelectedIndex()
 
     if idx = 0 then
-        m.castCrewGroup.visible = false
+        m.castAndCrewView.visible = false
         m.episodesGroup.visible = true
     else
         m.episodesGroup.visible = false
-        m.castCrewGroup.visible = true
+        m.castAndCrewView.visible = true
     end if
 
 End Sub
 
 
-Sub OnButton_FocusChanged(event as object)
-
-    btn = event.getRoSGNode()
-    if btn.hasFocus() then 
-        m.lastFocusedControl = btn
-        m.lastFocusedButton = btn
-    end if
-
-End Sub
-
-
-Sub OnErrorDialog_Closed()
-
-    m.top.getScene().dialog = invalid
-    RestoreFocus()
-
-End Sub
-
-
-
-Sub OnCastCrewList_FocusChanged()
-
-    if m.castCrewRowList.hasFocus() then 
-        m.lastFocusedControl = m.castCrewRowList    
-        OnCastCrewList_ItemFocused()
-    else
-        m.selectedPersonLabel.text = invalid
-    end if
-
-End Sub
-
-
-Sub OnCastCrewList_ItemFocused()
-
-    idx = m.castCrewRowList.rowItemFocused
-    if idx = invalid then return
-    if idx.count() < 2 then return
-    rowContent = m.castCrewRowList.content.getChild(idx[0])
-    selItem = rowContent.getChild(idx[1])
-    m.selectedPersonLabel.text = selItem.title
-
-End sub
-
-
-Sub OnSeasonList_ItemFocused(event as Object)
+Sub OnSeasonList_ItemFocused()
 
     if not m.seasonList.hasFocus() then return
     if m.seasonList.content = invalid then return
@@ -223,281 +96,270 @@ Sub OnSeasonList_ItemFocused(event as Object)
         return
     end if
     
-    seasonIdx = event.getData()
-    seasonId = m.global.currentDetailedMedia.seasons.getChild(seasonIdx).id
-    for episodeIdx = 0 to m.global.currentDetailedMedia.episodes.getChildCount() - 1
-        episode = m.global.currentDetailedMedia.episodes.getChild(episodeIdx)
-        if episode.titleSeason = seasonId then
+    dm = m.global.currentDetailedMedia
+    seasonIdx = m.seasonList.itemFocused
+    seasonNum = dm.seasons.getChild(seasonIdx).Id
+    for episodeIdx = 0 to dm.episodes.getChildCount() - 1
+        if dm.episodes.getChild(episodeIdx).seasonNum.toStr() = seasonNum then
             m.episodesList.jumpToItem = episodeIdx
             exit for
         end if
     next
     
-
 End Sub
 
 
-Sub OnEpisodesList_ItemFocused(event as Object)
+
+Sub OnEpisodesList_ItemFocused()
 
     if not m.episodesList.hasFocus() then return
     if m.episodesList.content = invalid then return
     if m.seasonList.content = invalid then return
-    
-    episodeIdx = event.getData()
-    episodeSeasonId = m.global.currentDetailedMedia.episodes.getChild(episodeIdx).titleSeason
-    for seasonIdx = 0 to m.global.currentDetailedMedia.seasons.getChildCount() - 1
-        seasonId = m.global.currentDetailedMedia.seasons.getChild(seasonIdx).id
-        if seasonId = episodeSeasonId then
-            m.seasonList.jumpToItem = seasonIdx
-            exit for
-        end if
-    next
+    SetSeason(m.episodesList.itemFocused)
         
 End Sub
 
 
 
 
-Sub OnSeriesDetailsTask_DataAvailable()
-       
 
-    if m.seriesDetailsTask.success then
+
+
+
+
+
+' ********** DATA UPDATE TRIGGER **********
+
+Sub OnGlobal_CurrentBasicMediaChanged()
     
-        m.global.currentDetailedMedia = m.seriesDetailsTask.data
+    bm = m.global.currentBasicMedia
+    if bm = invalid then return
+    if bm.contentType <> 2 then return
+
+    m.seriesDetailsTask.control = "stop"
+    m.seriesDetailsTask.id = bm.id
+    m.seriesDetailsTask.control = "run"
+
+End Sub
+
+
+
+
+
+
+Sub SetupView()
+
+    if not m.top.visible then return
+
+    if m.seriesDetailsTask.state = "run" then
+
+        bm = m.global.currentBasicMedia
+        backdrop = bm.backdropUrl ?? ""
+        if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
+
+        m.mediaInfoView.visible = false
+        m.episodesOrCastCrewRowList.visible = false
+        m.divider.visible = false
+        m.episodesGroup.visible = false
+        m.castAndCrewView.visible = false
+
+        m.busySpinner.visible = true
         
-        m.titleLabel.text = m.global.currentDetailedMedia.title
+    else
 
-        rated = m.global.currentDetailedMedia.rating
-        if rated <> "Not Rated" then rated = "Rated: " + rated
-        m.ratedLabel.text = rated
+        if m.seriesDetailsTask.success then
+        
+            dm = m.seriesDetailsTask.data
+            m.global.currentDetailedMedia = dm
 
-        if m.global.currentDetailedMedia.canPlay then
-           
-            if m.global.currentDetailedMedia.length > 0 and m.global.playbackPosition > 0 then 
-                m.requestButton.visible = false
-                m.playbackButtonLayoutGroup.visible = false
-                m.resumeButtonLayoutGroup.visible = true
-                m.resumeButton.setFocus(true)
+            backdrop = dm.backdropUrl ?? ""
+            if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
+                        
+            m.mediaInfoView.visible = true
+            
+
+            ' Episodes or Cast selector tabs
+            BuildEpisodesOrCastCrewNode(dm.castCrew.getChildCount() > 0)
+            m.episodesOrCastCrewRowList.visible = true
+            m.divider.visible = true
+        
+
+            ' Seasons / Episodes
+            m.seasonList.content = dm.seasons
+            m.episodesList.content = dm.episodes
+            m.episodesList.jumpToItem = dm.upNextIdx
+            SetSeason(dm.upNextIdx)
+            m.episodesGroup.visible = true
+
+
+            ' Cast & Crew
+            m.castAndCrewView.content = dm.castCrew
+            OnEpisodesOrCastCrewList_ItemFocused()
+            
+            if m.lastFocusedControl = invalid then
+                m.mediaInfoView.setFocus(true)
             else
-                m.requestButton.visible = false
-                m.resumeButtonLayoutGroup.visible = false
-                m.playbackButtonLayoutGroup.visible = true
-                m.playButton1.setFocus(true)
+                m.lastFocusedControl.setFocus(true)
             end if
+            
+            m.busySpinner.visible = false
 
-            SetWatchlistIcon(m.global.currentDetailedMedia.inWatchList)
-        
         else
+        
+            m.errorDialog.message = [m.seriesDetailsTask.error]
+            m.top.getScene().dialog = m.errorDialog
+        
+        end if
 
-            m.playbackButtonLayoutGroup.visible = false
-            m.resumeButton.visible = false
-            m.requestButton.visible = true
+    end if
+
+End Sub
+
+
+
+
+
+
+
+
+' ********** ERROR DIALOG **********
+
+Sub OnErrorDialog_Closed()
+
+    m.top.getScene().dialog = invalid
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+' ********** KEY PRESSES **********
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    if not press then return false
+
+    if key = "up" or key = "back" then
+
+        if m.episodesOrCastCrewRowList.isInFocusChain() then 
+            m.slideUpAnimation.control = "stop"
+            m.slideDownAnimation.control = "stop"
+            m.slideDownAnimation.control = "start"
+            m.mediaInfoView.setFocus(true)
+            return true
+        end if
+
+        if m.seasonList.isInFocusChain() or m.castAndCrewView.isInFocusChain() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+    end if
+
+    if key = "up" then
+
+        if m.episodesGroup.isInFocusChain() then
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+    end if
+
+    if key = "back" then
+
+        if m.episodesList.hasFocus() then
+            m.dontJump = true
+            m.seasonList.setFocus(true)
+            return true
+        end if
+
+    end if
+
+
+
+    if key = "down" then
+
+        if m.mediaInfoView.isInFocusChain() then
+            m.slideDownAnimation.control = "stop"
+            m.slideUpAnimation.control = "stop"
+            m.slideUpAnimation.control = "start"
+            m.episodesOrCastCrewRowList.setFocus(true)
+            return true
+        end if
+
+        if m.episodesOrCastCrewRowList.isInFocusChain() then
+
+            if GetEpisodeOrCastCrewListSelectedIndex() = 0 then
+                m.dontJump = true
+                m.seasonList.setFocus(true)
+            else
+                m.castAndCrewView.setFocus(true)
+            end if
+            return true
 
         end if
-        
-        m.descriptionLabel.text = m.global.currentDetailedMedia.description
-        
 
-        m.episodesOrCastCrewRowList.visible = true
-        m.castCrewRowList.visible = true
-        m.episodesGroup.visible = true
-        m.divider.visible = true 
-       
-
-        m.seasonList.content = m.global.currentDetailedMedia.seasons
-        m.episodesList.content = m.global.currentDetailedMedia.episodes
-
-        try
-            found = false
-            for seasonIdx = 0 to m.global.currentDetailedMedia.seasons.getChildCount() - 1
-                season = m.global.currentDetailedMedia.seasons.getChild(seasonIdx)
-                for episodeIdx = 0 to season.getChildCount() - 1
-                    episode = season.getChild(episodeIdx)
-                    if episode.upNext then
-                        m.seasonList.jumpToItem = seasonIdx
-                        found = true
-                        exit for
-                    end if
-                end for
-                if found then exit for
-            end for
-        catch ex
-        end try
-       
-        
-
-        m.castCrewRowList.content = m.global.currentDetailedMedia.castCrew
-        m.castCrewRowList.numRows = m.global.currentDetailedMedia.castCrew.getChildCount()
-        BuildEpisodesOrCastCrewNode(m.castCrewRowList.numRows > 0)
-        
-        RestoreFocus()
-
-        m.busySpinner.visible = false
-
-    else
-    
-        m.errorDialog.message = [m.seriesDetailsTask.error]
-        m.top.getScene().dialog = m.errorDialog
-    
     end if
 
-End Sub
 
+    if key = "right" or key = "OK" then
 
-Sub OnPlayButton_Selected()
+        if m.seasonList.hasFocus() then
+            m.episodesList.setFocus(true)
+            return true
+        end if
 
-    StartPlayback(false)
-
-End Sub
-
-Sub OnResumeButton_Selected()
-
-    StartPlayback(true)
-
-End Sub
-
-
-Sub StartPlayback(resume as boolean)
-
-    ' m.global.currentDetailedMedia.playStart = resume ? m.global.playbackPosition : 0.0
-    ' m.global.startVideoPlayback = true
-    
-End Sub
-
-
-
-
-Sub OnRequestButton_Selected()
-
-End Sub
-
-
-
-
-
-
-
-Sub OnMarkWatchedButton_Selected()
-
-    ' m.markSeriesWatchedTask.id = m.global.currentDetailedMedia.id
-    ' m.markSeriesWatchedTask.control = "run"
-
-    m.global.playbackPosition = 0
-    m.global.removeFromContinueWatching = m.global.currentDetailedMedia.id
-
-    m.resumeButtonLayoutGroup.visible = false
-    m.playbackButtonLayoutGroup.visible = true
-    m.playButton1.setFocus()
-
-End Sub
-
-
-
-
-Sub OnWatchlistButton_Selected()
-    
-    del = m.global.currentDetailedMedia.inWatchList ?? false
-
-    if del then
-        m.global.removeFromWatchlist = m.global.currentDetailedMedia.id        
-    else
-        m.global.addToWatchlist = BuildBasicMediaFromDetailed(m.global.currentDetailedMedia)
     end if
 
-    m.global.currentDetailedMedia.inWatchList = not del
-    SetWatchlistIcon(not del)
 
-    m.toggleWatchlistTask.control = "stop"
-    m.toggleWatchlistTask.add = not del
-    m.toggleWatchlistTask.id = m.global.currentDetailedMedia.id
-    m.toggleWatchlistTask.control = "run"
-    
-End Sub
+    if key = "left" then
 
+        if m.episodesList.hasFocus() then
+            m.dontJump = true
+            m.seasonList.setFocus(true)
+            return true
+        end if
 
-
-Sub OnAddToPlaylistButton_Selected()
-
-    ' m.top.relay_switchToAddToPlaylist = {
-    '     id:m.global.currentMedia.id,
-    '     mediaType:m.global.currentMedia.mediaType
-    ' }
-
-End Sub
-
-
-
-Sub OnGlobal_AddToContinueWatching()
-
-    if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
-
-    prevFocusId = m.lastFocusedControl = invalid ? "" : m.lastFocusedControl.id
-    if prevFocusId = m.playButton1.id then
-        m.lastFocusedControl = m.playButton2
-    else if prevFocusId = m.watchlistButton1.id then
-        m.lastFocusedControl = m.watchlistButton2
-    else if prevFocusId = m.addToPlaylistButton1.id then
-        m.lastFocusedControl = m.addToPlaylistButton2
-    end if
-    
-    setFocus = not m.castCrewRowList.hasFocus()
-
-    m.playbackButtonLayoutGroup.visible = false
-    m.resumeButtonLayoutGroup.visible = true
-
-    if m.top.visible and setFocus and m.lastFocusedControl <> invalid then m.lastFocusedControl.setFocus(true)
-    
-End sub
-
-
-Sub OnGlobal_RemoveFromContinueWatching()
-
-    if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
-
-    prevFocusId = m.lastFocusedControl = invalid ? "" : m.lastFocusedControl.id
-
-    if prevFocusId = m.playButton2.id then
-        m.lastFocusedControl = m.playButton1
-    else if prevFocusId = m.resumeButton.id then
-        m.lastFocusedControl = m.playButton1
-    else if prevFocusId = m.markWatchedButton.id then
-        m.lastFocusedControl = m.playButton1
-    else if prevFocusId = m.watchlistButton2.id then
-        m.lastFocusedControl = m.watchlistButton1
-    else if prevFocusId = m.addToPlaylistButton2.id then
-        m.lastFocusedControl = m.addToPlaylistButton1
     end if
 
-    setFocus = not m.castCrewRowList.hasFocus()
 
-    m.resumeButtonLayoutGroup.visible = false
-    m.playbackButtonLayoutGroup.visible = true
+    if key = "OK" or key = "play" then
 
-    if m.top.visible and setFocus and m.lastFocusedControl <> invalid then m.lastFocusedControl.setFocus(true)
+        if m.episodesList.hasFocus() then
 
-End sub
+            dm = m.global.currentDetailedMedia
+            idx = m.episodesList.itemSelected
+            if idx <> dm.upNextIdx then
+                dm.episodes.getChild(dm.upNextIdx).playStart = 0.0
+                dm.upNextIdx = idx
+            end if
+            m.global.startVideoPlayback = true
+            
+            return true
+            
+        end if
 
-
-
-
-Sub OnGlobal_PlaybackPositionChanged()
-
-    ' if m.seriesDetailsTask.id <> m.global.currentDetailedMedia.id then return
-
-    ' m.remainingLabel.text = GetDurationString(m.global.currentDetailedMedia.length - m.global.playbackPosition) + " remaining"
-    ' m.resumeButton.visible = true
-    ' m.markWatchedButton.visible = true
-
-End Sub
+    end if
 
 
-Sub SetWatchlistIcon(inWatchList as boolean)
+    return false
 
-    m.watchlistButton1.icon = inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
-    m.watchlistButton2.icon = m.watchlistButton1.icon
+End Function
 
-End Sub
 
+
+
+
+
+
+' ********** UTILITIES **********
 
 Sub BuildEpisodesOrCastCrewNode(includeCastCrew as boolean) 
 
@@ -539,126 +401,26 @@ Sub BuildEpisodesOrCastCrewNode(includeCastCrew as boolean)
 End Sub
 
 
-Function onKeyEvent(key as String, press as Boolean) as Boolean
+Function GetEpisodeOrCastCrewListSelectedIndex() as integer
 
-    if not press then return false
+    idx = m.episodesOrCastCrewRowList.rowItemFocused
+    if idx = invalid then return 0
+    if idx.count() < 2 then return 0
 
-
-    if key = "back" or key = "up" then
-
-        if m.castCrewRowList.hasFocus() then
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.seasonList.hasFocus() then
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.episodesList.hasFocus() then
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.episodesOrCastCrewRowList.isInFocusChain() then
-            m.slideUpAnimation.control = "stop"
-            m.slideDownAnimation.control = "stop"
-            m.slideDownAnimation.control = "start"
-            m.lastFocusedButton.setFocus(true)
-            return true
-        end if
-
-    end if
-
-
-    if key = "right" then
-
-        if m.playbackButtonLayoutGroup.isInFocusChain() then
-            for i = 0 to m.playbackButtonLayoutGroup.getChildCount() - 2
-                if m.playbackButtonLayoutGroup.getChild(i).isInFocusChain() then
-                    m.playbackButtonLayoutGroup.getChild(i + 1).setFocus(true)
-                    return true
-                end if
-            next
-        end if
-
-        if m.resumeButtonLayoutGroup.isInFocusChain() then
-            for i = 0 to m.resumeButtonLayoutGroup.getChildCount() - 2
-                if m.resumeButtonLayoutGroup.getChild(i).isInFocusChain() then
-                    m.resumeButtonLayoutGroup.getChild(i + 1).setFocus(true)
-                    return true
-                end if
-            next
-        end if
-
-        if m.seasonList.hasFocus() then
-            m.episodesList.setFocus(true)
-            return true
-        end if
-
-    end if
-
-
-
-
-    if key = "left" then
-
-        if m.playbackButtonLayoutGroup.isInFocusChain() then
-            for i = m.playbackButtonLayoutGroup.getChildCount() - 1 to 1 step -1
-                if m.playbackButtonLayoutGroup.getChild(i).isInFocusChain() then
-                    m.playbackButtonLayoutGroup.getChild(i - 1).setFocus(true)
-                    return true
-                end if
-            next
-        end if
-
-        if m.resumeButtonLayoutGroup.isInFocusChain() then
-            for i = m.resumeButtonLayoutGroup.getChildCount() - 1 to 1 step -1
-                if m.resumeButtonLayoutGroup.getChild(i).isInFocusChain() then
-                    m.resumeButtonLayoutGroup.getChild(i - 1).setFocus(true)
-                    return true
-                end if
-            next
-        end if
-
-        if m.episodesList.hasFocus() then
-            m.dontJump = true
-            m.seasonList.setFocus(true)
-            return true
-        end if
-
-    end if
-
-
-    
-    if key = "down" then
-
-        if m.playbackButtonLayoutGroup.isInFocusChain() or m.resumeButtonLayoutGroup.isInFocusChain() then
-            m.slideDownAnimation.control = "stop"
-            m.slideUpAnimation.control = "stop"
-            m.slideUpAnimation.control = "start"
-            m.episodesOrCastCrewRowList.setFocus(true)
-            return true
-        end if
-
-        if m.episodesOrCastCrewRowList.hasFocus() then
-
-            if GetEpisodeOrCastCrewListSelectedIndex() = 0 then
-
-                m.seasonList.setFocus(true)
-                return true
-            
-            else
-                m.castCrewRowList.setFocus(true)
-                return true
-            end if       
-
-        end if
-
-    end if
-
-    
-    return false
+    return idx[1]
 
 End Function
+
+
+Sub SetSeason(episodeIdx as integer)
+
+    dm = m.global.currentDetailedMedia
+    episodeSeasonNum = dm.episodes.getChild(episodeIdx).seasonNum
+    for seasonIdx = 0 to dm.seasons.getChildCount() - 1
+        if dm.seasons.getChild(seasonIdx).Id = episodeSeasonNum.toStr() then
+            m.seasonList.jumpToItem = seasonIdx
+            exit for
+        end if
+    next
+
+End Sub

@@ -8,6 +8,7 @@
         <field id="introStartTime" type="float" />
         <field id="introEndTime" type="float" />
         <field id="creditsStartTime" type="float" />
+        <field id="genres" type="string" />
   </interface>
 
 </component>

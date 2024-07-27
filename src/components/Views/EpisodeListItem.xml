@@ -54,10 +54,7 @@
 			This size is [1124,220]
 		-->
 
-		<Rectangle
-			width="1124"
-			height="220"
-			color="#000000" />
+		
 
 		<LayoutGroup
 			layoutDirection="horiz"

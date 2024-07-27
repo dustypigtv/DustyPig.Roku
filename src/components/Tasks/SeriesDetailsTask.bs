@@ -114,7 +114,9 @@ Sub SetSeriesFields(src as object, dst as object)
         inWatchList: src.inWatchList ?? false
         rating: rating,
         castCrew: castCrew,
-        canPlay: src.canPlay
+        canPlay: src.canPlay,
+        genres: GetGenresString(src.genres),
+        upNextIdx: 0
     })
 
 
@@ -126,9 +128,10 @@ Sub SetSeriesFields(src as object, dst as object)
 
         episodesNode = createObject("roSGNode", "ContentNode")
         dst.episodes = episodesNode
-
+        
+        epIdx = 0
         for each srcEp in src.episodes
-
+            
             if srcEp.seasonNumber <> lastSeason then
                 lastSeason = srcEp.seasonNumber
                 sn = seasonsNode.createChild("ContentNode")
@@ -138,13 +141,6 @@ Sub SetSeriesFields(src as object, dst as object)
                 else
                     sn.title = "Season " + srcEp.seasonNumber.toStr()
                 end if
-            end if
-
-            if srcEp.upNext ?? false then
-                dst.setFields({
-                    upNextSeason: srcEp.seasonNumber.toStr(),
-                    upNextEpisode: srcEp.episodeNumber.toStr()
-                })
             end if
 
             streamFormat = GetStreamFormat(srcEp.videoUrl)
@@ -172,15 +168,14 @@ Sub SetSeriesFields(src as object, dst as object)
                 backdropUrl: srcEp.artworkUrl,
                 contentType: "episode",
                 description: srcEp.description,
-                upNext: srcEp.upNext ?? false,
                 sdBifUrl: srcEp.bifUrl,
                 hdBifUrl: srcEp.bifUrl,
                 fhdBifUrl: srcEp.bifUrl,
                 url: srcEp.videoUrl,
                 length: srcEp.length,
                 playStart: srcEp.played ?? 0.0,
-                titleSeason: srcEp.seasonNumber.toStr(),
-                episodeNumber: srcEp.episodeNumber.toStr(),
+                seasonNum: srcEp.seasonNumber,
+                episodeNum: srcEp.episodeNumber,
                 streamFormat: streamFormat,
                 subtitleTracks: subtitleTracks,
                 introStartTime: srcEp.introStartTime,
@@ -188,6 +183,10 @@ Sub SetSeriesFields(src as object, dst as object)
                 creditsStartTime: srcEp.creditsStartTime
             })
             
+            if srcEp.upNext ?? false then dst.setFields({upNextIdx: epIdx})
+
+            epIdx++
+                       
         end for
 
     end if

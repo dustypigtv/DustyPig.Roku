@@ -128,6 +128,8 @@ Sub SetMovieFields(src as object, dst as object)
 
     streamFormat = GetStreamFormat(src.videoUrl)
 
+    genres = GetGenresString(src.genres ?? 0)
+    
     dst.setFields({
         id: src.id.toStr(),
         title: src.title,
@@ -144,15 +146,15 @@ Sub SetMovieFields(src as object, dst as object)
         hdBifUrl: src.bifUrl,
         fhdBifUrl: src.bifUrl,
         length: src.length,
+        playStart: src.played ?? 0,
         inWatchList: src.inWatchList ?? false,
         subtitleTracks: subtitleTracks,
         rating: rating,
         castCrew: castCrew,
-        canPlay: src.canPlay
+        canPlay: src.canPlay,
+        genres: genres
     })
 
-    m.top.playbackPosition = src.played ?? 0
-   
 End Sub
 
 

@@ -1,0 +1,38 @@
+Sub Init()
+
+    m.castCrewRowList = m.top.findNode("castCrewRowList")
+    m.selectedPersonLabel = m.top.findNode("selectedPersonLabel")
+
+    m.top.observeField("focusedChild", "OnFocusChanged")
+
+    m.castCrewRowList.observeField("rowItemFocused", "OnItemFocused")
+    m.castCrewRowList.observeField("rowItemSelected", "OnItemSelected")
+                
+End Sub
+
+Sub OnFocusChanged()
+
+    if m.top.isInFocusChain() then 
+        m.castCrewRowList.setFocus(true)
+    else
+        m.selectedPersonLabel.text = invalid
+    end if
+
+End Sub
+
+Sub OnItemFocused()
+
+    idx = m.castCrewRowList.rowItemFocused
+    if idx = invalid then return
+    if idx.count() < 2 then return
+    rowContent = m.castCrewRowList.content.getChild(idx[0])
+    selItem = rowContent.getChild(idx[1])
+    m.selectedPersonLabel.text = selItem.title
+
+End Sub
+
+Sub OnItemSelected()
+
+
+
+End Sub

@@ -5,12 +5,12 @@
     <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
    
     <interface>
-        <field id="beforePushToStack" type="bool" alwaysNotify="true" />
+        <field id="reset" type="bool" alwaysNotify="true" />
     </interface>
 
     <children>
 
-       <Poster
+       <Poster 
             id="backdropPoster"
             loadWidth="1920"
             loadHeight="1080"
@@ -34,215 +34,17 @@
             itemSpacings="[25]"
             translation="[192,106]">
 
-            <ThemedLabel
-                id="titleLabel"
-                themeColor="primary"
-                font="font:LargeBoldSystemFont"
-                width="1534"
-                wrap="false"
-                maxLines="1"
-                ellipsizeOnBoundary="true" />
-
-            <!-- Details (Year, Rated, Duration and Remaining)-->
-            <LayoutGroup
-                layoutDirection="horiz"
-                itemSpacings="[50]">
-
-                <ThemedLabel
-                    id="yearLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont" />
-
-                <ThemedLabel
-                    id="ratedLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont" />
-
-                <ThemedLabel
-                    id="lengthLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont" />
-
-                <ThemedLabel
-                    id="remainingLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont" />
             
-            </LayoutGroup>
-
-
-            <Group>
-
-                <!-- Request Only-->
-                <ThemedButton
-                    id="requestButton"
-                    width="250"
-                    height="75"
-                    text="Request" />
-
-
-
-                <!-- Play + Actions -->
-                <LayoutGroup
-                    id="playbackButtonLayoutGroup"
-                    layoutDirection="horiz"
-                    itemSpacings="[25]">
-
-                    <ThemedButton
-                        id="playButton1"
-                        width="250"
-                        height="75"
-                        text="Play" />
-                    
-                    <ThemedIconButton
-                        id="watchlistButton1"
-                        size="75"
-                        icon="pkg:/images/add.png" />
-
-                    <ThemedIconButton
-                        id="addToPlaylistButton1"
-                        size="75"
-                        icon="pkg:/images/playlist.png" />
-
-                </LayoutGroup>
-
-
-
-                <!-- Play + Resume + Actions -->
-                 <LayoutGroup
-                    id="resumeButtonLayoutGroup"
-                    layoutDirection="horiz"
-                    itemSpacings="[25]">
-
-                    <ThemedButton
-                        id="playButton2"
-                        width="250"
-                        height="75"
-                        text="Play" />
-                    
-                    <ThemedButton
-                        id="resumeButton"
-                        width="250"
-                        height="75"
-                        text="Resume" />
-
-                    <ThemedButton
-                        id="markWatchedButton"
-                        width="250"
-                        height="75"
-                        text="Watched" />
-
-                    <ThemedIconButton
-                        id="watchlistButton2"
-                        size="75"
-                        icon="pkg:/images/add.png" />
-
-                    <ThemedIconButton
-                        id="addToPlaylistButton2"
-                        size="75"
-                        icon="pkg:/images/playlist.png" />
-
-
-                </LayoutGroup>
-
-            </Group>
-
-
-          
-
-
-            <!-- 
-                Description Label 
-
-                ****
-                titleLabel uses LargeBoldSystemFont, which is 45pts
-                font px = pts * 1.3333(3)
-                titleLabel.height will be 45 * 1.3333(3) = 59.9999(9) = 60
-                
-                25 spacing
-
-                yearLabel uses SmallestSystemFont, which is 27pts
-                font px = pts * 1.3333(3)
-                yearLabel.height = 27 * 1.3333(3) = 35.9999(9) = 36
-
-                25 spacing
-
-                play buttons.height = 75
-
-                25 spacing
-                ****
-
-                Description.top = 60 + 25 + 36 + 25 + 75 + 25 = 246
-
-                Bottom of cast & crew (first row) will be at 866
-                    rowSize.h = 200
-                    title.h = 34 * 1.3333(3) = 45.3333(3) = 46
-                    spacing = 10
-                    Top = 866 - (200 + 46 + 10) = 606
-
-                25 spacing
-
-                So max height = 606 - 246 - 25 = 335
-            -->
-            <ThemedLabel
-                id="descriptionLabel"
-                themeColor="textOnBackground"
-                width="1534"
-                height="335"
-                vertAlign="center"
-                wrap="true"
-                ellipsizeOnBoundary="true" />
+            <MediaInfoView
+                id="mediaInfoView"
+                viewType="1" />
 
             
-            <!--
-                This is pushed over by 11px on each side, because of the focusedButmap.
-                So drop width from 1534 to 1512
-            -->
-            <Group>
-
-                <!-- 
-                    Cast & Crew 
-                    Set rowItemSize to 133x200
-                    100px spacing between rows for labels padding
-
-                    itemSize = 1534x281
-                    BUT there is 22px padding on each side from the focusedBitmap, 
-                    so drop down to 1512x281
-
-                    label on right is 1000
-                    itemSize = 1512 - 1000 = 512
-                -->
-                <ThemedRowList
-                    id="castCrewRowList"
-                    rowitemSize="[[133,200]]"
-                    rowItemSpacing= "[[20,0]]"
-                    itemSize= "[1512,281]"
-                    numRows="5"
-                    rowLabelOffset= "[[0,10]]"
-                    showRowLabel= "[true]"
-                    rowFocusAnimationStyle= "fixedFocus"
-                    vertFocusAnimationStyle="fixedFocus"
-                    loadingBitmapUri="pkg:/images/grey_profile.png"
-                    failedBitmapUri="pkg:/images/grey_profile.png"/>
-
-
-                <ThemedLabel 
-                    id="selectedPersonLabel"
-                    themeColor="textOnBackground"
-                    font="font:SmallestSystemFont"
-                    width="1000"
-                    numLines="1"
-                    wrap="true"
-                    horizAlign="right"
-                    ellipsizeOnBoundary="true"
-                    translation="[512,0]" />
-
-            </Group>
+            <CastAndCrewView 
+                id="castAndCrewView" />
+            
 
         </LayoutGroup>
-
-    
-        
 	
 		<!-- 
 			Spinner images are 200x200

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MediaInfoView" extends="LayoutGroup">
+    
+    <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
+    <script type = "text/brightscript" uri = "pkg:/components/Views/MediaInfoView.bs" />
+
+    <interface>
+        <field id="viewType" type="int" alwaysNotify="true" />
+        <field id="resetFocusTracking" type="bool" alwaysNotify="true" />
+    </interface>
+
+    <!-- Dimensions = 1534 x 581 -->
+
+    <children>
+
+        <ThemedLabel
+            id="titleLabel"
+            themeColor="primary"
+            font="font:LargeBoldSystemFont"
+            width="1534"
+            wrap="false"
+            maxLines="1"
+            ellipsizeOnBoundary="true" />
+
+
+        <!-- Details: Year (movie) or date(episode), Rated (movie or series), Genres (movie or series) -->
+        <LayoutGroup
+            id="detailsLayoutGroup"
+            layoutDirection="horiz"
+            itemSpacings="[50]">
+
+            <ThemedLabel
+                id="dateLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+
+            <ThemedLabel
+                id="ratedLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+
+            <ThemedLabel
+                id="genresLabel"
+                themeColor="textOnBackground"
+                font="font:SmallestSystemFont" />
+        
+        </LayoutGroup>
+
+
+        <!-- Buttons -->
+        <LayoutGroup
+            id="buttonLayoutGroup"
+            layoutDirection="horiz"
+            itemSpacings="[25]">
+
+            <ThemedButton
+                id="requestButton"
+                width="250"
+                height="75"
+                text="Request" />
+
+            <ThemedButton
+                id="playButton"
+                width="250"
+                height="75"
+                text="Play" />
+            
+            <ThemedButton
+                id="resumeButton"
+                width="250"
+                height="75"
+                text="Resume" />
+
+            <ThemedButton
+                id="markWatchedButton"
+                width="250"
+                height="75"
+                text="Watched" />
+
+            <ThemedIconButton
+                id="watchlistButton"
+                size="75"
+                icon="pkg:/images/add.png" />
+
+            <ThemedIconButton
+                id="addToPlaylistButton"
+                size="75"
+                icon="pkg:/images/playlist.png" />
+
+            <ThemedIconButton
+                id="showDescriptionButton"
+                size="75"
+                icon="pkg:/images/info.png" />
+
+        </LayoutGroup>
+
+
+        <!-- 
+            Description Label 
+
+            ****
+            titleLabel uses LargeBoldSystemFont, which is 45pts
+            font px = pts * 1.3333(3)
+            titleLabel.height will be 45 * 1.3333(3) = 59.9999(9) = 60
+            
+            25 spacing
+
+            dateLabel uses SmallestSystemFont, which is 27pts
+            font px = pts * 1.3333(3)
+            dateLabel.height = 27 * 1.3333(3) = 35.9999(9) = 36
+
+            25 spacing
+
+            button height = 75
+
+            25 spacing
+            ****
+
+            Description.top = 60 + 25 + 36 + 25 + 75 + 25 = 246
+
+            Layout.Bottom = 581
+
+            So max height = 581 - 246 = 335
+        -->
+        <Group>
+            <ThemedLabel
+                id="descriptionLabel"
+                themeColor="textOnBackground"
+                width="1534"
+                height="335"
+                vertAlign="center"
+                wrap="true"
+                ellipsizeOnBoundary="true" />
+
+            
+
+        </Group>
+
+    </children>
+  
+</component>

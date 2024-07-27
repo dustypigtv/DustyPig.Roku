@@ -22,8 +22,8 @@
     m.global.addFields({theme:  GetTheme(), defaultTheme:  GetTheme()})
 
 
-    m.global.addField("currentBasicMedia", "node", true)
-    m.global.addField("currentDetailedMedia", "node", true)
+    m.global.addField("currentBasicMedia", "node", false)
+    m.global.addField("currentDetailedMedia", "node", false)
 
     ' Store playback position separtly from currentDetailedMedia (setting it in the node causes playback to restart)
     m.global.addField("playbackPosition", "float", true)
@@ -31,17 +31,18 @@
 
     ' Multiple views will need to communicate these with each other, 
     ' so it's just easiest to observe global fields.
-    m.global.addField("addToContinueWatching", "node", true)
-    m.global.addField("removeFromContinueWatching", "string", true)
-    m.global.addField("addToWatchlist", "node", true)
-    m.global.addField("removeFromWatchlist", "string", true)
+    m.global.addField("addToContinueWatching", "boolean", true)
+    m.global.addField("removeFromContinueWatching", "boolean", true)
+    m.global.addField("addToWatchlist", "boolean", true)
+    m.global.addField("removeFromWatchlist", "boolean", true)
     m.global.addField("addPlaylist", "boolean", true)
-    m.global.addField("removePlaylist", "string", true)
+    m.global.addField("removePlaylist", "boolean", true)
 
 
     
     ' Start Playback with this ContentNode
     m.global.addField("startVideoPlayback", "boolean", true)
+    
 
    
     ' BaseScene will monitor these, and when 

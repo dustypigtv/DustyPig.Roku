@@ -1,0 +1,363 @@
+' viewType:
+'   1 = Movie
+'   2 = Series
+'   4 = Episode
+
+Sub Init()
+
+    ' Init properties for this
+     m.top.itemSpacings=[25]
+
+
+    ' Node references
+    m.titleLabel = m.top.findNode("titleLabel")
+
+    m.detailsLayoutGroup = m.top.findNode("detailsLayoutGroup")
+    m.dateLabel = m.detailsLayoutGroup.findNode("dateLabel")
+    m.ratedLabel = m.detailsLayoutGroup.findNode("ratedLabel")
+    m.genresLabel = m.detailsLayoutGroup.findNode("genresLabel")
+
+    m.buttonLayoutGroup = m.top.findNode("buttonLayoutGroup")
+    m.requestButton = m.buttonLayoutGroup.findNode("requestButton")
+    m.playButton = m.buttonLayoutGroup.findNode("playButton")
+    m.resumeButton = m.buttonLayoutGroup.findNode("resumeButton")
+    m.markWatchedButton = m.buttonLayoutGroup.findNode("markWatchedButton")
+    m.watchlistButton = m.buttonLayoutGroup.findNode("watchlistButton")
+    m.addToPlaylistButton = m.buttonLayoutGroup.findNode("addToPlaylistButton")
+    m.showDescriptionButton = m.buttonLayoutGroup.findNode("showDescriptionButton")
+
+    m.descriptionLabel = m.top.findNode("descriptionLabel")
+
+
+
+    ' Focus tracking
+    m.lastFocused = invalid
+    m.requestButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.playButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.resumeButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.markWatchedButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.watchlistButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.addToPlaylistButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.showDescriptionButton.observeField("focusedChild", "OnButton_FocusChanged")
+    m.top.observeField("resetFocusTracking", "OnThis_ResetFocusTracking")
+    
+    
+    ' Observers
+    m.top.observeField("movieView", "OnThis_UpdateControls")
+    m.top.observeField("focusedChild", "OnThis_FocusedChild")
+    
+    m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
+    m.playButton.observeField("buttonSelected", "OnPlayButton_Selected")
+    m.resumeButton.observeField("buttonSelected", "OnResumeButton_Selected")
+    m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchedButton_Selected")
+    m.watchlistButton.observeField("buttonSelected", "OnWatchlistButton_Selected")
+    m.addToPlaylistButton.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
+    m.showDescriptionButton.observeField("buttonSelected", "OnShowDescriptionButton_Selected")
+    
+    m.global.observeField("currentDetailedMedia", "OnGlobal_CurrentDetailedMediaChanged")
+    m.global.observeField("addToContinueWatching", "OnThis_UpdateControls")
+    
+
+    ' Actions
+    m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
+    m.toggleWatchlistTask = CreateObject("roSGNode", "ToggleWatchlistTask")
+
+
+End Sub
+
+
+
+
+
+' ********** FOCUS TRACKING **********
+
+Sub OnThis_ResetFocusTracking()
+
+    m.lastFocused = invalid
+
+End Sub
+
+Sub OnButton_FocusChanged(event as object)
+
+    node = event.getRoSGNode()
+    if node = invalid then return
+    if node.isInFocusChain() then m.lastFocused = node
+
+End Sub
+
+
+Sub OnThis_FocusedChild(event as object)
+
+    ' Only respond when this entire layoutgroup gets the focus
+    node = event.getData()
+    if node = invalid then return
+    if node.id <> m.top.id then return
+
+    cnt = m.buttonLayoutGroup.getChildCount()
+
+        
+    if m.lastFocused <> invalid then
+        ' print "*** " + m.lastFocused.id + " ***"
+        for i = 0 to cnt - 1
+            node = m.buttonLayoutGroup.getChild(i)
+            if node.id = m.lastFocused.id then
+                if not node.isInFocusChain() then node.setFocus(true)
+                return
+            end if
+        next
+    end if
+
+    if cnt > 1 and m.buttonLayoutGroup.getChild(1).id = m.resumeButton.id then 
+        m.resumeButton.setFocus(true)
+    else if cnt > 0
+        m.buttonLayoutGroup.getChild(0).setFocus(true)
+    else
+        m.lastFocused = invalid
+    end if
+
+End Sub
+
+
+
+' ********** BUTTON CLICKS **********
+Sub OnRequestButton_Selected()
+
+End Sub
+
+Sub OnPlayButton_Selected()
+
+    m.global.currentDetailedMedia.playStart = 0.0
+    m.global.startVideoPlayback = true
+
+End Sub
+
+Sub OnResumeButton_Selected()
+
+    m.global.startVideoPlayback = true
+    
+End Sub
+
+Sub OnMarkWatchedButton_Selected()
+
+    m.markMovieWatchedTask.id = m.global.currentDetailedMedia.id
+    m.markMovieWatchedTask.control = "run"
+
+    m.global.removeFromContinueWatching = true
+    m.global.currentDetailedMedia.setFields({playStart: 0})
+
+    btns = [m.playButton, m.watchlistButton, m.addToPlaylistButton]
+    if m.descriptionLabel.isTextEllipsized then btns.push(m.showDescriptionButton)
+    SetChildren(m.buttonLayoutGroup, btns)
+    m.playButton.setFocus(true)
+        
+End Sub
+
+Sub OnWatchlistButton_Selected()
+
+    detailedMedia = m.global.currentDetailedMedia
+    del = detailedMedia.inWatchList ?? false
+
+    if del then
+        m.global.removeFromWatchlist = true
+    else
+        m.global.addToWatchlist = true
+    end if
+
+    detailedMedia.inWatchList = not del
+    SetWatchlistIcon(not del)
+
+    m.toggleWatchlistTask.control = "stop"
+    m.toggleWatchlistTask.add = not del
+    m.toggleWatchlistTask.id = detailedMedia.id
+    m.toggleWatchlistTask.control = "run"
+
+End Sub
+
+Sub OnAddToPlaylistButton_Selected()
+
+End Sub
+
+Sub OnShowDescriptionButton_Selected()
+
+End Sub
+
+
+
+
+' ********** UPDATE TRIGGERS **********
+
+Sub OnGlobal_CurrentDetailedMediaChanged()
+
+    detailedMedia = m.global.currentDetailedMedia
+        
+    if detailedMedia = invalid then return
+    if detailedMedia.contentType <> m.top.viewType then return
+
+    m.lastFocused = invalid
+    OnThis_UpdateControls()
+
+End Sub
+
+
+Sub OnThis_UpdateControls()
+
+    detailedMedia = m.global.currentDetailedMedia
+    
+    if detailedMedia = invalid then return
+    if detailedMedia.contentType <> m.top.viewType then return
+    
+    m.titleLabel.text = detailedMedia.title
+    m.descriptionLabel.text = detailedMedia.description
+
+    if m.top.viewType = 1 then
+
+        ' Movie
+        
+        SetChildren(m.detailsLayoutGroup, [m.dateLabel, m.ratedLabel, m.genresLabel])
+        
+        m.dateLabel.text = detailedMedia.secondaryTitle
+        
+        rated = detailedMedia.rating
+        if not (rated = "Not Rated" or rated = "Unrated") then rated = "Rated: " + rated
+        m.ratedLabel.text = rated
+
+        m.genresLabel.text = detailedMedia.genres
+
+        if detailedMedia.canPlay then
+
+            btns = [m.playButton]
+            if detailedMedia.length > 0 and detailedMedia.playStart > 0 then 
+                btns.push(m.resumeButton)
+                btns.push(m.markWatchedButton)
+            end if
+            btns.push(m.watchlistButton)
+            btns.push(m.addToPlaylistButton)
+            SetChildren(m.buttonLayoutGroup, btns)
+
+            SetWatchlistIcon(detailedMedia.inWatchList)
+
+        else
+
+            SetChildren(m.buttonLayoutGroup, [m.requestButton])
+
+        end if
+
+        
+    else if m.top.viewType = 2 then
+
+        ' Series
+
+        SetChildren(m.detailsLayoutGroup, [m.ratedLabel, m.genresLabel])
+
+        rated = detailedMedia.rating
+        if not (rated = "Not Rated" or rated = "Unrated") then rated = "Rated: " + rated
+        m.ratedLabel.text = rated
+
+        m.genresLabel.text = detailedMedia.genres
+
+        if detailedMedia.canPlay then
+
+            btns = [m.playButton]
+            if detailedMedia.upNextIdx > 0 or detailedMedia.episodes.getChild(detailedMedia.upNextIdx).playStart > 0 then
+                btns.push(m.resumeButton)
+                btns.push(m.markWatchedButton)
+            end if
+            btns.push(m.watchlistButton)
+            btns.push(m.addToPlaylistButton)
+            SetChildren(m.buttonLayoutGroup, btns)
+
+            SetWatchlistIcon(detailedMedia.inWatchList)
+
+        else
+
+            SetChildren(m.buttonLayoutGroup, [m.requestButton])
+
+        end if
+
+        
+
+    else if m.top.viewType = 4 then
+
+        ' Episode
+
+        SetChildren(m.detailsLayoutGroup, [m.dateLabel])
+        m.dateLabel.text = detailedMedia.date
+
+    end if
+
+End Sub
+
+
+
+
+
+
+
+' ********** KEY PRESSES **********
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    if not press then return false
+
+    if key = "left" then
+        for i = 1 to m.buttonLayoutGroup.getChildCount() - 1
+            if m.buttonLayoutGroup.getChild(i).isInFocusChain() then 
+                m.buttonLayoutGroup.getChild(i - 1).setFocus(true)
+                return true
+            end if
+        next
+    end if
+
+    if key = "right" then
+        for i = 0 to m.buttonLayoutGroup.getChildCount() - 2
+            if m.buttonLayoutGroup.getChild(i).isInFocusChain() then
+                m.buttonLayoutGroup.getChild(i + 1).setFocus(true)
+                return true
+            end if
+        next
+    end if
+
+    return false
+
+End Function
+
+
+
+
+
+
+
+' ********** UTILITIES **********
+
+Sub SetChildren(layout, childObjects)
+
+    layoutCnt = layout.getChildCount()
+
+    resetLayout = layoutCnt <> childObjects.count()
+    if not resetLayout then
+        for i = 0 to layoutCnt - 1
+            if layout.getChild(i).id <> childObjects[i].id then
+                resetLayout = true
+                exit for
+            end if
+        end for
+    end if
+
+    if not resetLayout then return
+   
+    for i = 1 to layoutCnt
+        layout.removeChildIndex(0)
+    next
+
+    for each item in childObjects
+        layout.appendChild(item)
+    end for
+
+End Sub
+
+
+Sub SetWatchlistIcon(inWatchList as boolean)
+
+    m.watchlistButton.icon = inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
+
+End Sub

@@ -7,8 +7,8 @@
         <field id="inWatchList" type="bool" />
         <field id="seasons" type="node" />
         <field id="episodes" type="node" />
-        <field id="upNextSeason" type="string" />
-        <field id="upNextEpisode" type="string" />
+        <field id="upNextIdx" type="int" />
+        <field id="genres" type="string" />
     </interface>
 
 </component>

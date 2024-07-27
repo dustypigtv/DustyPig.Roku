@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="CastAndCrewView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/CastAndCrewView.bs" />
+
+    <interface>
+        <field id="content" type="node" alias="castCrewRowList.content" />
+    </interface>
+
+    <children>
+
+		<!-- 
+            Cast & Crew 
+            Set rowItemSize to 133x200
+            100px spacing between rows for labels padding
+
+            itemSize = 1534x281
+            BUT there is 22px padding on each side from the focusedBitmap, 
+            so drop down to 1512x281
+
+            label on right is 1000
+            itemSize = 1512 - 1000 = 512
+        -->
+        <ThemedRowList
+            id="castCrewRowList"
+            rowitemSize="[[133,200]]"
+            rowItemSpacing= "[[20,0]]"
+            itemSize= "[1512,281]"
+            numRows="5"
+            rowLabelOffset= "[[0,10]]"
+            showRowLabel= "[true]"
+            rowFocusAnimationStyle= "fixedFocus"
+            vertFocusAnimationStyle="fixedFocus"
+            loadingBitmapUri="pkg:/images/grey_profile.png"
+            failedBitmapUri="pkg:/images/grey_profile.png"/>
+
+
+        <ThemedLabel 
+            id="selectedPersonLabel"
+            themeColor="textOnBackground"
+            font="font:SmallestSystemFont"
+            width="1000"
+            numLines="1"
+            wrap="true"
+            horizAlign="right"
+            ellipsizeOnBoundary="true"
+            translation="[512,0]" />
+
+        
+	</children>
+
+</component>

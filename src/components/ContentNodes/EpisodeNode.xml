@@ -2,11 +2,12 @@
 <component name="EpisodeNode" extends="BasicMediaNode">
     
     <interface>
-        <field id="upNext" type="bool" />
         <field id="introStartTime" type="float" />
         <field id="introEndTime" type="float" />
         <field id="creditsStartTime" type="float" />
         <field id="header" type="string" />
+        <field id="seasonNum" type="int" />
+        <field id="episodeNum" type="int" />
     </interface>
 
 </component>

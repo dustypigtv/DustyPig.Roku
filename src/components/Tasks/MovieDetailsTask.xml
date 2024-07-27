@@ -14,7 +14,6 @@
 		<!-- Output from task -->
 		<field id="success" type="boolean" alwaysNotify="true" />
 		<field id="data" type="node" />
-		<field id="playbackPosition" type="float" />
 		<field id="error" type="string" />
     </interface>
 </component>

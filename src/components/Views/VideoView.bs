@@ -1,16 +1,66 @@
 Sub Init()
 
+    m.global.observeFieldScoped("theme", "OnThemeChanged")  
+    OnThemeChanged()
+
     m.top.notificationInterval = 0.5 ' Shortest allowed
     m.lastPosition = 0.0
+    m.firstUpdateDone = false
 
     m.updatePlaybackProgressTask = CreateObject("roSGNode", "UpdatePlaybackProgressTask")
     m.markMovieWatchedTask = createObject("roSGNode", "MarkMovieWatchedTask")
+    m.markEpisodeWatchedTask = createObject("roSGNode", "markEpisodeWatchedTask")
 
     m.top.observeField("state", "OnThis_StateChanged")
     m.top.observeField("position", "OnThis_PositionChanged")
     m.top.observeField("errorStr", "OnThis_Error")
+
+    m.global.observeField("startVideoPlayback", "OnGlobal_StartVideoPlayback")
+
     
 End sub
+
+
+Sub OnThemeChanged()
+
+    m.top.trickPlayBar.filledBarBlendColor = m.global.theme.primary
+
+End Sub
+
+
+
+
+
+
+Sub OnGlobal_StartVideoPlayback(event as object)
+
+    if not event.getData() then return
+    
+    m.top.control = "stop"
+    
+    dm = m.global.currentDetailedMedia
+
+    if dm.contentType = 1 then
+        
+        ' Movie
+        m.top.content = dm
+
+    else if dm.contentType = 2 then
+        
+        ' Series
+        m.top.content = dm.episodes.getChild(dm.upNextIdx)
+
+    end if
+        
+    m.firstUpdateDone = false
+    m.top.control = "play"
+    
+    m.global.addToContinueWatching = true
+    
+End Sub
+
+
+
 
 
 Sub OnThis_StateChanged(event as object)
@@ -30,16 +80,43 @@ Sub OnThis_StateChanged(event as object)
 
     print "VideoView:Video.State = " + state
 
-    if state = "finished" then
+    dm = m.global.currentDetailedMedia
+
+    if state = "error" then
+
+    else if state = "stopped" then
+
+        if dm.contentType = 1 then
+            dm.playStart = m.lastPosition
+        else if dm.contentType = 2 then 
+            dm.episodes.getChild(dm.upNextIdx).playStart = m.lastPosition
+        end if
+
+    else if state = "finished" then
         
-        ' Set contentType with a string, read as a number. Strange.
-        ' movie = 1
-        ' if m.top.content.contentType = 1 then
-        '     m.updatePlaybackProgressTask.control = "stop"
-        '     m.markMovieWatchedTask.id = m.top.content.id
-        '     m.markMovieWatchedTask.control = "run"
-        '     m.global.removeFromContinueWatching = m.top.content.id
-        ' end if
+        if dm.contentType = 1 then
+            
+            dm.playStart = 0.0
+            m.updatePlaybackProgressTask.control = "stop"
+            m.markMovieWatchedTask.id = dm.id
+            m.markMovieWatchedTask.control = "run"
+            m.global.removeFromContinueWatching = true
+            m.top.playbackFinished = true
+
+        else if dm.contentType = 2 then
+
+            ' Reset current ep playStart
+            dm.episodes.getChild(dm.upNextIdx).playStart = 0.0
+
+            if not TryPlayNext() then 
+                m.updatePlaybackProgressTask.control = "stop"
+                m.markEpisodeWatchedTask.id = dm.episodes.getChild(dm.upNextIdx).id
+                m.markEpisodeWatchedTask.control = "run"
+                m.global.removeFromContinueWatching = true
+                m.top.playbackFinished = true
+            end if
+
+        end if
 
     end if
 
@@ -47,30 +124,52 @@ Sub OnThis_StateChanged(event as object)
 End Sub
 
 
+Function TryPlayNext() as boolean
+
+    dm = m.global.currentDetailedMedia
+    if dm.contentType = 2 then
+        
+        if dm.upNextIdx < dm.episodes.getChildCount() - 1 then
+            dm.upNextIdx++
+            dm.episodes.getChild(dm.upNextIdx).playStart = 0.0
+            m.global.startVideoPlayback = true
+            return true
+        end if
+
+    end if
+
+    return false
+
+End Function
+
+
 Sub OnThis_PositionChanged(event as object)
 
-    ' if not m.top.visible then return
-    ' if m.top.content = invalid then return
-    ' if m.global.currentMedia = invalid then return
-    ' if m.top.content.id <> m.global.currentMedia.id then return
-    ' if m.top.state = "finished" then return
+    if not m.top.visible then return
+    if m.top.content = invalid then return
+    dm = m.global.currentDetailedMedia
+    if dm = invalid then return
+    if m.top.state = "finished" then return
 
     position = event.getData()
     print "VideoView:Postion", position
     
-    m.global.playbackPosition = position
+    ' if dm.contentType = 2 then dm.episodes.getChild(dm.upNextIdx).playStart = position
     
-    if m.lastPosition <= position - 10 or m.lastPosition > position then
+    if m.firstUpdateDone = false or abs(position - m.lastPosition) >= 10 then
         
-        m.lastPosition = position
+        if not m.firstUpdateDone then position = 1.1
 
         m.updatePlaybackProgressTask.control = "stop"
         m.updatePlaybackProgressTask.id = m.top.content.id
         m.updatePlaybackProgressTask.seconds = position
         m.updatePlaybackProgressTask.control = "run"
-        m.global.addToContinueWatching = BuildBasicMediaFromDetailed(m.top.content)
+        
+        m.firstUpdateDone = true
 
     end if
+
+    m.lastPosition = position
 
 End Sub
 

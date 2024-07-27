@@ -20,8 +20,8 @@ sub Init()
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
     m.errorDialog.title = "Error"
-    ' m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
-    ' m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialogClosed")
+    m.errorDialog.observeField("wasClosed", "OnErrorDialogClosed")
 
 
     
@@ -54,6 +54,16 @@ end sub
 
 
 
+
+
+
+
+
+
+
+
+' ********** MEDIA INFO FROM SERVER **********
+
 Sub OnThis_VisibleChanged(event as object)
     
     if event.getData() 
@@ -64,16 +74,6 @@ Sub OnThis_VisibleChanged(event as object)
     end if
 
 End Sub
-
-
-
-Sub OnThis_FocusChanged()
-
-    if m.top.isInFocusChain() then m.rowList.setFocus(true)
-
-End Sub
-
-
 
 Sub OnUpdateDataTimer_Fired()
 
@@ -88,9 +88,6 @@ Sub UpdateData()
     m.homeScreenTask.control = "run"
 
 End Sub
-
-
-
 
 Sub OnHomeScreenTask_DataAvailable()
 
@@ -175,6 +172,11 @@ Sub OnHomeScreenTask_DataAvailable()
 
 End Sub
 
+Sub OnErrorDialogClosed()
+
+    m.top.getScene().dialog = invalid
+
+End Sub
 
 
 
@@ -183,8 +185,16 @@ End Sub
 
 
 
+' ********** MEDIA DISPLAY / SELECTION **********
 
-' Fires when an item in the rowList gets focus
+
+Sub OnThis_FocusChanged()
+
+    if m.top.isInFocusChain() then m.rowList.setFocus(true)
+
+End Sub
+
+
 Sub OnRowList_ItemFocused()
 
     try
@@ -195,6 +205,9 @@ Sub OnRowList_ItemFocused()
         if idx.count() < 2 then return
         rowContent = m.rowList.content.getChild(idx[0])
         focusedItem = rowContent.getChild(idx[1])
+
+        m.global.currentBasicMedia = focusedItem
+
 
         ' Check values before changing to prevent flickering
         backdropUrl = focusedItem.backdropUrl
@@ -230,8 +243,7 @@ Sub OnRowList_ItemSelected()
     if idx.count() < 2 then return
     rowContent = m.rowList.content.getChild(idx[0])
     selContent = rowContent.getChild(idx[1])
-    m.global.currentBasicMedia = selContent
-
+    
     ' Movie = 1,
     ' Series = 2,
     ' Episode = 4
@@ -240,6 +252,17 @@ Sub OnRowList_ItemSelected()
 
 End sub
 
+
+
+
+
+
+
+
+
+
+
+' ********** GLOBAL EVENTS **********
 
 Sub OnGlobal_AddToContinueWatching()
 
@@ -258,7 +281,7 @@ Sub OnGlobal_AddToContinueWatching()
     found = false
     for i = 0 to continueWatchingSection.getChildCount() - 1
         item = continueWatchingSection.getChild(i)
-        if item.id = m.global.addToContinueWatching.id then
+        if item.id = m.global.currentBasicMedia.id then
             if i > 0 then
                 continueWatchingSection.removeChild(item)
                 continueWatchingSection.insertChild(item, 0)
@@ -267,7 +290,7 @@ Sub OnGlobal_AddToContinueWatching()
             exit for
         end if
     end for
-    if not found then continueWatchingSection.insertChild(m.global.addToContinueWatching, 0)
+    if not found then continueWatchingSection.insertChild(m.global.currentBasicMedia, 0)
 
 End Sub
 
@@ -275,14 +298,11 @@ End Sub
 Sub OnGlobal_RemoveFromContinueWatching()
 
     ' public const long ID_CONTINUE_WATCHING = -500
-    section = FindChildNode(m.rowList.content, "-500")
-    if section <> invalid then
-        item = FindChildNode(section, m.global.removeFromContinueWatching)
-        if item <> invalid then
-            section.removeChild(item)
-            if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
-        end if
-    end if
+    try
+        section = FindChildNode(m.rowList.content, "-500")
+        if section <> invalid then section.removeChild(m.global.currentBasicMedia)
+    catch e
+    end try
 
 End Sub
 
@@ -291,6 +311,9 @@ Sub OnGlobal_AddToWatchlist()
 
     ' public const long ID_CONTINUE_WATCHING = -500
     ' public const long ID_WATCHLIST = -400
+
+    bm = m.global.currentBasicMedia
+    if bm = invalid then return
 
     watchlistSection = FindChildNode(m.rowList.content, "-400")
     if watchlistSection = invalid then
@@ -307,24 +330,20 @@ Sub OnGlobal_AddToWatchlist()
         end if
     end if
     
-    item = FindChildNode(watchlistSection, m.global.addToWatchlist.id)
-    if item = invalid then watchlistSection.appendChild(m.global.addToWatchlist)
+    item = FindChildNode(watchlistSection, bm.id)
+    if item = invalid then watchlistSection.appendChild(bm.clone(true))
     
 End Sub
-
-
 
 
 Sub OnGlobal_RemoveFromWatchlist()
 
     ' public const long ID_WATCHLIST = -400
-    section = FindChildNode(m.rowList.content, "-400")
-    if section <> invalid then
-        item = FindChildNode(section, m.global.removeFromWatchlist)
-        if item <> invalid then
-            section.removeChild(item)
-            if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
-        endif        
-    end if
+    try
+        section = FindChildNode(m.rowList.content, "-400")
+        section.removeChild(m.global.currentBasicMedia)
+        if section.getChildCount() = 0 then m.rowList.content.removeChild(section)
+    catch e
+    end try
 
 End Sub

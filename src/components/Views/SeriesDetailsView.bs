@@ -17,7 +17,7 @@ Sub Init()
 
     ' Tracking focus
     m.lastFocusedControl = invalid
-    m.top.observeField("reset", "OnResetFocus")
+    m.top.observeField("reset", "OnReset")
     m.episodesOrCastCrewRowList.observeField("focusedChild", "OnFocusChanged")
 
     m.episodesOrCastCrewRowList.observeField("rowItemFocused", "OnEpisodesOrCastCrewList_ItemFocused")
@@ -37,12 +37,10 @@ Sub Init()
 
      ' Series Details task
      m.seriesDetailsTask = CreateObject("roSGNode", "SeriesDetailsTask")
-     m.seriesDetailsTask.observeField("state", "SetupView")
+     m.seriesDetailsTask.observeField("success", "SeriesDetailsTask_Complete")
  
-     ' Observers
-     m.top.observeField("visible", "SetupView")
-
-     m.global.observeField("currentBasicMedia", "OnGlobal_CurrentBasicMediaChanged")
+     ' Cache
+    m.lastBasicMediaId = invalid
 
 
 End sub
@@ -52,11 +50,33 @@ End sub
 
 ' ********** FOCUS TRACKING **********
 
-Sub OnResetFocus()
+Sub OnReset()
 
     m.lastFocusedControl = invalid
     m.mediaInfoView.resetFocusTracking = true
     m.episodesOrCastCrewRowList.jumpToItem = 0
+
+    bm = m.global.currentBasicMedia
+    if m.lastBasicMediaId = bm.id then
+        RestoreFocus()
+        return
+    end if
+
+    m.lastBasicMediaId = bm.id
+
+    m.mediaInfoView.visible = false
+    m.episodesOrCastCrewRowList.visible = false
+    m.divider.visible = false
+    m.episodesGroup.visible = false
+    m.castAndCrewView.visible = false
+
+    m.busySpinner.visible = true
+
+    m.backdropPoster.uri = bm.backdropUrl ?? ""
+
+    m.seriesDetailsTask.control = "stop"
+    m.seriesDetailsTask.id = bm.id
+    m.seriesDetailsTask.control = "run"
 
 End Sub
 
@@ -128,86 +148,47 @@ End Sub
 
 
 
-' ********** DATA UPDATE TRIGGER **********
+' ********** UPDATE VIEW TRIGGER **********
 
-Sub OnGlobal_CurrentBasicMediaChanged()
-    
-    bm = m.global.currentBasicMedia
-    if bm = invalid then return
-    if bm.contentType <> 2 then return
-
-    SetBackdrop()
-
-    m.seriesDetailsTask.control = "stop"
-    m.seriesDetailsTask.id = bm.id
-    m.seriesDetailsTask.control = "run"
-
-End Sub
-
-
-
-
-
-
-Sub SetupView()
+Sub SeriesDetailsTask_Complete()
 
     if not m.top.visible then return
 
-    SetBackdrop()
-
-    if m.seriesDetailsTask.state = "run" then
+    if m.seriesDetailsTask.success then
+    
+        dm = m.seriesDetailsTask.data
+        m.global.currentDetailedMedia = dm
+                    
+        m.mediaInfoView.visible = true
         
-        m.mediaInfoView.visible = false
-        m.episodesOrCastCrewRowList.visible = false
-        m.divider.visible = false
-        m.episodesGroup.visible = false
-        m.castAndCrewView.visible = false
 
-        m.busySpinner.visible = true
+        ' Episodes or Cast selector tabs
+        BuildEpisodesOrCastCrewNode(dm.castCrew.getChildCount() > 0)
+        m.episodesOrCastCrewRowList.visible = true
+        m.divider.visible = true
+    
+
+        ' Seasons / Episodes
+        m.seasonList.content = dm.seasons
+        m.episodesList.content = dm.episodes
+        m.episodesList.jumpToItem = dm.upNextIdx
+        SetSeason(dm.upNextIdx)
+        m.episodesGroup.visible = true
+
+
+        ' Cast & Crew
+        m.castAndCrewView.content = dm.castCrew
+        OnEpisodesOrCastCrewList_ItemFocused()
         
+        RestoreFocus()
+        
+        m.busySpinner.visible = false
+
     else
-
-        if m.seriesDetailsTask.success then
-        
-            dm = m.seriesDetailsTask.data
-            m.global.currentDetailedMedia = dm
-                        
-            m.mediaInfoView.visible = true
-            
-
-            ' Episodes or Cast selector tabs
-            BuildEpisodesOrCastCrewNode(dm.castCrew.getChildCount() > 0)
-            m.episodesOrCastCrewRowList.visible = true
-            m.divider.visible = true
-        
-
-            ' Seasons / Episodes
-            m.seasonList.content = dm.seasons
-            m.episodesList.content = dm.episodes
-            m.episodesList.jumpToItem = dm.upNextIdx
-            SetSeason(dm.upNextIdx)
-            m.episodesGroup.visible = true
-
-
-            ' Cast & Crew
-            m.castAndCrewView.content = dm.castCrew
-            OnEpisodesOrCastCrewList_ItemFocused()
-            
-            if m.lastFocusedControl = invalid then
-                m.mediaInfoView.setFocus(true)
-            else
-                m.lastFocusedControl.setFocus(true)
-            end if
-            
-            m.busySpinner.visible = false
-
-        else
-        
-            m.errorDialog.message = [m.seriesDetailsTask.error]
-            m.top.getScene().dialog = m.errorDialog
-        
-        end if
-
+    
+        m.errorDialog.message = [m.seriesDetailsTask.error]
+        m.top.getScene().dialog = m.errorDialog
+    
     end if
 
 End Sub
@@ -223,7 +204,8 @@ End Sub
 
 Sub OnErrorDialog_Closed()
 
-    m.top.getScene().dialog = invalid
+    m.errorDialog.close = true
+    m.global.popCurrentView = true
 
 End Sub
 
@@ -358,6 +340,17 @@ End Function
 
 ' ********** UTILITIES **********
 
+Sub RestoreFocus()
+
+    if m.lastFocusedControl = invalid or m.lastFocusedControl.visible = false then
+        m.mediaInfoView.setFocus(true)
+    else
+        m.lastFocusedControl.setFocus(true)
+    end if
+
+End Sub
+
+
 Sub BuildEpisodesOrCastCrewNode(includeCastCrew as boolean) 
 
     ' <ContentNode role="content">
@@ -423,13 +416,3 @@ Sub SetSeason(episodeIdx as integer)
 End Sub
 
 
-
-
-Sub SetBackdrop()
-
-    bm = m.global.currentBasicMedia
-    if bm = invalid then return
-    if bm.contentType <> 2 then return
-    m.backdropPoster.uri = bm.backdropUrl ?? ""
-    
-End Sub

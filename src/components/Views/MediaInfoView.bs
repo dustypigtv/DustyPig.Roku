@@ -175,6 +175,8 @@ End Sub
 
 Sub OnAddToPlaylistButton_Selected()
 
+    m.global.showViewWithId = "addToPlaylistView"
+
 End Sub
 
 Sub OnShowDescriptionButton_Selected()

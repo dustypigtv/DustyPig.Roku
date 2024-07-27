@@ -9,7 +9,6 @@ Sub RunTask()
 
     ' DeleteAccountToken()
 
-    ' sleep(3000)
     result = CheckAccountToken()
     if result then
         profiles = GetData("/Profiles/List", GetAccountToken())

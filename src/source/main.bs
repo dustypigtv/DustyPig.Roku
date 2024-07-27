@@ -49,6 +49,8 @@
     ' changed will change views accordingly
     m.global.addField("loggedOut", "boolean", true)
     m.global.addField("showViewWithId", "string", true)
+    m.global.addField("popCurrentView", "boolean", true)
+
     
 
     

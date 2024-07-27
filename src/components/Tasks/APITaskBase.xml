@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="APITaskBase" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+
+	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
+	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
+
+	<interface>
+
+		<!-- Input to task -->
+        <field id="id" type="string" />
+
+		<!-- Output from task -->
+		<field id="success" type="boolean" alwaysNotify="true" />
+		<field id="data" type="node" />
+		<field id="error" type="string" />
+    </interface>
+	
+</component>

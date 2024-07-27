@@ -1,0 +1,28 @@
+Sub Init()
+
+    m.top.functionName = "RunTask"
+
+End Sub
+
+Sub RunTask()
+
+    result = PostAndGetData("/Playlists/AddItem", {mediaId: m.top.mediaId, playlistId: m.top.playlistId}, m.global.profileToken)
+
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
+    if result.success then
+
+        m.top.error = invalid
+        m.top.success = true
+
+    else
+
+        m.top.error = result.error
+        m.top.success = false
+
+    end if
+
+End Sub

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="AddItemToPlaylistTask" extends="APITaskBase">
+
+	<script type="text/brightscript" uri="pkg:/components/Tasks/AddItemToPlaylistTask.bs" />
+
+    <interface>
+        <field id="playlistId" type="string" />
+        <field id="mediaId" type="string" />
+    </interface>
+		
+</component>

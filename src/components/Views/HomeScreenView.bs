@@ -235,7 +235,6 @@ Sub OnRowList_ItemFocused()
 End Sub
 
 
-' Fires when an item in the rowList is selected (ok button pressed)
 Sub OnRowList_ItemSelected()
 
     idx = m.rowList.rowItemFocused

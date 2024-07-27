@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="AddToPlaylistView" extends="Group">
+    
+    <script type = "text/brightscript" uri = "pkg:/components/Views/AddToPlaylistView.bs" />
+
+    <children>
+
+        <!--
+            Safe zone: 
+                x,y = 192,106
+                w,h = 1534,866
+        -->
+        <LayoutGroup
+            translation="[192,106]"
+            itemSpacings="[50]">
+
+            <ThemedLabel
+                width="1534"
+                horizAlign="center"
+                font="font:LargeBoldSystemFont"
+                themeColor="textOnBackground"
+                text="Add to Playlist" />
+
+            <ThemedMarkupList
+                id="list"
+                itemComponentName="ExistingPlaylistListItem"
+                itemSize="[1534,300]"
+                itemSpacing="[0,40]"
+                numRows="5"
+                focusBitmapUri="pkg:/images/focus.9.png"
+                focusFootprintBitmapUri="pkg:/images/focus.9.png"
+                drawFocusFeedbackOnTop="true" 
+                vertFocusAnimationStyle="fixedFocusWrap" />
+
+        </LayoutGroup>
+
+
+        <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<ThemedBusySpinner
+			id="busySpinner"
+			translation="[860,440]" />
+	        
+	</children>
+
+</component>

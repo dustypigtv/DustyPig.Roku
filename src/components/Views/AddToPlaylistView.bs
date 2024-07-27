@@ -1,0 +1,183 @@
+Sub Init()
+
+    m.list = m.top.findNode("list")
+    m.busySpinner = m.top.findNode("busySpinner")
+
+    m.loadPlaylistTask = createObject("roSGNode", "LoadPlaylistsTask")
+    m.loadPlaylistTask.observeField("success", "OnLoadPlaylist_DataAvailable")
+
+    m.addItemToPlaylistTask = createObject("roSGNode", "AddItemToPlaylistTask")
+    m.addItemToPlaylistTask.observeField("success", "OnAddToPlaylistTask_Complete")
+
+    m.addSeriesToPlaylistTask = createObject("roSGNode", "AddSeriesToPlaylistTask")
+    m.addSeriesToPlaylistTask.observeField("success", "OnAddToPlaylistTask_Complete")
+
+
+    ' Add new episodes dialog
+    m.addNewEpisodesDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.addNewEpisodesDialog.buttons = ["Yes", "No"]
+    m.addNewEpisodesDialog.title = "Add Series to Playlist"
+    m.addNewEpisodesDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
+    m.addNewEpisodesDialog.observeField("buttonSelected", "OnNewEpisodesDialog_ButtonSelected")
+
+
+    ' Error dialog
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Error"
+    m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
+
+
+    m.top.observeField("visible", "OnThis_VisibleChanged")
+
+End Sub
+
+
+Sub OnThis_VisibleChanged()
+
+    m.loadPlaylistTask.control = "stop"
+
+    if not m.top.visible then return
+
+    m.list.content = invalid
+    m.busySpinner.visible = true
+    m.loadPlaylistTask.control = "run"
+
+End Sub
+
+
+
+
+' ********** TASK COMPLETION **********
+
+Sub OnLoadPlaylist_DataAvailable()
+
+    if m.loadPlaylistTask.success then
+            
+        m.list.content = m.loadPlaylistTask.data
+        m.busySpinner.visible = false
+        if m.top.visible then m.list.setFocus(true)
+
+    else
+
+        m.errorDialog.message = [m.loadPlaylistTask.error]
+        m.top.getScene().dialog = m.errorDialog
+
+    end if
+
+End Sub
+
+
+Sub OnAddToPlaylistTask_Complete(event as object)
+
+    task = event.getRoSGNode()
+
+    if task.success then
+
+        m.global.popCurrentView = true
+
+    else
+
+        m.errorDialog.message = [task.error]
+        m.top.getScene().dialog = m.errorDialog
+
+    end if
+
+End Sub
+
+
+
+
+
+
+' ********** FLOW DIALOGS **********
+
+Sub OnNewEpisodesDialog_ButtonSelected(event as object)
+
+    m.addNewEpisodesDialog.close = true
+    idx = event.getData()
+
+    if idx = 2 then
+        m.list.setFocus(true)
+        return
+    end if
+
+    m.list.setFocus(false)
+    m.busySpinner.visible = true
+
+    bm = m.global.currentBasicMedia
+    playlistId = m.list.content.getChild(m.list.itemSelected).id
+
+    m.addSeriesToPlaylistTask.control = "stop"
+    m.addSeriesToPlaylistTask.playlistId = playlistId
+    m.addSeriesToPlaylistTask.mediaId = bm.id
+    m.addSeriesToPlaylistTask.addNewEpisodes = idx = 0
+    m.addSeriesToPlaylistTask.control = "run"
+
+End Sub
+
+
+
+
+
+
+
+
+
+' ********** ERROR DIALOG **********
+
+Sub OnErrorDialog_Closed()
+
+    m.top.getScene().dialog = invalid
+    m.global.popCurrentView = true
+
+End Sub
+
+
+
+
+
+
+' ********** KEY PRESSES **********
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    if not press then return false
+
+    if key = "OK" then
+
+        if m.list.hasFocus() then
+
+            ' Handle this here instead of itemSelected because in the markup list itemSelected plays the wrong ding
+            bm = m.global.currentBasicMedia
+            
+            playlistId = m.list.content.getChild(m.list.itemSelected).id
+            if playlistId = "-1" then
+
+            else if bm.contentType = 1 then
+
+                m.list.setFocus(false)
+                m.busySpinner.visible = true
+
+                m.addItemToPlaylistTask.control = "stop"
+                m.addItemToPlaylistTask.playlistId = playlistId
+                m.addItemToPlaylistTask.mediaId = bm.id
+                m.addItemToPlaylistTask.control = "run"
+
+            else if bm.contentType = 2 then
+
+                m.top.getScene().dialog = m.addNewEpisodesDialog
+
+            end if
+            
+            return true
+            
+        end if
+
+    end if
+
+
+    return false
+
+End Function
+

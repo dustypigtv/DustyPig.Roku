@@ -38,6 +38,10 @@ Sub Init()
     m.seriesDetailsView = m.top.findNode("seriesDetailsView")
     m.allViews.seriesDetailsView = m.seriesDetailsView
 
+    ' Add to Playlist View
+    m.addToPlaylistView = m.top.findNode("addToPlaylistView")
+    m.allViews.addToPlaylistView = m.addToPlaylistView
+
     
     ' Video View
     m.videoView = m.top.findNode("videoView")
@@ -48,6 +52,7 @@ Sub Init()
     ' Observe Globals
     m.global.observeField("loggedOut", "OnGlobal_LoggedOut")
     m.global.observeField("showViewWithId", "OnGlobal_ShowViewWithId")
+    m.global.observeField("popCurrentView", "HideTopView")
     m.global.observeField("startVideoPlayback", "OnGlobal_StartVideoPlayback")
 
 

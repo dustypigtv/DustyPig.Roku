@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="AddSeriesToPlaylistTask" extends="APITaskBase">
+
+	<script type="text/brightscript" uri="pkg:/components/Tasks/AddSeriesToPlaylistTask.bs" />
+
+    <interface>
+        <field id="playlistId" type="string" />
+        <field id="mediaId" type="string" />
+        <field id="addNewEpisodes" type="bool" />
+    </interface>
+		
+</component>

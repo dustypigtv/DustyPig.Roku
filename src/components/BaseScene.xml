@@ -37,6 +37,10 @@
 		<SeriesDetailsView
 			id="seriesDetailsView"
 			visible="false" />
+
+		<AddToPlaylistView
+			id="addToPlaylistView"
+			visible="false" />
 	
 		<VideoView
         	id = "videoView"

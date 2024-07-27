@@ -1,0 +1,50 @@
+Sub Init()
+
+    m.top.functionName = "RunTask"
+
+End Sub
+
+Sub RunTask()
+
+    url = "/Playlists/List"
+
+    result = GetData(url, m.global.profileToken)
+
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
+    if result.success then
+
+        data = createObject("roSGNode", "ContentNode")
+        for each srcPlaylist in result.data
+            data.createChild("ContentNode").setFields({
+                id: srcPlaylist.id.ToStr(),
+                sdGridPosterUrl: srcPlaylist.artworkUrl,
+                hdGridPosterUrl: srcPlaylist.artworkUrl,
+                fhdGridPosterUrl: srcPlaylist.artworkUrl,
+                title: srcPlaylist.name
+            })
+        end for
+
+        data.createChild("ContentNode").setFields({
+            id: "-1",
+            sdGridPosterUrl: "pkg:/images/new_playlist.png",
+            hdGridPosterUrl: "pkg:/images/new_playlist.png",
+            fhdGridPosterUrl: "pkg:/images/new_playlist.png",
+            title: "Create a New Playlist"
+        })
+
+        m.top.data = data
+        m.top.success = true
+
+    else
+
+        m.top.data = invalid
+        m.top.error = result.error
+        m.top.success = false
+
+    end if        
+
+End Sub

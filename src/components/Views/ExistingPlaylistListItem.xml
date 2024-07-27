@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ExistingPlaylistListItem" extends="LayoutGroup">
+
+	<!--
+
+		For some reason ThemedLabel doesn't work here.
+		Probably something to do with how it's initialized.
+
+		So manually set label text colors
+	-->
+
+	<script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+				m.top.layoutDirection="horiz"
+				m.top.itemSpacings=[25]
+
+				m.poster = m.top.findNode("poster")
+				m.title = m.top.findNode("title")
+
+				m.top.observeField("itemContent", "OnItemContent_Changed")
+
+				m.global.observeFieldScoped("theme", "OnThemeChanged")  
+                OnThemeChanged()
+                            
+            End Sub
+
+			Sub OnItemContent_Changed()
+
+				m.poster.uri = m.top.itemContent.fhdGridPosterUrl
+				if m.top.itemContent.id = "-1" then
+					m.poster.blendColor = m.global.theme.primary
+				else
+					m.poster.blendColor = "0xFFFFFFFF"
+				end if
+				
+				m.title.text = m.top.itemContent.title
+
+			End Sub
+
+			 Sub OnThemeChanged()
+
+                m.title.color = m.global.theme.textOnBackground
+				
+            End Sub
+			            
+        ]]>
+    </script>
+
+	<interface>
+    	<field id="itemContent" type="node" alwaysNotify="true" />
+  	</interface>
+  	
+	<children>
+
+		<!-- 
+			This size is [1534,300]
+		-->
+
+		<Poster 
+			id="poster"
+			Width="200"
+			Height="300"
+			loadDisplayMode="scaleToZoom" />		
+				
+		<!-- 
+			1534(W) - 200(Poster.W) - 25(Spacing) = 1309 
+		-->
+		<Label 
+			id="title"
+			width="1309"
+			height="300"
+			vertAlign="center"
+			wrap="true"
+			ellipsizeOnBoundary="true"
+			font="font:LargeSystemFont" />
+
+	</children>
+	
+</component>

@@ -69,13 +69,13 @@ Sub OnGlobal_CurrentBasicMediaChanged()
     if bm = invalid then return
     if bm.contentType <> 1 then return
 
+    Setbackdrop()
+    
     m.movieDetailsTask.control = "stop"
     m.movieDetailsTask.id = bm.id
     m.movieDetailsTask.control = "run"
 
 End Sub
-
-
 
 
 
@@ -88,12 +88,10 @@ Sub SetupView()
 
     if not m.top.visible then return
 
+    SetBackdrop()
+
     if m.movieDetailsTask.state = "run" then
-
-        bm = m.global.currentBasicMedia
-        backdrop = bm.backdropUrl ?? ""
-        if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
-
+        
         m.mediaInfoView.visible = false
         m.castAndCrewView.visible = false
         m.busySpinner.visible = true
@@ -105,9 +103,6 @@ Sub SetupView()
             dm = m.movieDetailsTask.data
             m.global.currentDetailedMedia = dm
 
-            backdrop = dm.backdropUrl ?? ""
-            if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
-                        
             m.castAndCrewView.content = dm.castCrew
             m.castAndCrewView.visible = dm.castCrew.getChildCount() > 0
             
@@ -180,3 +175,20 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     return false
 
 End Function
+
+
+
+
+
+
+' ********** UTILITIES **********
+
+
+Sub SetBackdrop()
+
+    bm = m.global.currentBasicMedia
+    if bm = invalid then return
+    if bm.contentType <> 1 then return
+    m.backdropPoster.uri = bm.backdropUrl ?? ""
+    
+End Sub

@@ -96,7 +96,6 @@ Sub OnHomeScreenTask_DataAvailable()
 
     if m.homeScreenTask.success then
     
-        m.rowList.numRows = m.homeScreenTask.data.getChildCount()
         if m.rowList.content = invalid then 
             
             m.rowList.content = m.homeScreenTask.data

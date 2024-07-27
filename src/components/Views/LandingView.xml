@@ -5,18 +5,6 @@
    
     <children>
 
-		<Poster
-            id="backdropPoster"
-            loadWidth="1920"
-            loadHeight="1080"
-            loadDisplayMode="scaleToZoom" />
-
-		<!-- Dimmer -->
-        <Rectangle
-            width="1920"
-            height="1080"
-            color="#00000080" />
-	
 		<!-- 
 			Spinner images are 200x200
 			Screen is 1920x1024
@@ -34,7 +22,7 @@
             Translate this 100 px down the y axis.
             Add another 50 for spacing
         -->
-        <ThemedLabel
+        <Label
             id="busyLabel"
             themeColor="textOnBackground"
             text="The Pig is gettin' Dusty"

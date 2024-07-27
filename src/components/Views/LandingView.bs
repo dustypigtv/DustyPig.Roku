@@ -1,11 +1,6 @@
 sub Init()
 
-    m.busySpinner = m.top.findNode("busySpinner")
-    m.backdropPoster = m.top.findNode("backdropPoster")
+    m.top.findNode("busySpinner").poster.blendColor = m.global.defaultTheme.primary
+    m.top.findNode("busyLabel").color = m.global.defaultTheme.textOnBackground
     
-    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-
-    ' r = rnd(12)
-    ' m.backdropPoster.uri = `pkg:/images/pig_${r}.png`
-
 end sub

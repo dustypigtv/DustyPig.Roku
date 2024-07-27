@@ -136,6 +136,8 @@ Sub OnGlobal_CurrentBasicMediaChanged()
     if bm = invalid then return
     if bm.contentType <> 2 then return
 
+    SetBackdrop()
+
     m.seriesDetailsTask.control = "stop"
     m.seriesDetailsTask.id = bm.id
     m.seriesDetailsTask.control = "run"
@@ -151,12 +153,10 @@ Sub SetupView()
 
     if not m.top.visible then return
 
+    SetBackdrop()
+
     if m.seriesDetailsTask.state = "run" then
-
-        bm = m.global.currentBasicMedia
-        backdrop = bm.backdropUrl ?? ""
-        if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
-
+        
         m.mediaInfoView.visible = false
         m.episodesOrCastCrewRowList.visible = false
         m.divider.visible = false
@@ -171,9 +171,6 @@ Sub SetupView()
         
             dm = m.seriesDetailsTask.data
             m.global.currentDetailedMedia = dm
-
-            backdrop = dm.backdropUrl ?? ""
-            if m.backdropPoster.uri <> backdrop then m.backdropPoster.uri = backdrop
                         
             m.mediaInfoView.visible = true
             
@@ -423,4 +420,16 @@ Sub SetSeason(episodeIdx as integer)
         end if
     next
 
+End Sub
+
+
+
+
+Sub SetBackdrop()
+
+    bm = m.global.currentBasicMedia
+    if bm = invalid then return
+    if bm.contentType <> 2 then return
+    m.backdropPoster.uri = bm.backdropUrl ?? ""
+    
 End Sub

@@ -109,6 +109,7 @@
        		itemSize= "[1770,400]"
        		rowLabelOffset= "[[0,10]]"
        		showRowLabel= "[true]"
+            numRows="3"
        		rowFocusAnimationStyle= "fixedFocusWrap"
        		vertFocusAnimationStyle="fixedFocusWrap"
        		failedBitmapUri = "pkg:/images/failed_poster.jpg"

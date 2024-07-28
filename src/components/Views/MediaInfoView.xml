@@ -87,11 +87,6 @@
                 size="75"
                 icon="pkg:/images/playlist.png" />
 
-            <ThemedIconButton
-                id="showDescriptionButton"
-                size="75"
-                icon="pkg:/images/info.png" />
-
         </LayoutGroup>
 
 

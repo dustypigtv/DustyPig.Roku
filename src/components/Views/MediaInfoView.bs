@@ -24,7 +24,6 @@ Sub Init()
     m.markWatchedButton = m.buttonLayoutGroup.findNode("markWatchedButton")
     m.watchlistButton = m.buttonLayoutGroup.findNode("watchlistButton")
     m.addToPlaylistButton = m.buttonLayoutGroup.findNode("addToPlaylistButton")
-    m.showDescriptionButton = m.buttonLayoutGroup.findNode("showDescriptionButton")
 
     m.descriptionLabel = m.top.findNode("descriptionLabel")
 
@@ -38,7 +37,6 @@ Sub Init()
     m.markWatchedButton.observeField("focusedChild", "OnButton_FocusChanged")
     m.watchlistButton.observeField("focusedChild", "OnButton_FocusChanged")
     m.addToPlaylistButton.observeField("focusedChild", "OnButton_FocusChanged")
-    m.showDescriptionButton.observeField("focusedChild", "OnButton_FocusChanged")
     m.top.observeField("resetFocusTracking", "OnThis_ResetFocusTracking")
     
     
@@ -52,7 +50,6 @@ Sub Init()
     m.markWatchedButton.observeField("buttonSelected", "OnMarkWatchedButton_Selected")
     m.watchlistButton.observeField("buttonSelected", "OnWatchlistButton_Selected")
     m.addToPlaylistButton.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
-    m.showDescriptionButton.observeField("buttonSelected", "OnShowDescriptionButton_Selected")
     
     m.global.observeField("currentDetailedMedia", "OnGlobal_CurrentDetailedMediaChanged")
     m.global.observeField("addToContinueWatching", "OnThis_UpdateControls")
@@ -146,7 +143,6 @@ Sub OnMarkWatchedButton_Selected()
     m.global.currentDetailedMedia.setFields({playStart: 0})
 
     btns = [m.playButton, m.watchlistButton, m.addToPlaylistButton]
-    if m.descriptionLabel.isTextEllipsized then btns.push(m.showDescriptionButton)
     SetChildren(m.buttonLayoutGroup, btns)
     m.playButton.setFocus(true)
         
@@ -179,9 +175,7 @@ Sub OnAddToPlaylistButton_Selected()
 
 End Sub
 
-Sub OnShowDescriptionButton_Selected()
 
-End Sub
 
 
 

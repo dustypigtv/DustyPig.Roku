@@ -4,7 +4,7 @@
 	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
-	<script type="text/brightscript" uri="pkg:/components/Tasks/HomeScreenTask.bs" />
+	<script type="text/brightscript" uri="HomeScreenTask.bs" />
 	
 	<interface>
         <field id="success" type="bool" value="false" alwaysNotify="true" />

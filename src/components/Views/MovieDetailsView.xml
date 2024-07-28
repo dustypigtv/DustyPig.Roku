@@ -2,7 +2,7 @@
 <component name="MovieDetailsView" extends="Group">
     
     <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
-    <script type = "text/brightscript" uri = "pkg:/components/Views/MovieDetailsView.bs" />
+    <script type = "text/brightscript" uri = "MovieDetailsView.bs" />
    
     <interface>
         <field id="reset" type="bool" alwaysNotify="true" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="LoginProfileView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/LoginProfileView.bs" />
+    <script type = "text/brightscript" uri = "LoginProfileView.bs" />
 
     <children>
 

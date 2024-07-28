@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="MainView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/MainView.bs" />
+    <script type = "text/brightscript" uri = "MainView.bs" />
 
 	
     <children>

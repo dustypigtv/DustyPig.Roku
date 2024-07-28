@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="CastAndCrewView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/CastAndCrewView.bs" />
+    <script type = "text/brightscript" uri = "CastAndCrewView.bs" />
 
     <interface>
         <field id="content" type="node" alias="castCrewRowList.content" />

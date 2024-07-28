@@ -2,7 +2,7 @@
 <component name="VideoView" extends="Video">
     
     <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
-    <script type = "text/brightscript" uri = "pkg:/components/Views/VideoView.bs" />
+    <script type = "text/brightscript" uri = "VideoView.bs" />
 
     <interface>
         <field id="playbackFinished" type="bool" alwaysNotify="true" />

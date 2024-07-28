@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="SeriesDetailsView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/SeriesDetailsView.bs" />
+    <script type = "text/brightscript" uri = "SeriesDetailsView.bs" />
    
     <interface>
         <field id="reset" type="bool" alwaysNotify="true" />

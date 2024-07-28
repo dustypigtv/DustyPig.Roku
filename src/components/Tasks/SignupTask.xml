@@ -5,7 +5,7 @@
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
-	<script type="text/brightscript" uri="pkg:/components/Tasks/SignUpTask.bs" />
+	<script type="text/brightscript" uri="SignUpTask.bs" />
 	
 	<interface>
         <field id="displayName" type="string" />

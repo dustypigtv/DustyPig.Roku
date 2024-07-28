@@ -2,7 +2,7 @@
 <component name="MediaInfoView" extends="LayoutGroup">
     
     <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
-    <script type = "text/brightscript" uri = "pkg:/components/Views/MediaInfoView.bs" />
+    <script type = "text/brightscript" uri = "MediaInfoView.bs" />
 
     <interface>
         <field id="viewType" type="int" alwaysNotify="true" />

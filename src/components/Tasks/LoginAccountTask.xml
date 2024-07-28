@@ -5,7 +5,7 @@
 	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
-	<script type="text/brightscript" uri="pkg:/components/Tasks/LoginAccountTask.bs" />
+	<script type="text/brightscript" uri="LoginAccountTask.bs" />
 	
 	<interface>
         <field id="email" type="string" />

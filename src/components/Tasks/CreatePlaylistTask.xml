@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="CreatePlaylistTask" extends="APITaskBase">
 
-	<script type="text/brightscript" uri="pkg:/components/Tasks/CreatePlaylistTask.bs" />
+	<script type="text/brightscript" uri="CreatePlaylistTask.bs" />
 
     <interface>
         <field id="mediaId" type="string" />

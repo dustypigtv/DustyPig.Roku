@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="HomeScreenView" extends="Group">
     
-    <script type = "text/brightscript" uri = "pkg:/components/Views/HomeScreenView.bs" />
+    <script type = "text/brightscript" uri = "HomeScreenView.bs" />
     <script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
 	
 	<children>

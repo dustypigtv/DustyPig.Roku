@@ -18,7 +18,11 @@ Sub Init()
     ' Tracking focus
     m.lastFocusedControl = invalid
     m.top.observeField("reset", "OnReset")
+    m.mediaInfoView.observeField("focusedChild", "OnFocusChanged")
     m.episodesOrCastCrewRowList.observeField("focusedChild", "OnFocusChanged")
+    m.seasonList.observeField("focusedChild", "OnFocusChanged")
+    m.episodesList.observeField("focusedChild", "OnFocusChanged")
+
 
     m.episodesOrCastCrewRowList.observeField("rowItemFocused", "OnEpisodesOrCastCrewList_ItemFocused")
 

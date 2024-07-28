@@ -117,7 +117,8 @@
 
             So max height = 581 - 246 = 335
         -->
-        <Group>
+        <Group focusable="true">
+
             <ThemedLabel
                 id="descriptionLabel"
                 themeColor="textOnBackground"

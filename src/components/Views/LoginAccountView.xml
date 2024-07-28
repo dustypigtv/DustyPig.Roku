@@ -12,15 +12,15 @@
         -->
 
 		
-		<Label
+		<ThemedLabel
 			id="headerLabel"
 			font="font:LargeBoldSystemFont"
 			text = "Sign In to Dusty Pig"
-            color="#DBD160"
 			horizAlign = "center"
 			vertAlign = "center"
 			width="1000"
-			translation="[460,200]" />
+			translation="[460,200]"
+			themeColor="textOnBackground" />
 
 		<TextEditBox
 			id="emailTextBox"
@@ -37,40 +37,26 @@
 			width="1000"
 			translation="[460,400]" />
 
+		<ThemedButton
+			id="forgotPasswordButton"
+			translation="[460,500]"
+			width="450"
+			height="75"
+			text="Forgot Password" />
 		
-		<Button
+		<ThemedButton
 			id="loginAccountButton"
 			translation="[1160,500]"
-			minWidth="300"
-			maxWidth="300"
+			width="300"
 			height="75"
-			showFocusFootprint="true"
-			iconUri=""
-			focusedIconUri="">
-			<Label 
-				height="75" 
-				width="300" 
-				text="Sign In"
-				vertAlign="center" 
-				horizAlign="center" />
-		</Button>
+			text="Sign In" />
 
-		<Button
+		<ThemedButton
 			id="signUpButton"
 			translation="[460,700]"
-			minWidth="1000"
-			maxWidth="1000"
-			height="75"
-			showFocusFootprint="true"
-			iconUri=""
-			focusedIconUri="">
-			<Label 
-				height="75" 
-				width="1000" 
-				text="Don't have an account?   Sign Up"
-				vertAlign="center" 
-				horizAlign="center" />
-		</Button>
+			width="1000"
+			height="75" 
+			text="Don't have an account?   Sign Up" />
 
 
         <!-- 
@@ -79,7 +65,7 @@
 			centerx = (1920 - 200) / 2 = 860
 			centery = (1080 - 200) / 2 = 440
 		-->
-        <BusySpinner
+        <ThemedBusySpinner
   		 	id="busySpinner"
 			uri="pkg:/images/spinner.png"
 			translation="[860,440]"

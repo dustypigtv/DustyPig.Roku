@@ -9,22 +9,12 @@ sub Init()
     m.signUpButton = m.top.findNode("signUpButton")
     m.busySpinner = m.top.findNode("busySpinner")
 
-
-    ' Init controls
-    m.headerLabel.color = m.global.defaultTheme.textOnBackground
-    m.headerLabel.visible = true
-
-    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    
-    m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+   
     m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountButton_Selected")
-
-    m.signUpButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
     m.signUpButton.observeField("buttonSelected", "OnSignUpButton_Selected")
 
 
 
-    
     ' Build keyboard dialog
     m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
     m.keyboardDialog.buttons=["Cancel","OK"]
@@ -187,7 +177,7 @@ End Sub
 
 Sub OnLoginAccountButton_Selected()
 
-    m.top.showViewWithId = "loginAccountView"
+    m.global.showViewWithId = "loginAccountView"
 
 End sub
 
@@ -204,6 +194,8 @@ Sub OnSignUpButton_Selected()
     m.signUpTask.control = "RUN"
 
 End Sub
+
+
 
 Function GetCredentials() as object
 
@@ -247,7 +239,10 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
     if not press then return false
 
-    if key = "back" then return true
+    if key = "back" then 
+        OnLoginAccountButton_Selected()
+        return true
+    end if
 
     if key = "up" then
         if m.emailTextBox.hasFocus() then

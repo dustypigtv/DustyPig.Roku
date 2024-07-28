@@ -100,6 +100,22 @@ function CheckAccountToken() as boolean
 end function
 
 
+function SendPasswordResetEmail(email as string) as object
+
+    response = fetch({
+        url: GetUrl("/Auth/SendPasswordResetEmail"),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: FormatJson({"value": email})
+    })
+
+    ret = BuildResult(response)
+
+    return ret
+
+end function
+
 function Login(email as string, password as string) as object
 
     di=createobject("roDeviceInfo")

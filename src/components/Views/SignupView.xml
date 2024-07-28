@@ -12,11 +12,11 @@
         -->
 
 		
-		<Label
+		<ThemedLabel
 			id="headerLabel"
 			font="font:LargeBoldSystemFont"
 			text = "Sign Up For Dusty Pig"
-            color="#DBD160"
+            themeColor="textOnBackground"
 			horizAlign = "center"
 			vertAlign = "center"
 			width="1000"
@@ -53,41 +53,21 @@
 			Button width = 300 so left edge = 1160
 			1160 - 30 - 1130
 		 -->
-		<Button
+		<ThemedButton
 			id="signUpButton"
 			translation="[1160,600]"
-			minWidth="300"
-			maxWidth="300"
+			width="300"
 			height="75"
 			showFocusFootprint="true"
-			iconUri=""
-			focusedIconUri=""
-			focusBitmapUri="pkg://images/maggie_pink.bmp">
-			<Label 
-				height="75" 
-				width="300" 
-				text="Sign Up"
-				vertAlign="center" 
-				horizAlign="center" />
-		</Button>
+			text="Sign Up" />
 
-		<Button
+		<ThemedButton
 			id="loginAccountButton"
 			translation="[460,800]"
-			minWidth="1000"
-			maxWidth="1000"
+			width="1000"
 			height="75"
 			showFocusFootprint="true"
-			iconUri=""
-			focusedIconUri=""
-			focusBitmapUri="pkg://images/maggie_pink.bmp">
-			<Label 
-				height="75" 
-				width="1000" 
-				text="Already have an account?   Sign In"
-				vertAlign="center" 
-				horizAlign="center" />
-		</Button>
+			text="Already have an account?   Sign In" />
 		
         <!-- 
 			Spinner images are 200x200
@@ -97,7 +77,7 @@
 
 			This covers the password field, so move down 100px to 540
 		-->
-        <BusySpinner
+        <ThemedBusySpinner
   		 	id="busySpinner"
 			uri="pkg:/images/spinner.png"
 			translation="[860,540]"

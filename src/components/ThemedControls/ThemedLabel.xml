@@ -6,6 +6,7 @@
 
             Sub Init()
 
+                m.top.observeFieldScoped("themeColor", "OnThemeChanged")
                 m.global.observeFieldScoped("theme", "OnThemeChanged")  
                 OnThemeChanged()
 
@@ -21,7 +22,7 @@
     </script>
 
     <interface>
-        <field id="themeColor" type="string" />
+        <field id="themeColor" type="string" alwaysNotify="true" />
     </interface>
 
 </component>

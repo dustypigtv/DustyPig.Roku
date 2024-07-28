@@ -5,33 +5,32 @@ sub Init()
     m.emailTextBox = m.top.findNode("emailTextBox")
     m.passwordTextBox = m.top.findNode("passwordTextBox")
     m.loginAccountButton = m.top.findNode("loginAccountButton")
+    m.forgotPasswordButton = m.top.findNode("forgotPasswordButton")
     m.signUpButton = m.top.findNode("signUpButton")
     m.busySpinner = m.top.findNode("busySpinner")
-    
-    
-    ' Init controls
-    m.headerLabel.color = m.global.defaultTheme.textOnBackground
-    m.headerLabel.visible = true
 
-    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
     
-    m.loginAccountButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
+    m.forgotPasswordButton.observeField("buttonSelected", "OnForgotPasswordButton_Selected")
     m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountButton_Selected")
-
-    m.signUpButton.focusBitmapUri = m.global.defaultTheme.primaryBitmap
     m.signUpButton.observeField("buttonSelected", "OnSignUpButton_Selected")
 
-
     
-    
-
     ' Build keyboard dialog
     m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
     m.keyboardDialog.buttons=["Cancel","OK"]
     m.keyboardDialog.observeField("wasClosed", "OnKeyboardDialogClosed")
     m.keyboardDialog.observeField("buttonSelected", "OnKeyboardDialog_ButtonSelected")
 
-    
+
+    ' Success dialog
+    m.successDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.successDialog.buttons = ["OK"]
+    m.successDialog.title = "Success"
+    m.successDialog.message = ["Check your email for password reset instructions"]
+    m.successDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
+    m.successDialog.observeField("wasClosed", "OnErrorDialog_Closed")
+
+
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
@@ -44,6 +43,11 @@ sub Init()
     ' Sign In task
     m.loginAccountTask = CreateObject("roSGNode", "LoginAccountTask")
     m.loginAccountTask.observeField("data", "OnLoginAccountTask_DataAvailable")
+
+
+    ' Forgot password task
+    m.forgotPasswordTask = CreateObject("roSGNode", "SendPasswordResetEmailTask")
+    m.forgotPasswordTask.observeField("success", "OnForgotPassword_Complete")
 
 
     'variables
@@ -113,6 +117,7 @@ Sub ShowControls(s as boolean)
     m.headerLabel.visible = s
     m.emailTextBox.visible = s
     m.passwordTextBox.visible = s
+    m.forgotPasswordButton.visible = s
     m.loginAccountButton.visible = s
     m.signUpButton.visible = s
 
@@ -171,12 +176,66 @@ Sub OnKeyboardDialog_ButtonSelected(event as object)
 End Sub
 
 
+
+Sub OnForgotDialog_ButtonSelected(event as object)
+
+    m.forgotPasswordDialog.close = true
+
+    idx = event.getData()
+    if idx = 1 then
+        FocusOnButton(m.forgotPasswordButton)
+        return
+    end if
+
+    m.passwordTextBox.text = m.forgotPasswordDialog.text
+    ShowControls(false)
+
+    m.forgotPasswordTask.control = "stop"
+    m.forgotPasswordTask.email = m.forgotPasswordDialog.text
+    m.forgotPasswordTask.control = "run"
+    
+
+End Sub
+
+
+
 Sub OnErrorDialog_Closed()
 
     m.top.getScene().dialog = invalid
     ShowControls(true)
 
 End Sub
+
+
+
+
+
+Sub OnForgotPasswordButton_Selected()
+
+    if m.forgotPasswordDialog <> invalid then m.forgotPasswordDialog.unobserveField("buttonSelected")
+    m.forgotPasswordDialog = createObject("roSGNode", "StandardKeyboardDialog")
+    m.forgotPasswordDialog.buttons = ["OK", "Cancel"]
+    m.forgotPasswordDialog.title = "Forgot Password"
+    m.forgotPasswordDialog.message = ["Enter your email address"]
+    m.forgotPasswordDialog.text = m.emailTextBox.text
+    m.forgotPasswordDialog.observeField("buttonSelected", "OnForgotDialog_ButtonSelected")
+    m.top.getScene().dialog = m.forgotPasswordDialog
+
+End Sub
+
+
+Sub OnForgotPassword_Complete()
+
+    if m.forgotPasswordTask.success then
+        m.top.getScene().dialog = m.successDialog
+    else
+        m.errorDialog.message = [m.forgotPasswordTask.error]
+        m.top.getScene().dialog = m.errorDialog    
+    end if
+
+End Sub
+
+
 
 
 Sub OnLoginAccountButton_Selected()
@@ -196,6 +255,7 @@ Sub OnSignUpButton_Selected()
     m.global.showViewWithId = "signUpView"
 
 End Sub
+
 
 Function GetCredentials() as object
 
@@ -246,6 +306,9 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
         else if m.loginAccountButton.hasFocus() then
             FocusOnTB(m.passwordTextBox)
             return true
+        else if m.forgotPasswordButton.hasFocus() then
+            FocusOnTB(m.passwordTextBox)
+            return true
         else if m.signUpButton.hasFocus() then
             credentials = GetCredentials()
             if credentials = invalid then
@@ -269,8 +332,22 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
                 FocusOnButton(m.loginAccountButton)
             end if
             return true
-        else if m.loginAccountButton.hasFocus() then
+        else if m.loginAccountButton.hasFocus() or m.forgotPasswordButton.hasFocus() then
             FocusOnButton(m.signUpButton)
+            return true
+        end if
+    end if
+
+    if key = "left" then
+        if m.loginAccountButton.hasFocus() then
+            FocusOnButton(m.forgotPasswordButton)
+            return true
+        end if
+    end if
+
+    if key = "right" then
+        if m.forgotPasswordButton.hasFocus() then
+            FocusOnButton(m.loginAccountButton)
             return true
         end if
     end if
@@ -305,3 +382,5 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
     return false
 
 End Function
+
+

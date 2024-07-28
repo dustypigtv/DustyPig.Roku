@@ -18,35 +18,6 @@ end function
 
 
 
-Function GetDurationString(totalSeconds As float) As String
-
-    remaining = Int(totalSeconds)
-    hours = Int(remaining / 3600).ToStr()
-    remaining = remaining Mod 3600
-    minutes = Int(remaining / 60).ToStr()
-    remaining = remaining Mod 60
-    seconds = remaining.ToStr()
-
-    If hours <> "0" Then
-        ret = hours + " hr"
-        if hours <> "1" then ret = ret + "s"
-        Return ret + " " + minutes + " min"
-    Else
-        Return minutes + " min"
-    End If
-
-End Function
-
-Function PadLeft(value As String, padChar As String, totalLength As Integer) As String
-    
-    While value.Len() < totalLength
-        value = padChar + value
-    End While
-    
-    Return value
-
-End Function
-
 
 Function StringHasValue(s as object) as boolean
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="SignUpView" extends="Group">
     
-    <script type = "text/brightscript" uri = "SignUpView.bs" />
+    <script type = "text/brightscript" uri = "SignupView.bs" />
    
     <children>
 

@@ -6,7 +6,42 @@ End Sub
 
 Sub RunTask()
 
+    data = { name: m.top.name }
+    result = PostAndGetData("/Playlists/Create", data, m.global.profileToken)
 
+    if result.statusCode = 401 then
+        m.global.loggedOut = true
+        return
+    end if
+
+    if not result.success then
+
+        m.top.error = result.error
+        m.top.success = false
+        return
+
+    end if
     
+    playlistId = result.data
+    
+    if m.top.contentType = 2 then
+        data = {mediaId: m.top.mediaId, playlistId: playlistId, autoAddNewEpisodes: m.top.addNewEpisodes}
+        result = PostAndGetData("/Playlists/AddSeries", data,  m.global.profileToken)
+    else
+        data = {mediaId: m.top.mediaId, playlistId: playlistId}
+        result = PostAndGetData("/Playlists/AddItem", data, m.global.profileToken)
+    end if
+
+    if result.success then
+
+        m.top.error = invalid
+        m.top.success = true
+
+    else
+
+        m.top.error = result.error
+        m.top.success = false
+
+    end if
 
 End Sub

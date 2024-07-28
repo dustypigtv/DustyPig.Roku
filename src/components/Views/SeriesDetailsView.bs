@@ -42,6 +42,7 @@ Sub Init()
      ' Cache
     m.lastBasicMediaId = invalid
 
+    m.top.observeField("visible", "OnThis_VisibleChanged")
 
 End sub
 
@@ -49,6 +50,14 @@ End sub
 
 
 ' ********** FOCUS TRACKING **********
+
+
+Sub OnThis_VisibleChanged(event as object)
+
+    if event.getData() then RestoreFocus()
+
+End Sub
+
 
 Sub OnReset()
 
@@ -342,7 +351,7 @@ End Function
 
 Sub RestoreFocus()
 
-    if m.lastFocusedControl = invalid or m.lastFocusedControl.visible = false then
+    if m.lastFocusedControl = invalid then
         m.mediaInfoView.setFocus(true)
     else
         m.lastFocusedControl.setFocus(true)

@@ -12,13 +12,37 @@ Sub Init()
     m.addSeriesToPlaylistTask = createObject("roSGNode", "AddSeriesToPlaylistTask")
     m.addSeriesToPlaylistTask.observeField("success", "OnAddToPlaylistTask_Complete")
 
+    m.createPlaylistTask = createObject("roSGNode", "CreatePlaylistTask")
+    m.createPlaylistTask.observeField("success", "OnAddToPlaylistTask_Complete")
+
+
 
     ' Add new episodes dialog
     m.addNewEpisodesDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.addNewEpisodesDialog.buttons = ["Yes", "No"]
+    m.addNewEpisodesDialog.buttons = ["Yes", "No", "Cancel"]
     m.addNewEpisodesDialog.title = "Add Series to Playlist"
     m.addNewEpisodesDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
     m.addNewEpisodesDialog.observeField("buttonSelected", "OnNewEpisodesDialog_ButtonSelected")
+
+
+    ' Create new playlist dialog
+    m.createNewPlaylistDialog = createObject("roSGNode", "StandardKeyboardDialog")
+    m.createNewPlaylistDialog.title = "Create New Playlist"
+    m.createNewPlaylistDialog.message = ["Enter new playlist name"]
+    m.createNewPlaylistDialog.buttons = ["OK", "Cancel"]
+    m.createNewPlaylistDialog.observeField("buttonSelected", "OnCreatePlaylistDialog_ButtonSelected")
+
+
+    ' Add new episodes to new playlist dialog
+    m.addNewEpisodesToNewPlaylistDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.addNewEpisodesToNewPlaylistDialog.buttons = ["Yes", "No", "Cancel"]
+    m.addNewEpisodesToNewPlaylistDialog.title = "Add Series to Playlist"
+    m.addNewEpisodesToNewPlaylistDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
+    m.addNewEpisodesToNewPlaylistDialog.observeField("buttonSelected", "OnNewEpisodesToNewPlaylistDialog_ButtonSelected")
+
+    
+    
+
 
 
     ' Error dialog
@@ -119,6 +143,62 @@ End Sub
 
 
 
+Sub OnCreatePlaylistDialog_ButtonSelected(event as object)
+
+    m.createNewPlaylistDialog.close = true
+    idx = event.getData()
+
+    if idx = 1 then
+        m.list.setFocus(true)
+        return
+    end if
+
+    bm = m.global.currentBasicMedia
+    if bm.contentType = 2 then
+
+        m.top.getScene().dialog = m.addNewEpisodesToNewPlaylistDialog
+
+    else
+
+        m.list.setFocus(false)
+        m.busySpinner.visible = true
+
+        m.createPlaylistTask.control = "stop"
+        m.createPlaylistTask.mediaId = bm.id
+        m.createPlaylistTask.contentType = bm.contentType
+        m.createPlaylistTask.name = m.createNewPlaylistDialog.text
+        m.createPlaylistTask.control = "run"
+
+    end if
+
+End Sub
+
+Sub OnNewEpisodesToNewPlaylistDialog_ButtonSelected(event as object)
+
+    m.addNewEpisodesToNewPlaylistDialog.close = true
+    idx = event.getData()
+
+    if idx = 2 then
+        m.list.setFocus(true)
+        return
+    end if
+
+    m.list.setFocus(false)
+    m.busySpinner.visible = true
+
+    bm = m.global.currentBasicMedia
+    playlistId = m.list.content.getChild(m.list.itemSelected).id
+
+    m.createPlaylistTask.control = "stop"
+    m.createPlaylistTask.mediaId = bm.id
+    m.createPlaylistTask.contentType = 2
+    m.createPlaylistTask.name = m.createNewPlaylistDialog.text
+    m.createPlaylistTask.addNewEpisodes = idx = 0
+    m.createPlaylistTask.control = "run"
+
+End Sub
+
+
 
 
 
@@ -153,6 +233,9 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
             
             playlistId = m.list.content.getChild(m.list.itemSelected).id
             if playlistId = "-1" then
+
+                m.createNewPlaylistDialog.text = invalid
+                m.top.getScene().dialog = m.createNewPlaylistDialog
 
             else if bm.contentType = 1 then
 

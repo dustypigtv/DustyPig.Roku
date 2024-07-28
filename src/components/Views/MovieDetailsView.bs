@@ -28,6 +28,8 @@ Sub Init()
     ' Cache
     m.lastBasicMediaId = invalid
 
+    m.top.observeField("visible", "OnThis_VisibleChanged")
+
 end sub
 
 
@@ -35,6 +37,13 @@ end sub
 
 
 ' ********** FOCUS TRACKING **********
+
+Sub OnThis_VisibleChanged(event as object)
+
+    if event.getData() then RestoreFocus()
+
+End Sub
+
 
 Sub OnReset()
 

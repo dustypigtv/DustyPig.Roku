@@ -4,9 +4,10 @@
 	<script type="text/brightscript" uri="pkg:/components/Tasks/CreatePlaylistTask.bs" />
 
     <interface>
-        <field id="playlistId" type="string" />
         <field id="mediaId" type="string" />
         <field id="addNewEpisodes" type="bool" />
+        <field id="contentType" type="int" />
+        <field id="name" type="string" />
     </interface>
 		
 </component>

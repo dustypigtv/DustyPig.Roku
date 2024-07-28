@@ -17,34 +17,6 @@ Sub Init()
 
 
 
-    ' Add new episodes dialog
-    m.addNewEpisodesDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.addNewEpisodesDialog.buttons = ["Yes", "No", "Cancel"]
-    m.addNewEpisodesDialog.title = "Add Series to Playlist"
-    m.addNewEpisodesDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
-    m.addNewEpisodesDialog.observeField("buttonSelected", "OnNewEpisodesDialog_ButtonSelected")
-
-
-    ' Create new playlist dialog
-    m.createNewPlaylistDialog = createObject("roSGNode", "StandardKeyboardDialog")
-    m.createNewPlaylistDialog.title = "Create New Playlist"
-    m.createNewPlaylistDialog.message = ["Enter new playlist name"]
-    m.createNewPlaylistDialog.buttons = ["OK", "Cancel"]
-    m.createNewPlaylistDialog.observeField("buttonSelected", "OnCreatePlaylistDialog_ButtonSelected")
-
-
-    ' Add new episodes to new playlist dialog
-    m.addNewEpisodesToNewPlaylistDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.addNewEpisodesToNewPlaylistDialog.buttons = ["Yes", "No", "Cancel"]
-    m.addNewEpisodesToNewPlaylistDialog.title = "Add Series to Playlist"
-    m.addNewEpisodesToNewPlaylistDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
-    m.addNewEpisodesToNewPlaylistDialog.observeField("buttonSelected", "OnNewEpisodesToNewPlaylistDialog_ButtonSelected")
-
-    
-    
-
-
-
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
@@ -234,10 +206,15 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
             playlistId = m.list.content.getChild(m.list.itemSelected).id
             if playlistId = "-1" then
 
-                m.createNewPlaylistDialog.text = invalid
+                RebuildDialogs()
                 m.top.getScene().dialog = m.createNewPlaylistDialog
 
-            else if bm.contentType = 1 then
+            else if bm.contentType = 2 then
+
+                RebuildDialogs()
+                m.top.getScene().dialog = m.addNewEpisodesDialog
+
+            else 
 
                 m.list.setFocus(false)
                 m.busySpinner.visible = true
@@ -247,10 +224,7 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
                 m.addItemToPlaylistTask.mediaId = bm.id
                 m.addItemToPlaylistTask.control = "run"
 
-            else if bm.contentType = 2 then
-
-                m.top.getScene().dialog = m.addNewEpisodesDialog
-
+            
             end if
             
             return true
@@ -264,3 +238,35 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
 End Function
 
+
+
+Sub RebuildDialogs()
+
+    ' Add new episodes dialog
+    if m.addNewEpisodesDialog <> invalid then m.addNewEpisodesDialog.unobserveField("buttonSelected")
+    m.addNewEpisodesDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.addNewEpisodesDialog.buttons = ["Yes", "No", "Cancel"]
+    m.addNewEpisodesDialog.title = "Add Series to Playlist"
+    m.addNewEpisodesDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
+    m.addNewEpisodesDialog.observeField("buttonSelected", "OnNewEpisodesDialog_ButtonSelected")
+
+
+    ' Create new playlist dialog
+    if m.createNewPlaylistDialog <> invalid then m.createNewPlaylistDialog.unobserveField("buttonSelected")
+    m.createNewPlaylistDialog = createObject("roSGNode", "StandardKeyboardDialog")
+    m.createNewPlaylistDialog.title = "Create New Playlist"
+    m.createNewPlaylistDialog.message = ["Enter new playlist name"]
+    m.createNewPlaylistDialog.buttons = ["OK", "Cancel"]
+    m.createNewPlaylistDialog.observeField("buttonSelected", "OnCreatePlaylistDialog_ButtonSelected")
+
+
+    ' Add new episodes to new playlist dialog
+    if m.addNewEpisodesToNewPlaylistDialog <> invalid then m.addNewEpisodesToNewPlaylistDialog.unobserveField("buttonSelected")
+    m.addNewEpisodesToNewPlaylistDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.addNewEpisodesToNewPlaylistDialog.buttons = ["Yes", "No", "Cancel"]
+    m.addNewEpisodesToNewPlaylistDialog.title = "Add Series to Playlist"
+    m.addNewEpisodesToNewPlaylistDialog.message = ["Do you want to automatically add new episodes to the playlist?"]
+    m.addNewEpisodesToNewPlaylistDialog.observeField("buttonSelected", "OnNewEpisodesToNewPlaylistDialog_ButtonSelected")
+
+
+End Sub

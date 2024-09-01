@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="ThemedLabel" extends="Label">
+<component name="ThemedPosterGrid" extends="Label">
     
     <script type="text/brightscript" >
         <![CDATA[
 
             Sub Init()
 
-                m.top.observeFieldScoped("themeColor", "OnThemeChanged")
                 m.global.observeFieldScoped("theme", "OnThemeChanged")  
                 OnThemeChanged()
 
@@ -14,15 +13,12 @@
 
             Sub OnThemeChanged()
 
-                m.top.color = m.global.theme[m.top.themeColor]
+                m.top.focusBitmapBlendColor = m.global.defaultTheme.primary
+                m.top.caption1Color = m.global.defaultTheme.textOnBackground
 
             End Sub
 
         ]]>
     </script>
-
-    <interface>
-        <field id="themeColor" type="string" value="textOnBackground" alwaysNotify="true" />
-    </interface>
 
 </component>

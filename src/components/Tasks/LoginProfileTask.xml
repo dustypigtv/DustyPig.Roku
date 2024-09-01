@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="LoginProfileTask" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+<component name="LoginProfileTask" extends="APITaskBase" >
 
-	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
-	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
 	<script type="text/brightscript" uri="LoginProfileTask.bs" />
 	
 	<interface>
-        <field id="id" type="string" />
         <field id="pin" type="string" />
-        <field id="data" type="assocarray" alwaysNotify="true" />
     </interface>
 </component>

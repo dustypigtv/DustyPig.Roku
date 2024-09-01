@@ -1,74 +1,37 @@
 sub Init()
 
     ' Find controls
-    m.busyLabel = m.top.findNode("busyLabel")
     m.busySpinner = m.top.findNode("busySpinner")
-    m.headerLabel = m.top.findNode("headerLabel")
     m.profileGrid = m.top.findNode("profileGrid")
 
 
 
     ' Init controls
-    m.busySpinner.poster.blendColor = m.global.defaultTheme.primary
-    m.busyLabel.color = m.global.defaultTheme.textOnBackground
-    m.headerLabel.color = m.global.defaultTheme.textOnBackground
-    m.profileGrid.focusBitmapBlendColor = m.global.defaultTheme.primary
-    m.profileGrid.caption1Color = m.global.defaultTheme.textOnBackground
     m.profileGrid.observeField("itemSelected", "OnProfileGrid_ItemSelected")
 
 
     ' Login profile task
     m.loginProfileTask = CreateObject("roSGNode", "LoginProfileTask")
-    m.loginProfileTask.observeField("data", "OnLoginProfileTask_DataAvailable")
+    m.loginProfileTask.observeField("success", "OnLoginProfileTask_Complete")
 
 
-    ' Pin dialog
-    m.pinDialog = createObject("roSGNode", "StandardPinPadDialog")
-    m.pinDialog.title = "Enter your Pin #:"
-    m.pinDialog.buttons = ["OK"]
-    m.pinDialog.textEditBox.maxTextLength = 4
-    m.pinDialog.observeField("buttonSelected", "OnPinDialog_PinEntered")
-
-
-    ' Load Error dialog
-    m.loadErrorDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.loadErrorDialog.title = "Error Loading Profiles"
-    m.loadErrorDialog.buttons = ["OK"]
-    m.loadErrorDialog.observeField("buttonSelected", "OnLoadErrorDialog_Closed")
-    m.loadErrorDialog.observeField("wasClosed", "OnLoadErrorDialog_Closed")
     
-
     ' Login error dialog
-    m.loginErrorDialog = createObject("roSGNode", "StandardMessageDialog")
-    m.loginErrorDialog.buttons = ["OK"]
-    m.loginErrorDialog.title = "Error Signing In To Profile"
-    m.loginErrorDialog.observeField("buttonSelected", "OnLoginErrorDialog_Closed")
-    m.loginErrorDialog.observeField("wasClosed", "OnLoginErrorDialog_Closed")
+    m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
+    m.errorDialog.buttons = ["OK"]
+    m.errorDialog.title = "Error Signing In To Profile"
+    m.errorDialog.observeField("buttonSelected", "CloseDialog")
     
 
-     ' Observe this.visible
-    m.top.observeField("visible", "OnThis_VisibleChanged")
+    ' Observe this.visible
+    m.top.observeField("data", "OnThis_DataChanged")
 
 end sub
 
 
-' Fires when this view's visibility changes
-Sub OnThis_VisibleChanged(event as object)
+Sub OnThis_DataChanged()
 
-    if not event.getData() then return
-
-    SetBusy(false)
-
-    data = m.global.allProfiles
-
-    ' 4 columns of profiles, figure out how many rows
-    ' Really? Brightscript doesn't have a ceiling function?
-    x = data.count() / 4
-    y = int(x)
-    if y = x then numRows = y else numRows = y + 1
-    
-    m.profileGrid.numRows = numRows
-    m.profileGrid.content = data
+    m.profileGrid.content = m.top.data
 
 End Sub
 
@@ -77,73 +40,77 @@ sub SetBusy(busy as boolean)
 
     m.profileGrid.visible = not busy
     m.profileGrid.setFocus(not busy)
-    m.busyLabel.visible = busy
     m.busySpinner.visible = busy
     
 end sub
 
 
 
-sub OnLoadErrorDialog_Closed()
-
-    m.top.getScene().dialog = invalid
-
-end sub
 
 sub OnProfileGrid_ItemSelected()
 
     idx = m.profileGrid.itemSelected
-    profile = m.global.allProfiles.getChild(idx)    
+    profile = m.top.data.getChild(idx)
     
     if profile.hasPin then
-        m.pinDialog.pin = ""
-        m.top.getScene().dialog = m.pinDialog
+   
+        pinDialog = createObject("roSGNode", "StandardPinPadDialog")
+        pinDialog.title = "Enter your Pin #:"
+        pinDialog.buttons = ["OK"]
+        pinDialog.textEditBox.maxTextLength = 4
+        pinDialog.observeField("buttonSelected", "OnPinDialog_ButtonSelected")
+   
+        m.top.getScene().dialog = pinDialog
+   
     else
-        if idx > 0 then m.busyLabel.text = "A piglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
+   
         SetBusy(true)
         m.loginProfileTask.id = profile.id
         m.loginProfileTask.pin = invalid
         m.loginProfileTask.control = "RUN"
+   
     end if
 
 end sub
 
 
-sub OnPinDialog_PinEntered()
+sub OnPinDialog_ButtonSelected(event as object)
 
-    m.top.getScene().dialog = invalid
+    CloseDialog()
     
     idx = m.profileGrid.itemSelected
-    profile = m.global.allProfiles.getChild(idx)
+    profile = m.top.data.getChild(idx)    
     
-    if idx > 0 then m.busyLabel.text = "A piglet is getting excited!" else m.busyLabel.text = "The Dusty Pig is taking control"
     SetBusy(true)
     
     m.loginProfileTask.id = profile.id
-    m.loginProfileTask.pin = m.pinDialog.pin
+    m.loginProfileTask.pin = event.getRoSGNode().pin
     m.loginProfileTask.control = "RUN"
 
 end sub
 
 
 
-Sub OnLoginProfileTask_DataAvailable()
+Sub OnLoginProfileTask_Complete()
 
     SetBusy(false)
     
-    result = m.loginProfileTask.data
+    if m.loginProfileTask.success then
 
-    ' This will only fire if there is an error.
-    ' code 401 and successful logins are handled in the task
-    m.loginErrorDialog.message = [result.error]
-    m.top.getScene().dialog = m.loginErrorDialog
+        m.global.loggedOut = false
+
+    else
+
+        m.errorDialog.message = [m.loginProfileTask.error]
+        m.top.getScene().dialog = m.errorDialog
+
+    end if
 
 End Sub
 
 
-sub OnLoginErrorDialog_Closed()
+sub CloseDialog()
 
     m.top.getScene().dialog = invalid
-    m.profileGrid.setFocus(true)
 
 end sub

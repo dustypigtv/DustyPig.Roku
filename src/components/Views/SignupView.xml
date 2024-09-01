@@ -1,73 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="SignUpView" extends="Group">
+<component name="SignupView" extends="BaseView">
     
-    <script type = "text/brightscript" uri = "SignupView.bs" />
+    <script type="text/brightscript" uri="SignupView.bs" />
+	<script type="text/brightscript" uri="pkg:/source/Utils.bs" />
    
     <children>
 
-        <!--
+       <!--
             Screen width = 1920
             Set control widths to 1000
-            centery = (1920 - 1000) / 2 = 460
+            center.x = (1920 - 1000) / 2 = 460
+
+			headerLabel uses LargeBoldSystemFont, which is 45pts
+            font px = pts * 1.3333(3)
+            headerLabel.height will be 45 * 1.3333(3) = 59.9999(9) = 60
+
+			headerLabel = 			60
+			+ spacing = 			50
+			+ name =				75
+			+ spacing = 			50
+			+ emailTextBox = 		75
+			+ spacing = 			50
+			+ passwordTextBox = 	75
+			+ spacing = 			50
+			+ signInButtons = 		75
+			+ spacing = 			50
+			+ signUpButton = 		75
+			__________________________
+
+			height = 685
+
+			screen.H = 1080
+			top = (1080 - 685) / 2 = 197
+
+			screen.W = 1920
+			layout.W = 1000
+			left = (1920 - 1000) / 2 = 460
+
         -->
 
+		<LayoutGroup
+			id="signupViews"
+			itemSpacings="[50]"
+			translation="[460,197]">
 		
-		<ThemedLabel
-			id="headerLabel"
-			font="font:LargeBoldSystemFont"
-			text = "Sign Up For Dusty Pig"
-            themeColor="textOnBackground"
-			horizAlign = "center"
-			vertAlign = "center"
-			width="1000"
-			translation="[460,200]" />
+			<ThemedLabel
+				id="headerLabel"
+				font="font:LargeBoldSystemFont"
+				text = "Sign Up For Dusty Pig"
+				themeColor="textOnBackground"
+				horizAlign = "center"
+				width="1000"
+				height="60" />
 
-		<TextEditBox
-			id="nameTextBox"
-			hintText="Name"
-			clearOnDownKey="false"
-			width="1000"
-			translation="[460,300]" />
+			<ThemedTextEditBox
+				id="nameTextBox"
+				hintText="Name"
+				clearOnDownKey="false"
+				width="1000"
+				height="75" />
 
 
-		<TextEditBox
-			id="emailTextBox"
-			hintText="Email Address"
-			clearOnDownKey="false"
-			width="1000"
-			translation="[460,400]" />
+			<ThemedTextEditBox
+				id="emailTextBox"
+				hintText="Email Address"
+				clearOnDownKey="false"
+				width="1000"
+				height="75" />
 
-		<TextEditBox
-			id="passwordTextBox"
-			hintText="Password"
-			clearOnDownKey="false"
-			secureMode="true"
-			width="1000"
-			translation="[460,500]" />
+			<ThemedTextEditBox
+				id="passwordTextBox"
+				hintText="Password"
+				clearOnDownKey="false"
+				secureMode="true"
+				width="1000"
+				height="75" />
 
 		
-		<!--
-			The translation is off by 30px on these, so adjust
-			Move the button 30px to the left
-			Right edge of other controls = 460:offset + 1000:width = 1460
-			Button width = 300 so left edge = 1160
-			1160 - 30 - 1130
-		 -->
-		<ThemedButton
-			id="signUpButton"
-			translation="[1160,600]"
-			width="300"
-			height="75"
-			showFocusFootprint="true"
-			text="Sign Up" />
+			<LayoutGroup
+				layoutDirection="horiz">
 
-		<ThemedButton
-			id="loginAccountButton"
-			translation="[460,800]"
-			width="1000"
-			height="75"
-			showFocusFootprint="true"
-			text="Already have an account?   Sign In" />
+				<!-- Spacer -->
+				<Label width="700" />
+
+				<ThemedButton
+					id="signUpButton"
+					width="300"
+					height="75"
+					translation="[700,0]"
+					text="Sign Up" />
+
+			</LayoutGroup>
+
+			<ThemedButton
+				id="loginButton"
+				width="1000"
+				height="75"
+				text="Already have an account?   Sign In" />
+
+		</LayoutGroup>
 		
         <!-- 
 			Spinner images are 200x200
@@ -79,7 +110,6 @@
 		-->
         <ThemedBusySpinner
   		 	id="busySpinner"
-			uri="pkg:/images/spinner.png"
 			translation="[860,540]"
 			visible="false" />
 		

@@ -1,38 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="LoginProfileView" extends="Group">
+<component name="LoginProfileView" extends="BaseView">
     
     <script type = "text/brightscript" uri = "LoginProfileView.bs" />
 
     <children>
-
-       <!-- 
-			Spinner images are 200x200
-			Screen is 1920x1024
-			centerx = (1920 - 200) / 2 = 860
-			centery = (1080 - 200) / 2 = 440
-		-->
-		<BusySpinner
-			id="busySpinner"
-			uri="pkg:/images/spinner.png"
-			translation="[860,440]" 
-            visible="false" />
-		
-		<!-- 
-			Since the spinner above is centered and is 200 px high,
-			Translate this 100 px down the y axis.
-			Add another 50 for spacing
-		-->
-		<Label
-			id="busyLabel" 
-			text="Roundin' up the piglets"
-			width="1920"
-			height="1080"
-			horizAlign="center"
-			vertAlign="center"
-			translation="[0,150]"
-            visible="false" />
-
-
 
         <!--
             Safe zone: 
@@ -45,32 +16,49 @@
                 Safe Zone = 1534
 
                 Item Spacing = (1534 - (4 * 300)) / 3 = ~111 
+
+                Item height = 300
+                safe = 866
+                so numRows = 3 (3 * 300 > 866)
         -->
 
-        <Label 
-            id="headerLabel"
+        <LayoutGroup
             translation="[192,106]"
-            width="1534"
-            font="font:LargeBoldSystemFont"
-			color="#DBD160"
-            horizAlign="center"
-            text="Who's Watching?" />
+            itemSpacings="[40]">
 
-        <PosterGrid
-            id="profileGrid"
-            translation="[192,206]"
-            basePosterSize="[300,300]"
-            useAtlas="false"
-            posterDisplayMode="scaleToFit"
-            enableCaptionScrolling="true"
-            caption1NumLines="1"
-            loadingBitmapUri = "pkg:/images/loading_profile.jpg"
-            failedBitmapUri = "pkg:/images/failed_profile.jpg"
-            itemSpacing="[111, 111]"
-            numColumns="4"
+            <ThemedLabel 
+                width="1534"
+                font="font:LargeBoldSystemFont"
+                horizAlign="center"
+                text="Who's Watching?" />
+
+            <ThemedPosterGrid
+                id="profileGrid"
+                basePosterSize="[300,300]"
+                useAtlas="false"
+                posterDisplayMode="scaleToFit"
+                enableCaptionScrolling="true"
+                caption1NumLines="1"
+                loadingBitmapUri = "pkg:/images/loading_profile.jpg"
+                failedBitmapUri = "pkg:/images/failed_profile.jpg"
+                itemSpacing="[111, 111]"
+                numColumns="4"
+                numRows="3"
+                visible="false" />
+
+        </LayoutGroup>
+
+        <!-- 
+			Spinner images are 200x200
+			Screen is 1920x1024
+			centerx = (1920 - 200) / 2 = 860
+			centery = (1080 - 200) / 2 = 440
+		-->
+		<ThemedBusySpinner
+			id="busySpinner"
+			translation="[860,440]" 
             visible="false" />
 		
-
 	</children>
 
 </component>

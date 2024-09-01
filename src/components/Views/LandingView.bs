@@ -1,6 +1,0 @@
-sub Init()
-
-    m.top.findNode("busySpinner").poster.blendColor = m.global.defaultTheme.primary
-    m.top.findNode("busyLabel").color = m.global.defaultTheme.textOnBackground
-    
-end sub

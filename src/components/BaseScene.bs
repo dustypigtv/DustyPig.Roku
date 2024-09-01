@@ -3,72 +3,19 @@ Sub Init()
     m.top.backgroundURI = ""
     m.top.backgroundColor ="0x000000FF"
 
-    m.allViews = { }
-
-    ' Landing view
-    m.landingView = m.top.findNode("landingView")
-    m.allViews.landingView = m.landingView
-
-
-    ' Login Account View
-    m.loginAccountView = m.top.findNode("loginAccountView")
-    m.allViews.loginAccountView = m.loginAccountView
-
-
-    ' SignUp View
-    m.signUpView = m.top.findNode("signupView")
-    m.allViews.signUpView = m.signUpView
-
-
-    ' Login Profile View
-    m.loginProfileView = m.top.findNode("loginProfileView")
-    m.allViews.loginProfileView = m.loginProfileView
-
-
-    ' Main View
+    ' Singleton Views
     m.mainView = m.top.findNode("mainView")
-    m.allViews.mainView = m.mainView
-    
-
-    ' Movie Details View
-    m.movieDetailsView = m.top.findNode("movieDetailsView")
-    m.allViews.movieDetailsView = m.movieDetailsView
-
-    ' Series Details View
-    m.seriesDetailsView = m.top.findNode("seriesDetailsView")
-    m.allViews.seriesDetailsView = m.seriesDetailsView
-
-    ' Add to Playlist View
-    m.addToPlaylistView = m.top.findNode("addToPlaylistView")
-    m.allViews.addToPlaylistView = m.addToPlaylistView
-
-    
-    ' Video View
-    m.videoView = m.top.findNode("videoView")
-    m.allViews.videoView = m.videoView
-    m.videoView.observeField("playbackFinished", "OnVideoView_PlaybackFinished")
 
     
     ' Observe Globals
     m.global.observeField("loggedOut", "OnGlobal_LoggedOut")
-    m.global.observeField("showViewWithId", "OnGlobal_ShowViewWithId")
-    m.global.observeField("popCurrentView", "HideTopView")
+    m.global.observeField("pushView", "OnGlobal_PushView")
+    m.global.observeField("popView", "PopTopView")
     m.global.observeField("startVideoPlayback", "OnGlobal_StartVideoPlayback")
 
 
-    ' Do this 3rd from last
-    m.viewStack = []
-    ShowView(m.landingView)
-    
-
-    ' Do this 2nd to last
-    m.launchTask = CreateObject("roSGNode", "LaunchTask")
-    m.launchTask.observeField("startAuthFlow", "OnShowView_LoginAccount")
-    m.launchTask.observeField("startProfileFlow", "OnShowView_LoginProfile")
-    m.launchTask.observeField("showView_Main", "OnShowView_Main")
-    m.launchTask.Control = "RUN"
-
-
+    ' Setup View Stack
+    m.viewStack = [m.top.findNode("launchView")]
 
     ' Do this LAST
     m.top.signalBeacon("AppLaunchComplete")
@@ -76,35 +23,32 @@ Sub Init()
 End Sub
 
 
-Sub ShowView(node)
+Sub PushView(view)
 
     prev = m.viewStack.peek()
     if prev <> invalid then prev.visible = false
 
-    ' If a screen needs to reset before being shown, it can implement and monitor this interface
-    try
-        node.reset = true
-    catch e
-    end try
-    node.visible = true
+    m.viewStack.push(view)    
+    m.top.appendChild(view)
+    view.visible = true
+    view.setFocus(true)
     
-    
-    node.setFocus(true)
-    m.viewStack.push(node)    
-
 End Sub
 
-Sub HideTopView()
+Sub PopTopView()
 
-    HideView(invalid)
+    PopView(invalid)
 
 end Sub
 
-Sub HideView(node as Object)
+Sub PopView(view as Object)
 
-    if node = invalid OR (m.viewStack.peek() <> invalid AND m.viewStack.peek().isSameNode(node))     
+    if view = invalid OR (m.viewStack.peek() <> invalid AND m.viewStack.peek().isSameNode(view))     
+        
         last = m.viewStack.pop()
         last.visible = false
+        m.top.removeChild(last)
+        
         prev = m.viewStack.peek()
         if prev <> invalid then
             prev.visible = true
@@ -114,54 +58,40 @@ Sub HideView(node as Object)
 
 End Sub
 
-Sub HideAllViews()
+Sub ResetViewStack()
 
-    for each item in m.viewStack
-        item.visible = false
+    for each view in m.viewStack
+        view.visible = false
     end for
     m.viewStack = []
+    m.top.removeChildrenIndex(m.top.getChildCount(), 0)
 
 End Sub
+
+Sub OnGlobal_PushView(event as Object)
+
+    view = event.getData()
+    if view = invalid then return
+    m.global.pushView = invalid
+    PushView(view)
+
+End Sub
+
 
 
 
 Sub OnGlobal_LoggedOut(event as object)
 
+    ResetViewStack()
+    
     if event.getData() then
-        m.global.showViewWithId = "loginAccountView"
+        PushView(CreateObject("roSGNode", "LoginAccountView"))
     else
-        m.global.showViewWithId = "mainView"
+        PushView(m.mainView)    
     end if
 
 End Sub
 
-
-Sub OnGlobal_ShowViewWithId(event as object)
-
-    id = event.getData()
-
-    if id = "loginAccountView" then
-   
-        HideAllViews()
-        ShowView(m.loginAccountView)
-   
-    else if id = "signUpView" then
-   
-        HideAllViews()
-        ShowView(m.signUpView)
-   
-    else if id = "mainView" then
-   
-        HideAllViews()
-        ShowView(m.mainView)
-   
-    else
-   
-        ShowView(m.allViews[id])
-   
-    end if
-
-End Sub
 
 
 
@@ -172,7 +102,7 @@ End Sub
 
 Sub OnGlobal_StartVideoPlayback(event as object)
 
-    if m.videoView.visible = false then ShowView(m.videoView)
+    if m.videoView.visible = false then PushView(m.videoView)
     
 End Sub
 
@@ -182,7 +112,7 @@ End Sub
 
 Sub OnVideoView_PlaybackFinished(event as object)
 
-    if event.getData() and m.videoView.visible then HideTopView()
+    if event.getData() and m.videoView.visible then PopTopView()
 
 End Sub
 
@@ -196,13 +126,13 @@ Function onKeyEvent(key as String, press as Boolean) as Boolean
 
     if key = "back" then
 
-        if m.videoView.visible then 
+        ' if m.videoView.visible then 
 
-            m.videoView.control = "stop"
+        '     m.videoView.control = "stop"
 
-        end if
+        ' end if
 
-        if not m.mainView.visible then HideTopView()
+        if not m.mainView.visible then PopTopView()
         return true
 
     end if

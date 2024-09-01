@@ -25,12 +25,32 @@ Sub Init()
     m.movieDetailsTask = CreateObject("roSGNode", "MovieDetailsTask")
     m.movieDetailsTask.observeField("success", "MovieDetailsTask_Complete")
 
-    ' Cache
-    m.lastBasicMediaId = invalid
-
+    ' Observers
+    m.top.observeField("data", "OnThis_DataChanged")
     m.top.observeField("visible", "OnThis_VisibleChanged")
 
 end sub
+
+
+
+
+
+
+
+' ********* DATA FIELD **********
+
+Sub OnThis_DataChanged()
+
+    m.backdropPoster.uri = m.top.data.backdropUrl ?? ""
+
+    m.movieDetailsTask.control = "stop"
+    m.movieDetailsTask.id = m.top.data.id
+    m.movieDetailsTask.control = "run"
+
+End Sub
+
+
+
 
 
 
@@ -41,32 +61,6 @@ end sub
 Sub OnThis_VisibleChanged(event as object)
 
     if event.getData() then RestoreFocus()
-
-End Sub
-
-
-Sub OnReset()
-
-    m.lastFocusedControl = invalid
-    m.mediaInfoView.resetFocusTracking = true
-
-    bm = m.global.currentBasicMedia
-    if m.lastBasicMediaId = bm.id then
-        RestoreFocus()
-        return
-    end if
-
-    m.lastBasicMediaId = bm.id
-
-    m.mediaInfoView.visible = false
-    m.castAndCrewView.visible = false
-    m.busySpinner.visible = true
-
-    m.backdropPoster.uri = bm.backdropUrl ?? ""
-
-    m.movieDetailsTask.control = "stop"
-    m.movieDetailsTask.id = bm.id
-    m.movieDetailsTask.control = "run"
 
 End Sub
 
@@ -101,11 +95,12 @@ Sub MovieDetailsTask_Complete()
         dm = m.movieDetailsTask.data
         m.global.currentDetailedMedia = dm
 
+        m.mediaInfoView.visible = true
+        m.mediaInfoView.data = dm
+
         m.castAndCrewView.content = dm.castCrew
         m.castAndCrewView.visible = dm.castCrew.getChildCount() > 0
-        
-        m.mediaInfoView.visible = true
-                    
+                            
         RestoreFocus()
 
         m.busySpinner.visible = false

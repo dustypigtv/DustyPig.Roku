@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedButton2" extends="Button">
+    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+                m.top.showFocusFootprint = true
+                m.top.iconUri=""
+                m.top.focusedIconUri=""
+                                
+                m.top.observeFieldScoped("width", "OnSizeChanged")
+                m.top.observeFieldScoped("height", "OnSizeChanged")
+                m.top.observeFieldScoped("unfocusedBlendColor", "OnThemeChanged")
+
+                m.focusedPoster = m.top.getChild(0)
+                m.unfocusedPoster = m.top.getChild(1)
+
+                
+                ' Keep the label centered
+                m.label = m.top.getChild(2)
+                m.label.observeFieldScoped("horizAlign", "SetLabelAlignment")
+
+                ' Watch for theme updates
+                m.global.observeFieldScoped("theme", "OnThemeChanged")
+                OnThemeChanged()
+
+            End Sub
+
+
+            Sub OnSizeChanged()
+
+                m.top.minWidth = m.top.width
+                m.top.maxWidth = m.top.width
+
+            End Sub
+
+
+            Sub SetLabelAlignment()
+
+                if m.label.horizAlign <> "center" then m.label.horizAlign = "center"
+
+            End Sub
+
+
+            Sub OnThemeChanged()
+
+                m.top.focusedTextColor = m.global.theme.textOnPrimary
+                m.focusedPoster.blendColor = m.global.theme.primary
+
+            End Sub
+        ]]>
+    </script>
+
+     <interface>
+        <field id="width" type="float" value="250" alwaysNotify="true" />
+    </interface>
+
+</component>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="ThemedTextEditBox" extends="TextEditBox">
+    
+    <script type="text/brightscript" >
+        <![CDATA[
+
+            Sub Init()
+
+                m.top.observeField("focusedChild", "SetColor")
+                m.global.observeField("theme", "SetColor")  
+                SetColor()
+
+            End Sub
+
+            Sub SetColor()
+
+                if m.top.hasFocus() then
+                    m.top.textcolor = m.global.theme.primary
+                else
+                    m.top.textColor = "0x808080"
+                end if
+
+            End Sub
+
+        ]]>
+    </script>
+
+    
+
+</component>

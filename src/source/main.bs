@@ -31,12 +31,12 @@
 
     ' Multiple views will need to communicate these with each other, 
     ' so it's just easiest to observe global fields.
-    m.global.addField("addToContinueWatching", "boolean", true)
-    m.global.addField("removeFromContinueWatching", "boolean", true)
-    m.global.addField("addToWatchlist", "boolean", true)
-    m.global.addField("removeFromWatchlist", "boolean", true)
-    m.global.addField("addPlaylist", "boolean", true)
-    m.global.addField("removePlaylist", "boolean", true)
+    m.global.addField("addToContinueWatching", "node", true)
+    m.global.addField("removeFromContinueWatching", "string", true)
+    m.global.addField("addToWatchlist", "node", true)
+    m.global.addField("removeFromWatchlist", "string", true)
+    m.global.addField("addPlaylist", "node", true)
+    m.global.addField("removePlaylist", "string", true)
 
 
     
@@ -51,6 +51,8 @@
     m.global.addField("showViewWithId", "string", true)
     m.global.addField("popCurrentView", "boolean", true)
 
+    m.global.addField("pushView", "node", true)
+    m.global.addField("popView", "boolean", true)
     
 
     

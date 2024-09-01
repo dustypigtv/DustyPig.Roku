@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="SeriesDetailsView" extends="Group">
+<component name="SeriesDetailsView" extends="BaseView">
     
     <script type = "text/brightscript" uri = "SeriesDetailsView.bs" />
    
-    <interface>
-        <field id="reset" type="bool" alwaysNotify="true" />
-    </interface>
-
     <children>
 
 		<Poster

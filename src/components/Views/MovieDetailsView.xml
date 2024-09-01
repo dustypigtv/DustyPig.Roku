@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="MovieDetailsView" extends="Group">
+<component name="MovieDetailsView" extends="BaseView">
     
     <script type = "text/brightscript" uri = "pkg:/source/Utils.bs" />
     <script type = "text/brightscript" uri = "MovieDetailsView.bs" />
    
-    <interface>
-        <field id="reset" type="bool" alwaysNotify="true" />
-    </interface>
-
     <children>
 
        <Poster 
@@ -37,11 +33,13 @@
             
             <MediaInfoView
                 id="mediaInfoView"
-                viewType="1" />
+                viewType="1"
+                visible="false" />
 
             
             <CastAndCrewView 
-                id="castAndCrewView" />
+                id="castAndCrewView"
+                visible="false" />
             
 
         </LayoutGroup>
@@ -54,7 +52,6 @@
 		-->
 		<ThemedBusySpinner
 			id="busySpinner"
-			visible="false"
 			translation="[860,440]" />
 
 	</children>

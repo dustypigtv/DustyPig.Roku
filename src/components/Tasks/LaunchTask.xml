@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="LaunchTask" extends="Task" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://devtools.web.roku.com/schema/RokuSceneGraph.xsd">
+<component name="LaunchTask" extends="APITaskBase">
 
-	<script type="text/brightscript" uri = "pkg:/source/Fetch.bs" />
-	<script type="text/brightscript" uri = "pkg:/source/API.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Theme.bs" />    
 	<script type="text/brightscript" uri = "pkg:/source/Utils.bs" />    
 	<script type="text/brightscript" uri="LaunchTask.bs" />
-	
+
 </component>

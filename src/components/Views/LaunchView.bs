@@ -1,0 +1,18 @@
+Sub Init()
+
+    m.launchTask = CreateObject("roSGNode", "LaunchTask")
+    m.launchTask.observeField("success", "OnLaunchTask_Complete")
+    m.launchTask.Control = "RUN"
+
+ End Sub
+
+
+ Sub OnLaunchTask_Complete()
+
+    ' This only fires when there is profiles
+
+    view = CreateObject("roSGNode", "LoginProfileView")
+    view.data = m.launchTask.data
+    m.global.pushView(view)
+
+ End Sub

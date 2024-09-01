@@ -5,9 +5,6 @@
 
 Sub Init()
 
-    ' Init properties for this
-     m.top.itemSpacings=[25]
-
 
     ' Node references
     m.titleLabel = m.top.findNode("titleLabel")
@@ -41,7 +38,7 @@ Sub Init()
     
     
     ' Observers
-    m.top.observeField("movieView", "OnThis_UpdateControls")
+    m.top.observeField("data", "OnThis_UpdateControls")
     m.top.observeField("focusedChild", "OnThis_FocusedChild")
     
     m.requestButton.observeField("buttonSelected", "OnRequestButton_Selected")
@@ -51,9 +48,15 @@ Sub Init()
     m.watchlistButton.observeField("buttonSelected", "OnWatchlistButton_Selected")
     m.addToPlaylistButton.observeField("buttonSelected", "OnAddToPlaylistButton_Selected")
     
-    m.global.observeField("currentDetailedMedia", "OnGlobal_CurrentDetailedMediaChanged")
-    m.global.observeField("addToContinueWatching", "OnThis_UpdateControls")
-    
+    ' m.global.addField("addToContinueWatching", "node", true)
+    ' m.global.addField("removeFromContinueWatching", "string", true)
+    ' m.global.addField("addToWatchlist", "node", true)
+    ' m.global.addField("removeFromWatchlist", "string", true)
+    ' m.global.addField("addPlaylist", "node", true)
+    ' m.global.addField("removePlaylist", "string", true)
+
+    ' m.global.observeField("addToContinueWatching", "OnThis_UpdateControls")
+        
 
     ' Actions
     m.markMovieWatchedTask = CreateObject("roSGNode", "MarkMovieWatchedTask")
@@ -94,7 +97,6 @@ Sub OnThis_FocusedChild(event as object)
 
         
     if m.lastFocused <> invalid then
-        ' print "*** " + m.lastFocused.id + " ***"
         for i = 0 to cnt - 1
             node = m.buttonLayoutGroup.getChild(i)
             if node.id = m.lastFocused.id then
@@ -123,44 +125,44 @@ End Sub
 
 Sub OnPlayButton_Selected()
 
-    m.global.currentDetailedMedia.playStart = 0.0
-    m.global.startVideoPlayback = true
+    ' m.top.data.playStart = 0.0
+    ' m.global.startVideoPlayback = true
 
 End Sub
 
 Sub OnResumeButton_Selected()
 
-    m.global.startVideoPlayback = true
+    ' m.global.startVideoPlayback = true
     
 End Sub
 
 Sub OnMarkWatchedButton_Selected()
 
-    m.markMovieWatchedTask.id = m.global.currentDetailedMedia.id
+    m.markMovieWatchedTask.id = m.top.data.id
     m.markMovieWatchedTask.control = "run"
 
-    m.global.removeFromContinueWatching = true
-    m.global.currentDetailedMedia.setFields({playStart: 0})
+    m.global.removeFromContinueWatching = m.top.data.id
+    ' m.top.data.setFields({playStart: 0})
 
-    btns = [m.playButton, m.watchlistButton, m.addToPlaylistButton]
-    SetChildren(m.buttonLayoutGroup, btns)
-    m.playButton.setFocus(true)
+    ' btns = [m.playButton, m.watchlistButton, m.addToPlaylistButton]
+    ' SetChildren(m.buttonLayoutGroup, btns)
+    ' m.playButton.setFocus(true)
         
 End Sub
 
 Sub OnWatchlistButton_Selected()
 
-    detailedMedia = m.global.currentDetailedMedia
+    detailedMedia = m.top.data
     del = detailedMedia.inWatchList ?? false
 
     if del then
-        m.global.removeFromWatchlist = true
+        m.global.removeFromWatchlist = m.top.data.id
     else
-        m.global.addToWatchlist = true
+        m.global.addToWatchlist = BuildBasicMediaFromDetailed(m.top.data)
     end if
 
-    detailedMedia.inWatchList = not del
-    SetWatchlistIcon(not del)
+    ' detailedMedia.inWatchList = not del
+    ' SetWatchlistIcon()
 
     m.toggleWatchlistTask.control = "stop"
     m.toggleWatchlistTask.add = not del
@@ -171,7 +173,7 @@ End Sub
 
 Sub OnAddToPlaylistButton_Selected()
 
-    m.global.showViewWithId = "addToPlaylistView"
+    ' m.global.showViewWithId = "addToPlaylistView"
 
 End Sub
 
@@ -182,25 +184,24 @@ End Sub
 
 ' ********** UPDATE TRIGGERS **********
 
-Sub OnGlobal_CurrentDetailedMediaChanged()
+' Sub OnGlobal_CurrentDetailedMediaChanged()
 
-    detailedMedia = m.global.currentDetailedMedia
+'     detailedMedia = m.top.data
         
-    if detailedMedia = invalid then return
-    if detailedMedia.contentType <> m.top.viewType then return
+'     if detailedMedia = invalid then return
+'     if detailedMedia.contentType <> m.top.viewType then return
 
-    m.lastFocused = invalid
-    OnThis_UpdateControls()
+'     m.lastFocused = invalid
+'     OnThis_UpdateControls()
 
-End Sub
+' End Sub
 
 
 Sub OnThis_UpdateControls()
 
-    detailedMedia = m.global.currentDetailedMedia
+    detailedMedia = m.top.data
     
     if detailedMedia = invalid then return
-    if detailedMedia.contentType <> m.top.viewType then return
     
     m.titleLabel.text = detailedMedia.title
     m.descriptionLabel.text = detailedMedia.description
@@ -230,7 +231,7 @@ Sub OnThis_UpdateControls()
             btns.push(m.addToPlaylistButton)
             SetChildren(m.buttonLayoutGroup, btns)
 
-            SetWatchlistIcon(detailedMedia.inWatchList)
+            SetWatchlistIcon()
 
         else
 
@@ -262,23 +263,14 @@ Sub OnThis_UpdateControls()
             btns.push(m.addToPlaylistButton)
             SetChildren(m.buttonLayoutGroup, btns)
 
-            SetWatchlistIcon(detailedMedia.inWatchList)
+            SetWatchlistIcon()
 
         else
 
             SetChildren(m.buttonLayoutGroup, [m.requestButton])
 
         end if
-
-        
-
-    else if m.top.viewType = 4 then
-
-        ' Episode
-
-        SetChildren(m.detailsLayoutGroup, [m.dateLabel])
-        m.dateLabel.text = detailedMedia.date
-
+    
     end if
 
 End Sub
@@ -352,8 +344,8 @@ Sub SetChildren(layout, childObjects)
 End Sub
 
 
-Sub SetWatchlistIcon(inWatchList as boolean)
+Sub SetWatchlistIcon()
 
-    m.watchlistButton.icon = inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
+    m.watchlistButton.icon = m.top.data.inWatchList ? "pkg:/images/check.png" : "pkg:/images/add.png"
 
 End Sub

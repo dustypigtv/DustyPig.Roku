@@ -7,7 +7,9 @@ End Sub
 
 Sub RunTask()
 
+    ' ***** DEBUG ONLY *****
     ' DeleteAccountToken()
+    ' **********************
 
     result = CheckAccountToken()
     if result then
@@ -40,10 +42,10 @@ Sub RunTask()
                 end if
 
             else
-
+ 
                 ' More than 1 profile
-                m.global.allProfiles = ProfilesToNode(profiles.data)
-                m.global.showViewWithId = "loginProfileView"
+                m.top.data = ProfilesToNode(profiles.data)
+                m.top.success = true
             
             end if
         else

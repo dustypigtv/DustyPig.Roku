@@ -1,83 +1,60 @@
 sub Init()
 
-    ' Find controls    
-    m.headerLabel = m.top.findNode("headerLabel")
-    m.emailTextBox = m.top.findNode("emailTextBox")
-    m.passwordTextBox = m.top.findNode("passwordTextBox")
-    m.loginAccountButton = m.top.findNode("loginAccountButton")
-    m.forgotPasswordButton = m.top.findNode("forgotPasswordButton")
-    m.signUpButton = m.top.findNode("signUpButton")
-    m.busySpinner = m.top.findNode("busySpinner")
+    ' View References
+    m.loginViews = m.top.findNode("loginViews")
+    m.emailTextBox = m.loginViews.findNode("emailTextBox")
+    m.passwordTextBox = m.loginViews.findNode("passwordTextBox")
+    m.loginButton = m.loginViews.findNode("loginButton")
+    m.forgotPasswordButton = m.loginViews.findNode("forgotPasswordButton")
+    m.signUpButton = m.loginViews.findNode("signUpButton")
+    m.busySpinner = m.loginViews.findNode("busySpinner")
 
     
+    ' Button clicks
     m.forgotPasswordButton.observeField("buttonSelected", "OnForgotPasswordButton_Selected")
-    m.loginAccountButton.observeField("buttonSelected", "OnLoginAccountButton_Selected")
+    m.loginButton.observeField("buttonSelected", "OnLoginButton_Selected")
     m.signUpButton.observeField("buttonSelected", "OnSignUpButton_Selected")
 
-    
-    ' Build keyboard dialog
-    m.keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
-    m.keyboardDialog.buttons=["Cancel","OK"]
-    m.keyboardDialog.observeField("wasClosed", "OnKeyboardDialogClosed")
-    m.keyboardDialog.observeField("buttonSelected", "OnKeyboardDialog_ButtonSelected")
 
-
-    ' Success dialog
+    ' Forgot password success dialog
     m.successDialog = createObject("roSGNode", "StandardMessageDialog")
     m.successDialog.buttons = ["OK"]
     m.successDialog.title = "Success"
     m.successDialog.message = ["Check your email for password reset instructions"]
-    m.successDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
-    m.successDialog.observeField("wasClosed", "OnErrorDialog_Closed")
+    m.successDialog.observeField("buttonSelected", "CloseDialog")
 
 
     ' Error dialog
     m.errorDialog = createObject("roSGNode", "StandardMessageDialog")
     m.errorDialog.buttons = ["OK"]
-    m.errorDialog.title = "Sign In error"
-    m.errorDialog.observeField("buttonSelected", "OnErrorDialog_Closed")
-    m.errorDialog.observeField("wasClosed", "OnErrorDialog_Closed")
+    m.errorDialog.title = "Error"
+    m.errorDialog.observeField("buttonSelected", "CloseDialog")
 
 
 
-    ' Sign In task
+    ' Tasks
     m.loginAccountTask = CreateObject("roSGNode", "LoginAccountTask")
-    m.loginAccountTask.observeField("data", "OnLoginAccountTask_DataAvailable")
+    m.loginAccountTask.observeField("success", "OnLoginAccountTask_Complete")
 
-
-    ' Forgot password task
     m.forgotPasswordTask = CreateObject("roSGNode", "SendPasswordResetEmailTask")
     m.forgotPasswordTask.observeField("success", "OnForgotPassword_Complete")
 
 
-    'variables
-    m.lastSelected = invalid
-    m.alreadyAskedChannelStore = false
-
-    ' Observe this.visible
+    ' Focus Tracking
+    m.lastFocused = invalid
     m.top.observeField("visible", "OnThis_VisibleChanged")
+    m.top.observeField("focusedChild", "OnThis_FocusChanged")
+    
 
-end sub
-
-
-' Fires when this view's visibility changes
-Sub OnThis_VisibleChanged(event as object)
-
-    m.busySpinner.visible = false
-    if not event.getData() then return
-
-    m.lastSelected = m.emailTextBox
-    ShowControls(true)
-
-    ' Test user
+    ' Init flow
     if m.global.isDev
-       
+    
+        ' Test user
         m.emailTextBox.text = "testuser@dustypig.tv"
         m.passwordTextBox.text = "test password"
             
-    else if m.alreadyAskedChannelStore = false
+    else
 
-        m.alreadyAskedChannelStore = true
         m.channelStore = CreateObject("roSGNode", "ChannelStore")
         
         ' Set sign-in context for RFI screen
@@ -90,158 +67,166 @@ Sub OnThis_VisibleChanged(event as object)
         m.channelStore.command = "getUserData"
         
     end if
-    
-
-End Sub
-
-
-sub OnChannelStore_DataAvailable()
-
-    if m.channelStore.userData <> invalid then
-         m.emailTextBox.text = m.channelStore.userData.email
-        FocusOnTB(m.passwordTextBox)
-    end if
 
 end sub
 
 
+
+
+
+
+
+
+
+
+' ********** FOCUS TRACKING **********
+
+Sub OnThis_FocusChanged(event as object)
+
+    try
+        view = event.getData()
+        if view.isSameNode(m.top) then
+            if m.lastFocused = invalid then m.lastFocused = m.emailTextBox
+            m.lastFocused.setFocus(true)
+        else
+            sv = view
+            while sv <> invalid
+                if sv.focusedChild.isSameNode(sv) then
+                    m.lastFocused = sv.focusedChild
+                    exitwhile
+                else
+                    sv = sv.focusedChild
+                end if
+            end while
+        end if
+    catch e
+    end try
+
+End Sub
+
+
+Sub OnThis_VisibleChanged(event as object)
+
+    if event.getData() then ShowControls(true)
+
+End Sub
+
+
 Sub ShowControls(s as boolean)
 
-    if not s then
+    if not m.top.visible then return
 
-        if m.emailTextBox.hasFocus() then m.lastSelected = m.emailTextBox
-        if m.passwordTextBox.hasFocus() then m.lastSelected = m.passwordTextBox
-    
+    if s then 
+   
+        m.busySpinner.visible = false
+        if m.lastFocused = invalid then m.lastFocused = m.emailTextBox
+        m.lastFocused.setFocus(true)
+   
+    else
+   
+        if m.lastFocused <> invalid then
+            
+            ' Drop focus without losing tracking
+            lf = m.lastFocused
+            m.lastFocused.setFocus(false)
+            m.lastFocused = lf
+        
+        end if
+   
+        m.busySpinner.visible = true
+   
     end if
 
-    m.headerLabel.visible = s
-    m.emailTextBox.visible = s
-    m.passwordTextBox.visible = s
-    m.forgotPasswordButton.visible = s
-    m.loginAccountButton.visible = s
-    m.signUpButton.visible = s
-
-    if s then FocusOnTB(m.lastSelected)
-
 End Sub
 
 
-Sub FocusOnTB(tb as object)
-
-    m.emailTextBox.textColor = "#808080"
-    m.passwordTextBox.textColor = "#808080"
-
-    if tb = invalid then tb = m.emailTextBox
-
-    tb.setFocus(true)
-    tb.textColor = m.global.defaultTheme.primary
-
-End Sub
 
 
-Sub FocusOnButton(btn as object)
-
-    m.emailTextBox.textColor = "#808080"
-    m.passwordTextBox.textColor = "#808080"
-
-    if btn = invalid then btn = m.loginAccountButton
-
-    btn.setFocus(true)
-
-End Sub
 
 
-Sub OnKeyboardDialogClosed()
 
-    ShowControls(true)
 
-End Sub
 
+
+' ********** DIALOG EVENTS **********
 
 Sub OnKeyboardDialog_ButtonSelected(event as object)
 
-    m.top.getScene().dialog = invalid
+    CloseDialog()
+
     idx = event.getData()
-    selectLogin = false
-    if idx = 1 then 
-        m.lastSelected.text = m.keyboardDialog.text
-        if m.lastSelected.id = m.emailTextBox.id and m.emailTextBox.text = "testuser@dustypig.tv" then 
-            m.passwordTextBox.text = "test password"
-            selectLogin = true
-        end if
-    end if
-    ShowControls(true)
-    if selectLogin then FocusOnButton(m.loginAccountButton)
+    if idx <> 0 then return
+
+    m.lastFocused.text = event.getRoSGNode().text
+    if m.lastFocused.id = m.emailTextBox.id and m.emailTextBox.text = "testuser@dustypig.tv" then m.passwordTextBox.text = "test password"
+    if m.emailTextBox.text = "testuser@dustypig.tv" and m.passwordTextBox.text = "test password" then m.loginButton.setFocus(true)
     
 End Sub
-
 
 
 Sub OnForgotDialog_ButtonSelected(event as object)
 
-    m.forgotPasswordDialog.close = true
+    CloseDialog()
 
     idx = event.getData()
-    if idx = 1 then
-        FocusOnButton(m.forgotPasswordButton)
-        return
-    end if
+    if idx = 1 then return
 
-    m.passwordTextBox.text = m.forgotPasswordDialog.text
+    email = event.getRoSGNode().text
+    m.passwordTextBox.text = email
     ShowControls(false)
 
     m.forgotPasswordTask.control = "stop"
-    m.forgotPasswordTask.email = m.forgotPasswordDialog.text
+    m.forgotPasswordTask.email = email
     m.forgotPasswordTask.control = "run"
     
+End Sub
+
+Sub ShowDialog(dlg)
+
+    m.top.getScene().dialog = dlg
 
 End Sub
 
-
-
-Sub OnErrorDialog_Closed()
+Sub CloseDialog()
 
     m.top.getScene().dialog = invalid
-    ShowControls(true)
+    if m.lastFocused <> invalid and not m.lastFocused.hasFocus() then m.lastFocused.setFocus(true)
+    
+End Sub
+
+Sub ShowErrorDialog(msg as String)
+
+    m.errorDialog.message = [msg]
+    ShowDialog(m.errorDialog)
 
 End Sub
 
 
 
 
+
+
+
+
+
+' ********** BUTTON CLICKS **********
 
 Sub OnForgotPasswordButton_Selected()
 
-    if m.forgotPasswordDialog <> invalid then m.forgotPasswordDialog.unobserveField("buttonSelected")
-    m.forgotPasswordDialog = createObject("roSGNode", "StandardKeyboardDialog")
-    m.forgotPasswordDialog.buttons = ["OK", "Cancel"]
-    m.forgotPasswordDialog.title = "Forgot Password"
-    m.forgotPasswordDialog.message = ["Enter your email address"]
-    m.forgotPasswordDialog.text = m.emailTextBox.text
-    m.forgotPasswordDialog.observeField("buttonSelected", "OnForgotDialog_ButtonSelected")
-    m.top.getScene().dialog = m.forgotPasswordDialog
+    forgotPasswordDialog = createObject("roSGNode", "StandardKeyboardDialog")
+    forgotPasswordDialog.buttons = ["OK", "Cancel"]
+    forgotPasswordDialog.title = "Forgot Password"
+    forgotPasswordDialog.message = ["Enter your email address"]
+    forgotPasswordDialog.text = m.emailTextBox.text
+    forgotPasswordDialog.observeField("buttonSelected", "OnForgotDialog_ButtonSelected")
+    ShowDialog(forgotPasswordDialog)
 
 End Sub
 
 
-Sub OnForgotPassword_Complete()
+Sub OnLoginButton_Selected()
 
-    if m.forgotPasswordTask.success then
-        m.top.getScene().dialog = m.successDialog
-    else
-        m.errorDialog.message = [m.forgotPasswordTask.error]
-        m.top.getScene().dialog = m.errorDialog    
-    end if
-
-End Sub
-
-
-
-
-Sub OnLoginAccountButton_Selected()
-
-    m.loginAccountButton.setFocus(false)
-    m.busySpinner.visible = true
+    ShowControls(false)
 
     m.loginAccountTask.email = m.emailTextBox.text
     m.loginAccountTask.password = m.passwordTextBox.text
@@ -252,10 +237,166 @@ End sub
 
 Sub OnSignUpButton_Selected()
 
-    m.global.showViewWithId = "signUpView"
+    m.global.pushView = CreateObject("roSGNode", "SignupView")
 
 End Sub
 
+
+
+
+
+
+
+
+
+' ********** DATA AVAILABLE CALLBACKS **********
+
+Sub OnChannelStore_DataAvailable()
+
+    if m.channelStore.userData <> invalid then
+         m.emailTextBox.text = m.channelStore.userData.email
+         m.passwordTextBox.setFocus()
+    end if
+
+End Sub
+
+Sub OnForgotPassword_Complete()
+
+    ShowControls(true)
+
+    if m.forgotPasswordTask.success then
+        ShowDialog(m.successDialog)
+    else
+        ShowErrorDialog(m.forgotPasswordTask.error)
+    end if
+
+End Sub
+
+
+Sub OnLoginAccountTask_Complete()
+
+    ShowControls(true)
+
+    if m.loginAccountTask.success then
+
+        ' This is only fired when there are profiles
+        view = CreateObject("roSGNode", "LoginProfileView")
+        view.data = m.loginAccountTask.data
+        m.global.pushView(view)
+
+    else
+
+        ShowErrorDialog(m.loginAccountTask.error)
+
+    end if
+
+End Sub
+
+
+
+
+
+
+
+
+
+' ********** Key Presses **********
+
+Function onKeyEvent(key as String, press as Boolean) as Boolean
+
+    if not press then return false
+
+    if key = "back" then return true
+
+    if key = "up" then
+        if m.passwordTextBox.hasFocus() then
+            m.emailTextBox.setFocus(true)
+            return true
+        else if m.forgotPasswordButton.hasFocus() or m.loginButton.hasFocus() then
+            m.passwordTextBox.setFocus(true)
+            return true
+        else if m.signUpButton.hasFocus() then
+            credentials = GetCredentials()
+            if credentials = invalid then
+                m.forgotPasswordButton.setFocus(true)
+            else
+                m.loginButton.setFocus(true)
+            end if
+            return true
+        end if
+    end if
+
+    if key = "down" then
+        if m.emailTextBox.hasFocus() then
+            m.passwordTextBox.setFocus(true)
+            return true
+        else if m.passwordTextBox.hasFocus() then
+            credentials = GetCredentials()
+            if credentials = invalid then 
+                m.forgotPasswordButton.setFocus(true)
+            else
+                m.loginButton.setFocus(true)
+            end if
+            return true
+        else if m.loginButton.hasFocus() or m.forgotPasswordButton.hasFocus() then
+            m.signUpButton.setFocus(true)
+            return true
+        end if
+    end if
+
+    if key = "left" then
+        if m.loginButton.hasFocus() then
+            m.forgotPasswordButton.setFocus(true)
+            return true
+        end if
+    end if
+
+    if key = "right" then
+        if m.forgotPasswordButton.hasFocus() then
+            m.loginButton.setFocus(true)
+            return true
+        end if
+    end if
+
+    if key = "OK" then 
+
+        if m.emailTextBox.hasFocus() or m.passwordTextBox.hasFocus() then
+
+            keyboardDialog = createObject("roSGNode", "StandardKeyboardDialog")
+            keyboardDialog.buttons=["OK", "Cancel"]
+            keyboardDialog.observeField("buttonSelected", "OnKeyboardDialog_ButtonSelected")
+
+            if m.emailTextBox.hasFocus() then
+                 keyboardDialog.title = "Email Address:"
+                 keyboardDialog.keyBoardDomain = "email"
+            else
+                keyboardDialog.title = "Password:"
+                keyboardDialog.keyBoardDomain = "password"
+            end if
+
+            keyboardDialog.text = m.lastFocused.text
+            keyboardDialog.textEditBox.secureMode = m.passwordTextBox.hasFocus()
+            
+            ShowDialog(keyboardDialog)
+            return true
+
+        end if
+
+    end if
+
+    return false
+
+End Function
+
+
+
+
+
+
+
+
+
+' ********** UTILITIES **********
 
 Function GetCredentials() as object
 
@@ -266,120 +407,6 @@ Function GetCredentials() as object
     if password = invalid or password = "" then return invalid
 
     return { "email": email, "password": password }
-
-End Function
-
-
-
-
-
-
-Sub OnLoginAccountTask_DataAvailable()
-
-    m.loginAccountButton.setFocus(true)
-    m.busySpinner.visible = false
-
-    result = m.loginAccountTask.data
-
-    ' This only fires on error
-    ' Other events are handled in the task
-
-    ShowControls(false)
-    m.errorDialog.message = [result.error]
-    m.top.getScene().dialog = m.errorDialog
-
-
-End Sub
-
-
-
-Function onKeyEvent(key as String, press as Boolean) as Boolean
-
-    if not press then return false
-
-    if key = "back" then return true
-
-    if key = "up" then
-        if m.passwordTextBox.hasFocus() then
-            FocusOnTB(m.emailTextBox)
-            return true
-        else if m.loginAccountButton.hasFocus() then
-            FocusOnTB(m.passwordTextBox)
-            return true
-        else if m.forgotPasswordButton.hasFocus() then
-            FocusOnTB(m.passwordTextBox)
-            return true
-        else if m.signUpButton.hasFocus() then
-            credentials = GetCredentials()
-            if credentials = invalid then
-                FocusOnTB(m.passwordTextBox)
-            else
-                FocusOnButton(m.loginAccountButton)
-            end if
-            return true
-        end if
-    end if
-
-    if key = "down" then
-        if m.emailTextBox.hasFocus() then
-            FocusOnTB(m.passwordTextBox)
-            return true
-        else if m.passwordTextBox.hasFocus() then
-            credentials = GetCredentials()
-            if credentials = invalid then 
-                FocusOnButton(m.signUpButton)
-            else
-                FocusOnButton(m.loginAccountButton)
-            end if
-            return true
-        else if m.loginAccountButton.hasFocus() or m.forgotPasswordButton.hasFocus() then
-            FocusOnButton(m.signUpButton)
-            return true
-        end if
-    end if
-
-    if key = "left" then
-        if m.loginAccountButton.hasFocus() then
-            FocusOnButton(m.forgotPasswordButton)
-            return true
-        end if
-    end if
-
-    if key = "right" then
-        if m.forgotPasswordButton.hasFocus() then
-            FocusOnButton(m.loginAccountButton)
-            return true
-        end if
-    end if
-
-    if key = "OK" then 
-
-        if m.emailTextBox.hasFocus() or m.passwordTextBox.hasFocus() then
-
-            if m.emailTextBox.hasFocus() then
-                 m.keyboardDialog.title = "Email Address:"
-                 m.keyboardDialog.keyBoardDomain = "email"
-            else
-                m.keyboardDialog.title = "Password:"
-                m.keyboardDialog.keyBoardDomain = "password"
-            end if
-
-            m.keyboardDialog.text = m.lastSelected.text
-            m.keyboardDialog.textEditBox.secureMode = m.passwordTextBox.hasFocus()
-            
-
-            ShowControls(false)
-            m.top.getScene().dialog = m.keyboardDialog
-            return true
-
-        end if
-
-        ' Return button click sound
-        if m.loginAccountButton.hasFocus() or m.signUpButton.hasFocus() return true
-
-    end if
-
-    return false
 
 End Function
 

@@ -9,7 +9,11 @@ Sub RunTask()
 
     result = Login(m.top.email, m.top.password)
     if result.success then 
+
+        m.top.loginType = result.data.loginType
+        
         if result.data.loginType = 1 then
+
             m.global.profileId = result.data.profileId
             m.global.profileToken = result.data.profileToken
             m.global.profileIsMain = true
@@ -19,11 +23,16 @@ Sub RunTask()
 
             m.global.loggedOut = false
             return
+            
         else
-            m.global.allProfiles = ProfilesToNode(result.data.profiles)
-            m.global.showViewWithid = "loginProfileView"
+            
+            m.top.data = ProfilesToNode(result.data.profiles)
+        
         end if
     end if
-    m.top.data = result
+
+
+    m.top.error = result.error
+    m.top.success = result.success
 
 End Sub
